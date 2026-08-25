@@ -165,7 +165,6 @@ function TarotCard({ step }: { step: (typeof STEPS)[number] }) {
 
 export function HowItWorks() {
   const reducedMotion = useReducedMotion();
-  const titleRef = useRef<HTMLHeadingElement>(null);
 
   const scrollToDirections = () => {
     const section = document.getElementById("directions");
@@ -177,6 +176,7 @@ export function HowItWorks() {
       title.focus({ preventScroll: true });
     }
   };
+
 
   return (
     <Section
