@@ -50,7 +50,7 @@
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
 
-  --font-display: "Playfair Display", "Forum", "Unbounded", sans-serif;
+  --font-display: "Forum", "Playfair Display", "Unbounded", sans-serif;
   --font-sans: "Onest", sans-serif;
   --font-mono: "JetBrains Mono", monospace;
 
