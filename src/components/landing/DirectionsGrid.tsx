@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { directions } from "@/lib/directions";
 import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
 
@@ -90,142 +90,23 @@ function SectionStars({ count }: { count: number }) {
   );
 }
 
-const PAD = 150;
-const STAR_COUNT = 14;
-
-const INSET = 24;
-
-type CardStar = {
-  size: number;
-  restX: number;
-  restY: number;
-  delay: number;
-  /** fraction along card perimeter */
-  t: number;
-};
-
-function buildCardStars(): CardStar[] {
-  return Array.from({ length: STAR_COUNT }, (_, i) => {
-    // rest position: anywhere in the wrapper but outside the card area
-    let restX = 0;
-    let restY = 0;
-    for (let attempt = 0; attempt < 30; attempt++) {
-      restX = rand(0, 1);
-      restY = rand(0, 1);
-      const insideCard = restX > 0.28 && restX < 0.72 && restY > 0.28 && restY < 0.72;
-      if (!insideCard) break;
-    }
-    return {
-      size: rand(3, 5),
-      restX,
-      restY,
-      delay: rand(0, 200),
-      t: (i + 0.5) / STAR_COUNT,
-    };
-  });
-}
-
-/**
- * Final position: the star's evenly spaced point on the card edge, pushed
- * INSET px inward so it disappears behind the opaque card.
- * Wrapper coords (wrapper = card + PAD on each side).
- */
-function perimeterPos(star: CardStar, card: number) {
-  const per = 4 * card;
-  let d = star.t * per;
-  let x = 0;
-  let y = 0;
-  let nx = 0;
-  let ny = 0;
-  if (d < card) {
-    x = d;
-    y = 0;
-    ny = 1;
-  } else if ((d -= card) < card) {
-    x = card;
-    y = d;
-    nx = -1;
-  } else if ((d -= card) < card) {
-    x = card - d;
-    y = card;
-    ny = -1;
-  } else {
-    d -= card;
-    x = 0;
-    y = card - d;
-    nx = 1;
-  }
-  return { x: PAD + x + nx * INSET, y: PAD + y + ny * INSET };
-}
-
 function DirectionCard({
   title,
   desc,
   image,
-  starsEnabled,
   liftEnabled,
   reducedMotion,
 }: {
   title: string;
   desc: string;
   image: string;
-  starsEnabled: boolean;
   liftEnabled: boolean;
   reducedMotion: boolean;
 }) {
   const [active, setActive] = useState(false);
-  const [card, setCard] = useState(0);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const stars = useMemo(buildCardStars, []);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const measure = () => setCard(el.clientWidth);
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
 
   return (
-    <div ref={wrapRef} className="relative isolate h-[var(--card)] w-[var(--card)]">
-      {starsEnabled && card > 0 && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute z-0"
-          style={{ inset: -PAD }}
-        >
-          {stars.map((s, i) => {
-            const target = perimeterPos(s, card);
-            const rest = {
-              x: s.restX * (card + PAD * 2),
-              y: s.restY * (card + PAD * 2),
-            };
-            const pos = active ? target : rest;
-            return (
-              <span
-                key={i}
-                className="absolute rounded-full"
-                style={{
-                  width: s.size,
-                  height: s.size,
-                  left: 0,
-                  top: 0,
-                  backgroundColor: "var(--text-primary)",
-                  boxShadow: "0 0 10px 2px rgba(230, 240, 239, 0.45)",
-                  opacity: active ? 0 : 0.9,
-                  transform: `translate3d(${pos.x - s.size / 2}px, ${pos.y - s.size / 2}px, 0)`,
-                  transition: active
-                    ? `transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${s.delay}ms, opacity 260ms ease-in ${440 + s.delay}ms`
-                    : `transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${200 - s.delay}ms, opacity 300ms ease-out 0ms`,
-                }}
-              />
-            );
-          })}
-        </div>
-      )}
-
+    <div className="relative h-[var(--card)] w-[var(--card)]">
       <button
         type="button"
         onClick={() => {}}
@@ -245,7 +126,7 @@ function DirectionCard({
           transition: reducedMotion
             ? "none"
             : active
-              ? "transform 300ms ease, border-color 500ms ease-out 340ms, box-shadow 600ms ease-out 340ms"
+              ? "transform 300ms ease, border-color 500ms ease-out 240ms, box-shadow 600ms ease-out 240ms"
               : "transform 300ms ease, border-color 400ms ease-out, box-shadow 400ms ease-out",
           outlineOffset: 4,
         }}
@@ -311,7 +192,6 @@ export function DirectionsGrid() {
               title={d.title}
               desc={d.desc}
               image={d.image}
-              starsEnabled={!isMobile && !reduced}
               liftEnabled={!reduced}
               reducedMotion={reduced}
             />
