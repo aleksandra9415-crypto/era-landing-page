@@ -38,7 +38,7 @@ export function Headline() {
         <span className="invisible">СХОДИТСЯ</span>
       </h1>
 
-      <div className="relative mt-6 h-[48px] w-full max-w-[420px] md:h-[52px]">
+      <div className="relative mt-6 h-[48px] w-full max-w-[420px] md:h-[56px] md:w-[32vw] md:max-w-none">
         {WORDS.map((w, i) => (
           <p
             key={w.word}
