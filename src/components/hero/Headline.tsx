@@ -60,11 +60,8 @@ export function Headline() {
         ))}
       </h1>
 
-      <div
-        className="relative mt-[24px] w-full"
-        style={{ height: "6em" }}
-      >
-        <div className="hidden md:block" style={{ height: "4.5em" }} />
+      <div className="relative mt-[24px] h-[6em] w-full md:h-[4.5em]">
+
         {PHRASES.map((p, i) => (
           <p
             key={p.l2}
