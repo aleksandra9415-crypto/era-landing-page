@@ -192,7 +192,6 @@ export function DirectionsGrid() {
               title={d.title}
               desc={d.desc}
               image={d.image}
-              starsEnabled={!isMobile && !reduced}
               liftEnabled={!reduced}
               reducedMotion={reduced}
             />
