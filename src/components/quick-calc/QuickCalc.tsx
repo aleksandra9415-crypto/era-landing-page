@@ -89,9 +89,11 @@ function Orbits({ speedFactor, dim, still }: { speedFactor: number; dim: boolean
                   width: o.dot,
                   height: o.dot,
                   opacity: o.opacity,
+                  boxShadow: "0 0 12px 2px rgba(230, 240, 239, 0.5)",
                   transform: `translate(-50%, -50%) scaleY(${1 / o.squash})`,
                 }}
               />
+
             </div>
           ))}
         </div>
