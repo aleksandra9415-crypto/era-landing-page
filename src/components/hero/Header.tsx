@@ -7,7 +7,7 @@ const LINKS = [
 export function Header() {
   return (
     <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-6 md:px-12">
-      <span className="font-display text-text-primary text-[20px]" style={{ letterSpacing: "0.03em" }}>
+      <span className="font-display text-text-primary text-[20px]" style={{ letterSpacing: "0.02em", fontWeight: 500 }}>
         Моя.Эра
       </span>
       <nav className="hidden items-center gap-8 md:flex">
