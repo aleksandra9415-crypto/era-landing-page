@@ -1,7 +1,7 @@
 import type { Direction } from "@/lib/directions";
 
 /** Line-only geometric schemes, drawn on a 64x64 viewBox. */
-export function Glyph({ name, size = 64 }: { name: Direction["id"]; size?: number }) {
+export function Glyph({ name, size = 64 }: { name: Direction["id"]; size?: number | string }) {
   const common = {
     width: size,
     height: size,
