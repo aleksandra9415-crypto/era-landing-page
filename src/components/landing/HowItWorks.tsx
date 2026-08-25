@@ -183,6 +183,7 @@ export function HowItWorks() {
       id="how"
       title="Три шага"
       subtitle="Как устроен путь от даты рождения до разбора"
+      className="how-gradient"
     >
       <div
         className="mt-12 flex flex-col items-center justify-center md:flex-row md:items-start"

@@ -212,15 +212,6 @@ export function QuickCalc({
         </svg>
       </div>
 
-      {/* bottom dissolve */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[200px]"
-        style={{
-          background: "linear-gradient(to bottom, rgba(3, 25, 30, 0), var(--bg-page))",
-        }}
-      />
-
       <div
         className="relative z-[4] mx-auto flex w-full max-w-[1600px] flex-col items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
         style={{ paddingLeft: "clamp(24px, 6vw, 120px)", paddingRight: "clamp(24px, 6vw, 120px)" }}
