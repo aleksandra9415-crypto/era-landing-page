@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { directions } from "@/lib/directions";
 import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
 
@@ -14,169 +14,253 @@ const gauss = () => {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 };
 
-const EASE = "cubic-bezier(0.22, 1, 0.36, 1)";
-const INSET = 24;
-const GLOW = "0 0 10px 2px rgba(230, 240, 239, 0.4)";
+/** Section background star field, drawn in code on a canvas. */
+function SectionStars({ count }: { count: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-type Star = {
-  hx: number;
-  hy: number;
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const color =
+      getComputedStyle(document.documentElement).getPropertyValue("--text-primary").trim() ||
+      "#E6F0EF";
+
+    const draw = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
+      if (!w || !h) return;
+      canvas.width = Math.floor(w * dpr);
+      canvas.height = Math.floor(h * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+
+      const clusters = Array.from({ length: Math.floor(rand(5, 7)) }, () => ({
+        x: rand(0, w),
+        y: rand(0, h),
+        spread: rand(w * 0.05, w * 0.12),
+      }));
+      const clustered = Math.round(count * 0.7);
+      const bright = 6;
+      const mid = 20;
+
+      for (let i = 0; i < count; i++) {
+        let x: number;
+        let y: number;
+        if (i < clustered) {
+          const c = clusters[Math.floor(Math.random() * clusters.length)]!;
+          x = c.x + gauss() * c.spread;
+          y = c.y + gauss() * c.spread;
+        } else {
+          x = rand(0, w);
+          y = rand(0, h);
+        }
+        let r = 0.6;
+        let opacity = 0.25;
+        if (i < bright) {
+          r = 1.6;
+          opacity = 0.85;
+        } else if (i < bright + mid) {
+          r = 1.1;
+          opacity = 0.5;
+        }
+        ctx.globalAlpha = opacity;
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    };
+
+    draw();
+    window.addEventListener("resize", draw);
+    return () => window.removeEventListener("resize", draw);
+  }, [count]);
+
+  return (
+    <canvas
+      ref={canvasRef}
+      aria-hidden="true"
+      className="pointer-events-none absolute inset-0 z-0 h-full w-full"
+    />
+  );
+}
+
+const PAD = 150;
+const STAR_COUNT = 14;
+
+type CardStar = {
   size: number;
-  opacity: number;
-  glow: boolean;
+  restX: number;
+  restY: number;
+  delay: number;
+  /** fraction along card perimeter */
+  t: number;
+  gap: number;
 };
 
-function buildStars(w: number, h: number, count: number): Star[] {
-  const clusters = Array.from({ length: Math.floor(rand(6, 8)) }, () => ({
-    x: rand(0, w),
-    y: rand(0, h),
-    spread: rand(w * 0.05, w * 0.12),
-  }));
-  const clustered = Math.round(count * 0.7);
-  const bright = Math.max(1, Math.round(count * (10 / 120)));
-  const mid = Math.round(count * (30 / 120));
-
-  return Array.from({ length: count }, (_, i) => {
-    let x: number;
-    let y: number;
-    if (i < clustered) {
-      const c = clusters[Math.floor(Math.random() * clusters.length)]!;
-      x = Math.min(w, Math.max(0, c.x + gauss() * c.spread));
-      y = Math.min(h, Math.max(0, c.y + gauss() * c.spread));
-    } else {
-      x = rand(0, w);
-      y = rand(0, h);
+function buildCardStars(): CardStar[] {
+  return Array.from({ length: STAR_COUNT }, (_, i) => {
+    // rest position: anywhere in the wrapper but outside the card area
+    let restX = 0;
+    let restY = 0;
+    for (let attempt = 0; attempt < 30; attempt++) {
+      restX = rand(0, 1);
+      restY = rand(0, 1);
+      const insideCard = restX > 0.28 && restX < 0.72 && restY > 0.28 && restY < 0.72;
+      if (!insideCard) break;
     }
-    let size = 2;
-    let opacity = 0.3;
-    let glow = false;
-    if (i < bright) {
-      size = 5;
-      opacity = 0.9;
-      glow = true;
-    } else if (i < bright + mid) {
-      size = 3.5;
-      opacity = 0.6;
-      glow = true;
-    }
-    return { hx: x, hy: y, size, opacity, glow };
+    return {
+      size: rand(3, 5),
+      restX,
+      restY,
+      delay: rand(0, 220),
+      t: (i + rand(0.15, 0.85)) / STAR_COUNT,
+      gap: rand(10, 18),
+    };
   });
 }
 
-type Rect = { x: number; y: number; w: number; h: number };
-
-/** Points evenly distributed along the perimeter of a rect inset by INSET. */
-function perimeterPoints(rect: Rect, n: number) {
-  const x0 = rect.x + INSET;
-  const y0 = rect.y + INSET;
-  const w = Math.max(1, rect.w - INSET * 2);
-  const h = Math.max(1, rect.h - INSET * 2);
+/** Perimeter position (in wrapper px, wrapper = card + PAD on each side). */
+function perimeterPos(star: CardStar, card: number) {
+  const gap = star.gap;
+  const w = card + gap * 2;
+  const h = card + gap * 2;
   const per = 2 * (w + h);
-  return Array.from({ length: n }, (_, i) => {
-    let d = (i / n) * per;
-    if (d < w) return { x: x0 + d, y: y0 };
+  let d = star.t * per;
+  let x = 0;
+  let y = 0;
+  if (d < w) {
+    x = d;
+    y = 0;
+  } else if ((d -= w) < h) {
+    x = w;
+    y = d;
+  } else if ((d -= h) < w) {
+    x = w - d;
+    y = h;
+  } else {
     d -= w;
-    if (d < h) return { x: x0 + w, y: y0 + d };
-    d -= h;
-    if (d < w) return { x: x0 + w - d, y: y0 + h };
-    d -= w;
-    return { x: x0, y: y0 + h - d };
-  });
+    x = 0;
+    y = h - d;
+  }
+  return { x: PAD - gap + x, y: PAD - gap + y };
 }
 
-type Flight = { x: number; y: number; delay: number; back: number };
+function DirectionCard({
+  title,
+  desc,
+  image,
+  starsEnabled,
+  liftEnabled,
+}: {
+  title: string;
+  desc: string;
+  image: string;
+  starsEnabled: boolean;
+  liftEnabled: boolean;
+}) {
+  const [active, setActive] = useState(false);
+  const [card, setCard] = useState(0);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const stars = useMemo(buildCardStars, []);
 
-export function DirectionsGrid() {
-  const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
-  const animate = !isMobile && !reduced;
-
-  const fieldRef = useRef<HTMLDivElement>(null);
-  const cardRefs = useRef<Array<HTMLDivElement | null>>([]);
-  const [size, setSize] = useState<{ w: number; h: number } | null>(null);
-  const [hovered, setHovered] = useState<number | null>(null);
-  const [flights, setFlights] = useState<Map<number, Flight> | null>(null);
-  const [returning, setReturning] = useState<Map<number, Flight> | null>(null);
-  const [willChange, setWillChange] = useState(false);
-  const returnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useLayoutEffect(() => {
-    const el = fieldRef.current;
+  useEffect(() => {
+    const el = wrapRef.current;
     if (!el) return;
-    const measure = () => setSize({ w: el.clientWidth, h: el.clientHeight });
+    const measure = () => setCard(el.clientWidth);
     measure();
     const ro = new ResizeObserver(measure);
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
 
-  const stars = useMemo(() => {
-    if (!size || !size.w || !size.h) return [];
-    return buildStars(size.w, size.h, isMobile ? 55 : 120);
-  }, [size, isMobile]);
+  return (
+    <div ref={wrapRef} className="relative isolate h-[var(--card)] w-[var(--card)]">
+      {starsEnabled && card > 0 && (
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute z-0"
+          style={{ inset: -PAD }}
+        >
+          {stars.map((s, i) => {
+            const target = perimeterPos(s, card);
+            const rest = {
+              x: s.restX * (card + PAD * 2),
+              y: s.restY * (card + PAD * 2),
+            };
+            const pos = active ? target : rest;
+            return (
+              <span
+                key={i}
+                className="absolute rounded-full"
+                style={{
+                  width: s.size,
+                  height: s.size,
+                  left: 0,
+                  top: 0,
+                  backgroundColor: "var(--text-primary)",
+                  boxShadow: "0 0 10px 2px rgba(230, 240, 239, 0.45)",
+                  opacity: active ? 0.9 : 0.35,
+                  transform: `translate3d(${pos.x - s.size / 2}px, ${pos.y - s.size / 2}px, 0)`,
+                  transition:
+                    "transform 800ms cubic-bezier(0.22, 1, 0.36, 1), opacity 800ms cubic-bezier(0.22, 1, 0.36, 1)",
+                  transitionDelay: `${active ? s.delay : 220 - s.delay}ms`,
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
 
-  const computeFlights = useCallback(
-    (index: number) => {
-      const field = fieldRef.current;
-      const card = cardRefs.current[index];
-      if (!field || !card || stars.length === 0) return null;
-      const fb = field.getBoundingClientRect();
-      const cb = card.getBoundingClientRect();
-      const rect: Rect = { x: cb.left - fb.left, y: cb.top - fb.top, w: cb.width, h: cb.height };
-      const cx = rect.x + rect.w / 2;
-      const cy = rect.y + rect.h / 2;
-
-      const scored = stars.map((s, i) => ({
-        i,
-        d: Math.hypot(s.hx - cx, s.hy - cy),
-        a: Math.atan2(s.hy - cy, s.hx - cx),
-      }));
-      scored.sort((p, q) => p.d - q.d);
-      const chosen = scored.slice(0, Math.round(scored.length * 0.6));
-      const maxD = Math.max(...chosen.map((c) => c.d), 1);
-
-      const byAngle = [...chosen].sort((p, q) => p.a - q.a);
-      const points = perimeterPoints(rect, byAngle.length);
-
-      const map = new Map<number, Flight>();
-      byAngle.forEach((c, k) => {
-        const p = points[k]!;
-        const ratio = c.d / maxD;
-        map.set(c.i, {
-          x: p.x,
-          y: p.y,
-          delay: (1 - ratio) * 240,
-          back: ratio * 240,
-        });
-      });
-      return map;
-    },
-    [stars],
+      <button
+        type="button"
+        onClick={() => {}}
+        onMouseEnter={() => setActive(true)}
+        onMouseLeave={() => setActive(false)}
+        onFocus={() => setActive(true)}
+        onBlur={() => setActive(false)}
+        className="group relative z-10 block h-full w-full cursor-pointer overflow-hidden text-left"
+        style={{
+          borderRadius: 18,
+          border: `1px solid ${active ? "color-mix(in srgb, var(--text-accent) 60%, transparent)" : "var(--border)"}`,
+          transform: liftEnabled && active ? "translateY(-6px)" : "translateY(0)",
+          transition: "transform 300ms ease, border-color 300ms ease",
+          outlineOffset: 4,
+        }}
+      >
+        <img src={image} alt="" className="absolute inset-0 h-full w-full object-cover" loading="lazy" />
+        <div className="absolute inset-0" style={{ background: CARD_GRADIENT }} />
+        <div className="absolute inset-x-0 bottom-0" style={{ padding: 24 }}>
+          <h3
+            className="font-display text-text-primary"
+            style={{ fontSize: "clamp(19px, 1.5vw, 27px)", fontWeight: 400, letterSpacing: "0.01em" }}
+          >
+            {title}
+          </h3>
+          <p className="text-text-secondary" style={{ fontSize: "clamp(13px, 1vw, 16px)", marginTop: 6 }}>
+            {desc}
+          </p>
+        </div>
+        <span
+          aria-hidden="true"
+          className="dg-arrow absolute text-text-accent"
+          style={{ right: 24, bottom: 24, fontSize: 20, lineHeight: 1 }}
+        >
+          →
+        </span>
+      </button>
+    </div>
   );
+}
 
-  const onEnter = (index: number) => {
-    setHovered(index);
-    if (!animate) return;
-    if (returnTimer.current) clearTimeout(returnTimer.current);
-    setWillChange(true);
-    setReturning(null);
-    setFlights(computeFlights(index));
-  };
-
-  const onLeave = () => {
-    setHovered(null);
-    if (!animate) return;
-    setReturning(flights);
-    setFlights(null);
-    if (returnTimer.current) clearTimeout(returnTimer.current);
-    returnTimer.current = setTimeout(() => setWillChange(false), 1000);
-  };
-
-  useEffect(() => {
-    return () => {
-      if (returnTimer.current) clearTimeout(returnTimer.current);
-    };
-  }, []);
+export function DirectionsGrid() {
+  const reduced = useReducedMotion();
+  const isMobile = useIsMobile();
 
   return (
     <section
@@ -187,33 +271,7 @@ export function DirectionsGrid() {
         paddingBottom: "clamp(40px, 5vh, 80px)",
       }}
     >
-      <div ref={fieldRef} aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
-        {stars.map((s, i) => {
-          const f = flights?.get(i);
-          const x = (f ? f.x : s.hx) - s.size / 2;
-          const y = (f ? f.y : s.hy) - s.size / 2;
-          return (
-            <span
-              key={i}
-              className="absolute left-0 top-0 rounded-full"
-              style={{
-                width: s.size,
-                height: s.size,
-                backgroundColor: "var(--text-primary)",
-                boxShadow: s.glow ? GLOW : undefined,
-                opacity: f ? 0 : s.opacity,
-                transform: `translate3d(${x}px, ${y}px, 0)`,
-                willChange: willChange ? "transform" : undefined,
-                transition: animate
-                  ? f
-                    ? `transform 700ms ${EASE} ${f.delay}ms, opacity 240ms ease-in ${f.delay + 460}ms`
-                    : `transform 700ms ${EASE} ${returning?.get(i)?.back ?? 0}ms, opacity 300ms ease 0ms`
-                  : "none",
-              }}
-            />
-          );
-        })}
-      </div>
+      <SectionStars count={isMobile ? 45 : 90} />
 
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-[4vw] md:px-6">
         <h2
@@ -230,71 +288,15 @@ export function DirectionsGrid() {
         </p>
 
         <div className="dg-grid mx-auto" style={{ marginTop: 40 }}>
-          {directions.map((d, i) => (
-            <div
+          {directions.map((d) => (
+            <DirectionCard
               key={d.id}
-              ref={(el) => {
-                cardRefs.current[i] = el;
-              }}
-              className="relative h-[var(--card)] w-[var(--card)]"
-            >
-              <button
-                type="button"
-                onMouseEnter={() => onEnter(i)}
-                onMouseLeave={onLeave}
-                onFocus={() => onEnter(i)}
-                onBlur={onLeave}
-                className="group relative block h-full w-full cursor-pointer overflow-hidden text-left"
-                style={{
-                  borderRadius: 18,
-                  border: `1px solid ${hovered === i ? "rgba(255, 255, 255, 0.95)" : "var(--border)"}`,
-                  boxShadow:
-                    hovered === i && !reduced
-                      ? "0 0 26px rgba(230, 240, 239, 0.3), inset 0 0 14px rgba(230, 240, 239, 0.08)"
-                      : "none",
-                  transform: !reduced && hovered === i ? "translateY(-6px)" : "translateY(0)",
-                  transition: reduced
-                    ? "none"
-                    : hovered === i
-                      ? "transform 300ms ease, border-color 480ms ease-out 560ms, box-shadow 560ms ease-out 560ms"
-                      : "transform 300ms ease, border-color 400ms ease-out, box-shadow 400ms ease-out",
-                  outlineOffset: 4,
-                }}
-              >
-                <img
-                  src={d.image}
-                  alt=""
-                  className="absolute inset-0 h-full w-full object-cover"
-                  loading="lazy"
-                />
-                <div className="absolute inset-0" style={{ background: CARD_GRADIENT }} />
-                <div className="absolute inset-x-0 bottom-0" style={{ padding: 24 }}>
-                  <h3
-                    className="font-display text-text-primary"
-                    style={{
-                      fontSize: "clamp(19px, 1.5vw, 27px)",
-                      fontWeight: 400,
-                      letterSpacing: "0.01em",
-                    }}
-                  >
-                    {d.title}
-                  </h3>
-                  <p
-                    className="text-text-secondary"
-                    style={{ fontSize: "clamp(13px, 1vw, 16px)", marginTop: 6 }}
-                  >
-                    {d.desc}
-                  </p>
-                </div>
-                <span
-                  aria-hidden="true"
-                  className="dg-arrow absolute text-text-accent"
-                  style={{ right: 24, bottom: 24, fontSize: 20, lineHeight: 1 }}
-                >
-                  →
-                </span>
-              </button>
-            </div>
+              title={d.title}
+              desc={d.desc}
+              image={d.image}
+              starsEnabled={!isMobile && !reduced}
+              liftEnabled={!reduced}
+            />
           ))}
         </div>
       </div>
