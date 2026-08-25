@@ -16,7 +16,7 @@ export type Direction = {
 export const directions: Direction[] = [
   { id: "matrix", title: "Матрица судьбы", desc: "Твой рисунок в 22 арканах", image: matrixImg },
   { id: "natal", title: "Натальная карта", desc: "Небо в минуту твоего рождения", image: natalImg },
-  { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле", image: humandesignImg },
+  { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле", image: humandesignImg.url },
   { id: "numerology", title: "Нумерология", desc: "Числа, из которых ты собран", image: numerologyImg },
   { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя", image: tarotImg.url },
   { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система", image: synastryImg },
