@@ -184,10 +184,40 @@
 
 @media (max-width: 767px) {
   .qc-plate {
-    border-top-left-radius: 100% 60px;
-    border-top-right-radius: 100% 60px;
-    margin-top: -60px;
+    border-top-left-radius: 100% 80px;
+    border-top-right-radius: 100% 80px;
+    margin-top: -80px;
     padding-top: 140px;
+  }
+}
+
+/* Quick-calc numeral / question mark */
+.qc-numeral {
+  font-size: clamp(160px, 20vw, 420px);
+  line-height: 1;
+}
+
+@media (max-width: 767px) {
+  .qc-numeral {
+    font-size: clamp(120px, 34vw, 200px);
+  }
+}
+
+/* Focus ring inside the arcanum plate */
+.qc-focus:focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 3px;
+}
+
+/* Hero horizon glow */
+.hero-glow {
+  height: clamp(180px, 18vh, 340px);
+  background: linear-gradient(to top, rgba(12, 79, 88, 0.55), rgba(12, 79, 88, 0));
+}
+
+@media (max-width: 767px) {
+  .hero-glow {
+    height: 140px;
   }
 }
 

@@ -5,9 +5,10 @@ import { useReducedMotion } from "@/hooks/use-reduced-motion";
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 const selectClass =
-  "h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary outline-none transition-colors focus:border-text-accent";
+  "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
 
-const ARC_H = "clamp(90px, 7vw, 180px)";
+
+const ARC_H = "clamp(140px, 11vw, 280px)";
 
 type OrbitSpec = {
   /** radius in % of area width */
@@ -21,10 +22,11 @@ type OrbitSpec = {
 };
 
 const ORBITS: OrbitSpec[] = [
-  { r: 34, squash: 0.32, tilt: -18, period: 12, dot: 5, opacity: 0.9, phases: [0, 180] },
-  { r: 44, squash: 0.26, tilt: 28, period: 19, dot: 4, opacity: 0.6, phases: [0] },
-  { r: 52, squash: 0.4, tilt: -62, period: 27, dot: 3, opacity: 0.45, phases: [0, 140] },
+  { r: 34, squash: 0.32, tilt: -18, period: 12, dot: 8, opacity: 1, phases: [0, 180] },
+  { r: 44, squash: 0.26, tilt: 28, period: 19, dot: 6, opacity: 0.75, phases: [0] },
+  { r: 52, squash: 0.4, tilt: -62, period: 27, dot: 5, opacity: 0.55, phases: [0, 140] },
 ];
+
 
 function Chevron() {
   return (
@@ -49,14 +51,15 @@ function Orbits({ speedFactor, dim, still }: { speedFactor: number; dim: boolean
       {ORBITS.map((o, i) => (
         <div
           key={`line-${i}`}
-          className="absolute left-1/2 top-1/2 aspect-square rounded-full border border-border"
+          className="absolute left-1/2 top-1/2 aspect-square rounded-full"
           style={{
             width: `${o.r * 2}%`,
-            opacity: 0.22,
+            border: "1px solid rgba(159, 186, 185, 0.35)",
             transform: `translate(-50%, -50%) rotate(${o.tilt}deg) scaleY(${o.squash})`,
           }}
         />
       ))}
+
 
       {/* stars */}
       {ORBITS.map((o, i) => (
@@ -87,9 +90,11 @@ function Orbits({ speedFactor, dim, still }: { speedFactor: number; dim: boolean
                   width: o.dot,
                   height: o.dot,
                   opacity: o.opacity,
+                  boxShadow: "0 0 12px 2px rgba(230, 240, 239, 0.5)",
                   transform: `translate(-50%, -50%) scaleY(${1 / o.squash})`,
                 }}
               />
+
             </div>
           ))}
         </div>
@@ -168,27 +173,25 @@ export function QuickCalc({
       className="qc-plate relative z-[2] w-full overflow-hidden"
       style={{
         background: "#000000",
-        borderTop: "1px solid var(--border)",
+        borderTop: "2px solid rgba(159, 186, 185, 0.5)",
         borderTopLeftRadius: `100% ${ARC_H}`,
         borderTopRightRadius: `100% ${ARC_H}`,
         marginTop: `calc(-1 * ${ARC_H})`,
-        boxShadow: "0 -40px 90px rgba(0, 0, 0, 0.8)",
-        paddingTop: `calc(${ARC_H} + 40px + clamp(40px, 6vh, 100px))`,
+        paddingTop: `calc(${ARC_H} + 60px)`,
         paddingBottom: "clamp(120px, 14vh, 220px)",
       }}
     >
-      {/* edge light */}
+      {/* inner edge highlight */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[160px]"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[60px]"
         style={{
-          background: "linear-gradient(to bottom, rgba(12, 79, 88, 0.45), rgba(12, 79, 88, 0))",
-          maskImage: "linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.3))",
-          WebkitMaskImage: "linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.3))",
+          background: "linear-gradient(to bottom, rgba(12, 79, 88, 0.4), rgba(12, 79, 88, 0))",
           borderTopLeftRadius: `100% ${ARC_H}`,
           borderTopRightRadius: `100% ${ARC_H}`,
         }}
       />
+
 
       {/* grain */}
       <div
@@ -219,11 +222,12 @@ export function QuickCalc({
       />
 
       <div
-        className="relative z-[4] mx-auto flex w-full max-w-[1400px] flex-col items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-0"
+        className="relative z-[4] mx-auto flex w-full max-w-[1600px] flex-col items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
         style={{ paddingLeft: "clamp(24px, 6vw, 120px)", paddingRight: "clamp(24px, 6vw, 120px)" }}
       >
         {/* left column */}
-        <div className="w-full text-left md:w-[46%]">
+        <div className="w-full text-left md:w-[44%]">
+
           <h2
             className="font-display text-text-primary"
             style={{
@@ -312,7 +316,7 @@ export function QuickCalc({
                 type="button"
                 onClick={handleSubmit}
                 disabled={!complete || dateInvalid || stage === "loading"}
-                className="mt-5 h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
+                className="qc-focus mt-5 h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
                 style={{ opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1 }}
               >
                 {stage === "loading" ? "Считаем" : "Показать"}
@@ -344,8 +348,18 @@ export function QuickCalc({
         </div>
 
         {/* right column — result area */}
-        <div className="w-full md:w-[46%]">
+        <div className="w-full md:w-[50%]">
           <div className="relative mx-auto aspect-square w-full">
+            {/* glow behind the sign */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 50%, rgba(122, 93, 168, 0.22) 0%, rgba(122, 93, 168, 0) 55%)",
+              }}
+            />
+
             <Orbits speedFactor={fast ? 4 : 1} dim={stage === "result"} still={reduced} />
 
             {stage !== "result" ? (
@@ -358,8 +372,7 @@ export function QuickCalc({
                 }}
               >
                 <span
-                  className="font-mono text-text-accent"
-                  style={{ fontSize: "clamp(100px, 12vw, 220px)", lineHeight: 1 }}
+                  className="qc-numeral font-mono text-text-accent"
                   aria-hidden="true"
                 >
                   ?
@@ -370,16 +383,11 @@ export function QuickCalc({
                 className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center"
                 style={{ animation: reduced ? "none" : "qc-result-in 800ms ease-out both" }}
               >
-                <div
-                  className="font-mono text-text-accent"
-                  style={{ fontSize: "clamp(100px, 12vw, 220px)", lineHeight: 1 }}
-                >
-                  {card?.n}
-                </div>
+                <div className="qc-numeral font-mono text-text-accent">{card?.n}</div>
                 <div
                   className="mt-2 font-display text-text-primary"
                   style={{
-                    fontSize: "clamp(28px, 3vw, 52px)",
+                    fontSize: "clamp(32px, 3.6vw, 68px)",
                     letterSpacing: "0.01em",
                     lineHeight: 1.08,
                   }}
@@ -387,14 +395,15 @@ export function QuickCalc({
                   {card?.name}
                 </div>
                 <p
-                  className="mt-4 max-w-[340px] text-text-secondary"
-                  style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
+                  className="mt-4 max-w-[420px] text-text-secondary"
+                  style={{ fontSize: "clamp(17px, 1.3vw, 22px)" }}
                 >
                   {card?.line}
                 </p>
               </div>
             )}
           </div>
+
         </div>
       </div>
     </section>
