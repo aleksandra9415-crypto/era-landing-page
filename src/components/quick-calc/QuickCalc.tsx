@@ -347,8 +347,18 @@ export function QuickCalc({
         </div>
 
         {/* right column — result area */}
-        <div className="w-full md:w-[46%]">
+        <div className="w-full md:w-[50%]">
           <div className="relative mx-auto aspect-square w-full">
+            {/* glow behind the sign */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(circle at 50% 50%, rgba(122, 93, 168, 0.22) 0%, rgba(122, 93, 168, 0) 55%)",
+              }}
+            />
+
             <Orbits speedFactor={fast ? 4 : 1} dim={stage === "result"} still={reduced} />
 
             {stage !== "result" ? (
@@ -361,8 +371,7 @@ export function QuickCalc({
                 }}
               >
                 <span
-                  className="font-mono text-text-accent"
-                  style={{ fontSize: "clamp(100px, 12vw, 220px)", lineHeight: 1 }}
+                  className="qc-numeral font-mono text-text-accent"
                   aria-hidden="true"
                 >
                   ?
@@ -373,16 +382,11 @@ export function QuickCalc({
                 className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center"
                 style={{ animation: reduced ? "none" : "qc-result-in 800ms ease-out both" }}
               >
-                <div
-                  className="font-mono text-text-accent"
-                  style={{ fontSize: "clamp(100px, 12vw, 220px)", lineHeight: 1 }}
-                >
-                  {card?.n}
-                </div>
+                <div className="qc-numeral font-mono text-text-accent">{card?.n}</div>
                 <div
                   className="mt-2 font-display text-text-primary"
                   style={{
-                    fontSize: "clamp(28px, 3vw, 52px)",
+                    fontSize: "clamp(32px, 3.6vw, 68px)",
                     letterSpacing: "0.01em",
                     lineHeight: 1.08,
                   }}
@@ -390,14 +394,15 @@ export function QuickCalc({
                   {card?.name}
                 </div>
                 <p
-                  className="mt-4 max-w-[340px] text-text-secondary"
-                  style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
+                  className="mt-4 max-w-[420px] text-text-secondary"
+                  style={{ fontSize: "clamp(17px, 1.3vw, 22px)" }}
                 >
                   {card?.line}
                 </p>
               </div>
             )}
           </div>
+
         </div>
       </div>
     </section>
