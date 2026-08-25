@@ -38,10 +38,7 @@ const FACE_GRADIENT =
   "linear-gradient(to bottom, rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 22%, rgba(0,0,0,0) 46%, rgba(0,0,0,0.82) 72%, rgba(0,0,0,0.95) 100%)";
 
 function TarotCard({ step }: { step: (typeof STEPS)[number] }) {
-  const [hovered, setHovered] = useState(false);
   const [pinned, setPinned] = useState(false);
-
-  const flipped = !step.flips || pinned || hovered;
 
   const toggle = () => {
     if (!step.flips) return;
@@ -56,22 +53,29 @@ function TarotCard({ step }: { step: (typeof STEPS)[number] }) {
     }
   };
 
+  const classes = [
+    "tarot-hit",
+    step.flips ? "is-interactive" : "",
+    !step.flips || pinned ? "is-flipped" : "",
+    pinned ? "is-pinned" : "",
+  ]
+    .filter(Boolean)
+    .join(" ");
+
   return (
     <div
-      className="tarot-wrap"
+      className={classes}
       style={{ ["--tilt" as string]: `${step.tilt}deg` }}
+      role={step.flips ? "button" : undefined}
+      tabIndex={step.flips ? 0 : undefined}
+      aria-expanded={step.flips ? pinned : undefined}
+      aria-label={step.flips ? `${step.title}: ${step.text}` : undefined}
+      onClick={toggle}
+      onKeyDown={onKeyDown}
     >
-      <div
-        className={`tarot-card${flipped ? " is-flipped" : ""}`}
-        role={step.flips ? "button" : undefined}
-        tabIndex={step.flips ? 0 : undefined}
-        aria-expanded={step.flips ? flipped : undefined}
-        aria-label={step.flips ? `${step.title}: ${step.text}` : undefined}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
-        onClick={toggle}
-        onKeyDown={onKeyDown}
-      >
+      <div className="tarot-tilt">
+        <div className="tarot-flip">
+
         {/* Back */}
         <div className="tarot-side tarot-back">
           <img
