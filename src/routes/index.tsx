@@ -45,6 +45,12 @@ function Index() {
         <Grain />
         <Header />
 
+        <div
+          aria-hidden="true"
+          className="hero-glow pointer-events-none absolute bottom-0 left-0 right-0 z-[11]"
+        />
+
+
         <div className="absolute inset-0 z-[12]">
           <DirectionWheel />
         </div>
