@@ -447,3 +447,44 @@
     transition: none;
   }
 }
+
+/* ── «Шесть систем»: сетка карточек-кнопок ───────────────────────── */
+.dg-grid {
+  --card: min(calc((min(1240px, 92vw) - 56px) / 3), 32vh);
+  display: grid;
+  grid-template-columns: repeat(3, var(--card));
+  gap: 28px;
+  justify-content: center;
+}
+
+.dg-arrow {
+  opacity: 0;
+  transform: translateX(-8px);
+  transition:
+    opacity 300ms ease,
+    transform 300ms ease;
+}
+
+.group:hover .dg-arrow,
+.group:focus-visible .dg-arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+@media (max-width: 767px) {
+  .dg-grid {
+    --card: 88vw;
+    grid-template-columns: var(--card);
+  }
+  .dg-arrow {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dg-arrow {
+    transform: none;
+    transition: opacity 300ms ease;
+  }
+}
