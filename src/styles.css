@@ -209,6 +209,12 @@
   outline-offset: 3px;
 }
 
+/* Hero wheel card focus ring */
+.wheel-card:focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 4px;
+}
+
 /* Hero horizon glow */
 .hero-glow {
   height: clamp(180px, 18vh, 340px);
