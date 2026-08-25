@@ -314,3 +314,47 @@
     background: linear-gradient(to bottom, #000000 0px, var(--bg-page) 440px);
   }
 }
+
+/* ── Интерактивная схема расчёта ─────────────────────────────────── */
+.scheme-node {
+  --node-size: 72px;
+  --node-center: 88px;
+  --node-font: 26px;
+  --node-font-center: 32px;
+}
+
+@media (max-width: 767px) {
+  .scheme-node {
+    --node-size: 56px;
+    --node-center: 68px;
+    --node-font: 20px;
+    --node-font-center: 24px;
+  }
+}
+
+.scheme-node:focus-visible {
+  outline: 2px solid var(--text-accent);
+  outline-offset: 4px;
+}
+
+.scheme-transition {
+  transition:
+    border-color 250ms ease,
+    border-width 250ms ease,
+    box-shadow 250ms ease,
+    color 250ms ease,
+    stroke 250ms ease,
+    stroke-opacity 250ms ease,
+    stroke-width 250ms ease;
+}
+
+.scheme-panel {
+  transition: opacity 200ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scheme-transition,
+  .scheme-panel {
+    transition: none;
+  }
+}
