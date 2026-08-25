@@ -13,11 +13,12 @@ const PHRASES = [
     sub: "Матрица судьбы, натальная карта, дизайн человека, нумерология, таро и совместимость считают тебя независимо друг от друга",
   },
   {
-    l1: "ОДИН",
-    l2: "РИСУНОК",
-    sub: "Всё сходится в один профиль, который можно читать и уточнять месяцами",
+    l1: "ВСЁ",
+    l2: "СОВПАДАЕТ",
+    sub: "Шесть независимых расчётов описывают одного человека — и сходятся между собой",
   },
 ];
+
 
 const LAST = PHRASES.length - 1;
 
@@ -38,7 +39,7 @@ export function Headline() {
     <div className="flex h-full flex-col items-start justify-center overflow-visible">
       {/* All phrases stay in the DOM for SEO; visibility is CSS-driven. */}
       <h1
-        className="relative w-full text-left font-display uppercase text-text-primary text-[clamp(34px,13vw,72px)] md:text-[clamp(52px,9.2vw,240px)]"
+        className="hero-headline relative w-full text-left font-display uppercase text-text-primary"
         style={{
           lineHeight: 0.95,
           height: "1.9em",
@@ -60,13 +61,12 @@ export function Headline() {
         ))}
       </h1>
 
-      <div className="relative mt-[24px] h-[6em] w-full md:h-[4.5em]">
-
+      <div className="relative mt-[24px] h-[7.5em] w-full md:h-[6em]">
         {PHRASES.map((p, i) => (
           <p
             key={p.l2}
             aria-hidden={i !== index}
-            className={`word-slot text-left text-text-secondary text-[clamp(15px,1.2vw,22px)] ${
+            className={`word-slot text-left text-text-secondary text-[clamp(14px,1.05vw,18px)] ${
               i === index ? "word-slot-active" : "word-slot-leaving"
             }`}
             style={{ lineHeight: 1.5 }}
@@ -75,6 +75,7 @@ export function Headline() {
           </p>
         ))}
       </div>
+
 
       <button
         type="button"
