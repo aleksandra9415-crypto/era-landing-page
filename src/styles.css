@@ -158,7 +158,7 @@
 @media (min-width: 768px) {
   .hero-text-block {
     left: auto;
-    right: 6vw;
+    right: 10vw;
     top: 44vh;
     width: min(46vw, calc(var(--hero-headline-size) * 6.2));
     transform: translateY(-50%);
