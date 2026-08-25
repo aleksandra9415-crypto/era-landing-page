@@ -1,6 +1,6 @@
 import matrixImg from "@/assets/matrix.jpg";
 import natalImg from "@/assets/natal.jpg";
-import humandesignImg from "@/assets/humandesign.jpg";
+import humandesignImg from "@/assets/humandesign.png.asset.json";
 import numerologyImg from "@/assets/numerology.jpg";
 import tarotImg from "@/assets/tarot.png.asset.json";
 import synastryImg from "@/assets/synastry.jpg";
