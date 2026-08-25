@@ -179,11 +179,11 @@ export function DirectionWheel() {
             style={{
               left: x,
               top: y,
-              transform: `translate(-50%, -50%)${isActive ? "" : " scale(0.75)"}`,
-              opacity: isActive ? 1 : 0.35,
-              filter: isActive ? "none" : "blur(2px)",
+              transform: `translate(-50%, -50%)${isActive ? "" : " scale(0.7)"}`,
+              opacity: isActive ? 1 : 0.4,
+              filter: isActive ? "none" : "blur(1.5px)",
               transition: `left ${duration}ms ease-out, top ${duration}ms ease-out, transform 400ms ease-out, opacity 400ms ease-out, filter 400ms ease-out`,
-              width: mobile ? "70vw" : "clamp(300px, 22vw, 400px)",
+              width: mobile ? "70vw" : "clamp(280px, 16vw, 420px)",
             }}
           >
             <div
@@ -191,7 +191,7 @@ export function DirectionWheel() {
               style={{
                 borderColor: "var(--border)",
                 borderRadius: 16,
-                padding: 32,
+                padding: 28,
               }}
             >
               <Glyph name={d.id} size={64} />
