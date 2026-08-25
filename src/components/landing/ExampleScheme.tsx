@@ -3,7 +3,7 @@ import { Section } from "./Section";
 import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
 import { centralArcanum, digitSum, reduceTo22 } from "@/lib/arcana";
 
-const demoDate = { day: 15, month: 7, year: 1990 };
+const demoDate = { day: 26, month: 7, year: 1990 };
 
 const A = reduceTo22(demoDate.day);
 const B = demoDate.month;
@@ -31,9 +31,9 @@ const nodes: SchemeNode[] = [
     id: "A",
     value: A,
     label: "день",
-    sum: `день = ${A}`,
-    reduce: "",
-    text: "Число дня берётся как есть, если оно не больше 22",
+    sum: "день = 26",
+    reduce: "26 → 2 + 6 = 8",
+    text: "Если число дня не больше 22, оно берётся как есть. Если больше — цифры складываются между собой",
     sources: ["date-day"],
     x: 6,
     y: 50,
@@ -42,7 +42,7 @@ const nodes: SchemeNode[] = [
     id: "B",
     value: B,
     label: "месяц",
-    sum: `июль = ${B}`,
+    sum: "июль = 7",
     reduce: "",
     text: "Номер месяца всегда от 1 до 12, свёртка не нужна",
     sources: ["date-month"],
@@ -53,9 +53,9 @@ const nodes: SchemeNode[] = [
     id: "C",
     value: C,
     label: "год",
-    sum: `${String(demoDate.year).split("").join(" + ")} = ${C}`,
+    sum: "1 + 9 + 9 + 0 = 19",
     reduce: "",
-    text: "Цифры года складываются между собой",
+    text: "Цифры года складываются между собой. Девятнадцать не больше 22, поэтому свёртка на этом заканчивается",
     sources: ["date-year"],
     x: 94,
     y: 50,
@@ -64,8 +64,8 @@ const nodes: SchemeNode[] = [
     id: "D",
     value: D,
     label: "сумма",
-    sum: `${A} + ${B} + ${C} = ${A + B + C}`,
-    reduce: `${A + B + C} → ${String(A + B + C).split("").join(" + ")} = ${D}`,
+    sum: "8 + 7 + 19 = 34",
+    reduce: "34 → 3 + 4 = 7",
     text: "Сумма первых трёх. Всё, что больше 22, сворачивается сложением цифр",
     sources: ["A", "B", "C"],
     x: 50,
@@ -75,9 +75,9 @@ const nodes: SchemeNode[] = [
     id: "E",
     value: E,
     label: "центр",
-    sum: `${A} + ${B} + ${C} + ${D} = ${A + B + C + D}`,
-    reduce: `${A + B + C + D} → ${String(A + B + C + D).split("").join(" + ")} = ${E}`,
-    text: "Сумма всех четырёх. Это центральный аркан — Колесо Фортуны",
+    sum: "8 + 7 + 19 + 7 = 41",
+    reduce: "41 → 4 + 1 = 5",
+    text: "Сумма всех четырёх. Это центральный аркан — Иерофант",
     sources: ["A", "B", "C", "D"],
     x: 50,
     y: 50,
