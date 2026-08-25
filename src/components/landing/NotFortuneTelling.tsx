@@ -134,7 +134,7 @@ export function NotFortuneTelling() {
             padding-top: 0;
             border-top: none;
             border-left: ${RULE};
-            padding-left: 56px;
+            padding-left: 28px;
             margin-left: -28px;
           }
           .nft-closing { text-align: center; margin-left: auto; margin-right: auto; }
