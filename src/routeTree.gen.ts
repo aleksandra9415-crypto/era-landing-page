@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 
@@ -22,6 +23,11 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConsentRoute = ConsentRouteImport.update({
+  id: '/consent',
+  path: '/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfferRoute = OfferRouteImport.update({
@@ -38,12 +44,14 @@ const PrivacyRoute = PrivacyRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/consent': typeof ConsentRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/consent': typeof ConsentRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
 }
@@ -51,20 +59,22 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/consent': typeof ConsentRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/offer' | '/privacy'
+  fullPaths: '/' | '/about' | '/consent' | '/offer' | '/privacy'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/offer' | '/privacy'
-  id: '__root__' | '/' | '/about' | '/offer' | '/privacy'
+  to: '/' | '/about' | '/consent' | '/offer' | '/privacy'
+  id: '__root__' | '/' | '/about' | '/consent' | '/offer' | '/privacy'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  ConsentRoute: typeof ConsentRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
 }
@@ -83,6 +93,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/consent': {
+      id: '/consent'
+      path: '/consent'
+      fullPath: '/consent'
+      preLoaderRoute: typeof ConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offer': {
@@ -105,6 +122,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  ConsentRoute: ConsentRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
 }
