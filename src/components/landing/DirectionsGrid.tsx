@@ -93,6 +93,8 @@ function SectionStars({ count }: { count: number }) {
 const PAD = 150;
 const STAR_COUNT = 14;
 
+const INSET = 24;
+
 type CardStar = {
   size: number;
   restX: number;
@@ -100,7 +102,6 @@ type CardStar = {
   delay: number;
   /** fraction along card perimeter */
   t: number;
-  gap: number;
 };
 
 function buildCardStars(): CardStar[] {
@@ -118,37 +119,43 @@ function buildCardStars(): CardStar[] {
       size: rand(3, 5),
       restX,
       restY,
-      delay: rand(0, 220),
-      t: (i + rand(0.15, 0.85)) / STAR_COUNT,
-      gap: rand(10, 18),
+      delay: rand(0, 200),
+      t: (i + 0.5) / STAR_COUNT,
     };
   });
 }
 
-/** Perimeter position (in wrapper px, wrapper = card + PAD on each side). */
+/**
+ * Final position: the star's evenly spaced point on the card edge, pushed
+ * INSET px inward so it disappears behind the opaque card.
+ * Wrapper coords (wrapper = card + PAD on each side).
+ */
 function perimeterPos(star: CardStar, card: number) {
-  const gap = star.gap;
-  const w = card + gap * 2;
-  const h = card + gap * 2;
-  const per = 2 * (w + h);
+  const per = 4 * card;
   let d = star.t * per;
   let x = 0;
   let y = 0;
-  if (d < w) {
+  let nx = 0;
+  let ny = 0;
+  if (d < card) {
     x = d;
     y = 0;
-  } else if ((d -= w) < h) {
-    x = w;
+    ny = 1;
+  } else if ((d -= card) < card) {
+    x = card;
     y = d;
-  } else if ((d -= h) < w) {
-    x = w - d;
-    y = h;
+    nx = -1;
+  } else if ((d -= card) < card) {
+    x = card - d;
+    y = card;
+    ny = -1;
   } else {
-    d -= w;
+    d -= card;
     x = 0;
-    y = h - d;
+    y = card - d;
+    nx = 1;
   }
-  return { x: PAD - gap + x, y: PAD - gap + y };
+  return { x: PAD + x + nx * INSET, y: PAD + y + ny * INSET };
 }
 
 function DirectionCard({
