@@ -162,8 +162,10 @@ function TarotCard({ step }: { step: (typeof STEPS)[number] }) {
             </div>
           </div>
         </div>
+        </div>
       </div>
     </div>
+
   );
 }
 
