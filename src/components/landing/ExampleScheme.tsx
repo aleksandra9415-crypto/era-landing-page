@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Section } from "./Section";
-import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { centralArcanum, digitSum, reduceTo22 } from "@/lib/arcana";
 
 const demoDate = { day: 26, month: 7, year: 1990 };
@@ -102,7 +102,7 @@ const byId = (id: NodeId) => nodes.find((n) => n.id === id)!;
 
 export function ExampleScheme() {
   const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
+  
   const [pinned, setPinned] = useState<NodeId>("E");
   const [hovered, setHovered] = useState<NodeId | null>(null);
   const [autoIndex, setAutoIndex] = useState(0);
