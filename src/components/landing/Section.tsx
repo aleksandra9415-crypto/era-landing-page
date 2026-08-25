@@ -5,16 +5,18 @@ export function Section({
   title,
   subtitle,
   children,
+  className,
 }: {
   id?: string;
   title: string;
   subtitle?: string;
   children?: ReactNode;
+  className?: string;
 }) {
   return (
     <section
       id={id}
-      className="relative w-full bg-bg-page"
+      className={`relative w-full bg-bg-page ${className ?? ""}`}
       style={{
         paddingTop: "clamp(80px, 10vh, 160px)",
         paddingBottom: "clamp(80px, 10vh, 160px)",

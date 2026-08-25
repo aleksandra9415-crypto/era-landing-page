@@ -303,3 +303,14 @@
     opacity: 0;
   }
 }
+
+/* ── «Три шага»: плавный переход из чёрной секции аркана ─────────── */
+.how-gradient {
+  background: linear-gradient(to bottom, #000000 0px, var(--bg-page) 620px);
+}
+
+@media (max-width: 767px) {
+  .how-gradient {
+    background: linear-gradient(to bottom, #000000 0px, var(--bg-page) 440px);
+  }
+}
