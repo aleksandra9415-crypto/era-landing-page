@@ -133,7 +133,24 @@
   }
 }
 
+/* Hero: единый размер активной карточки колеса */
+:root {
+  --hero-card: min(30vw, 48vh);
+}
+
+/* Hero headline: кегль соразмерен карточке колеса */
+.hero-headline {
+  font-size: clamp(30px, calc(84vw / 6.2), 78px);
+}
+
+@media (min-width: 768px) {
+  .hero-headline {
+    font-size: clamp(34px, calc(var(--hero-card) / 6.2), 120px);
+  }
+}
+
 /* Headline word rotation (CSS-driven, all words present in DOM) */
+
 @utility word-slot {
   position: absolute;
   inset: 0;
