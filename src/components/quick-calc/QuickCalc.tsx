@@ -50,14 +50,15 @@ function Orbits({ speedFactor, dim, still }: { speedFactor: number; dim: boolean
       {ORBITS.map((o, i) => (
         <div
           key={`line-${i}`}
-          className="absolute left-1/2 top-1/2 aspect-square rounded-full border border-border"
+          className="absolute left-1/2 top-1/2 aspect-square rounded-full"
           style={{
             width: `${o.r * 2}%`,
-            opacity: 0.22,
+            border: "1px solid rgba(159, 186, 185, 0.35)",
             transform: `translate(-50%, -50%) rotate(${o.tilt}deg) scaleY(${o.squash})`,
           }}
         />
       ))}
+
 
       {/* stars */}
       {ORBITS.map((o, i) => (
