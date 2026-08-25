@@ -8,7 +8,6 @@ const selectClass =
   "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
 
 
-const ARC_H = "clamp(140px, 11vw, 280px)";
 
 type OrbitSpec = {
   /** radius in % of area width */
