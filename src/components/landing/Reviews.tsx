@@ -50,8 +50,7 @@ export function Reviews() {
                   loading="lazy"
                   width={96}
                   height={96}
-                  className="rounded-full border border-border object-cover md:h-[clamp(64px,6vw,96px)] md:w-[clamp(64px,6vw,96px)]"
-                  style={{ width: 64, height: 64 }}
+                  className="h-16 w-16 rounded-full border border-border object-cover md:h-[clamp(64px,6vw,96px)] md:w-[clamp(64px,6vw,96px)]"
                 />
                 <div className="ml-4">
                   <div
