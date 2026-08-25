@@ -32,7 +32,7 @@ export function DirectionWheel() {
   const reduced = useReducedMotion();
   const [metrics, setMetrics] = useState<Metrics>(() => computeMetrics());
   const [offset, setOffset] = useState(0);
-  const [duration, setDuration] = useState(800);
+  const [duration, setDuration] = useState(650);
   const [interacting, setInteracting] = useState(false);
   const drag = useRef<{ active: boolean; lastX: number; moved: boolean }>({
     active: false,
@@ -49,13 +49,13 @@ export function DirectionWheel() {
     return () => window.removeEventListener("resize", onResize);
   }, []);
 
-  // stepped auto-rotation: 4000ms pause, then one 60° step over 800ms
+  // stepped auto-rotation: 2800ms pause, then one 60° step over 650ms
   useEffect(() => {
     if (reduced || interacting) return;
     const id = setInterval(() => {
-      setDuration(800);
+      setDuration(650);
       setOffset((o) => o - STEP);
-    }, 4800);
+    }, 3450);
     return () => clearInterval(id);
   }, [reduced, interacting]);
 
@@ -64,15 +64,27 @@ export function DirectionWheel() {
     if (resume.current) clearTimeout(resume.current);
     setInteracting(true);
   }, []);
-  const scheduleResume = useCallback(() => {
+  const scheduleResume = useCallback((delay = 2000) => {
     if (resume.current) clearTimeout(resume.current);
-    resume.current = setTimeout(() => setInteracting(false), 2000);
+    resume.current = setTimeout(() => setInteracting(false), delay);
   }, []);
 
   const snap = useCallback(() => {
     setDuration(400);
     setOffset((o) => Math.round(o / STEP) * STEP);
   }, []);
+
+  /** Rotate so card `i` lands in the active slot, shortest way. Never queued. */
+  const goTo = useCallback(
+    (i: number) => {
+      pause();
+      setDuration(650);
+      setOffset((o) => o - wrapDeg(o + i * STEP));
+      scheduleResume(6000);
+    },
+    [pause, scheduleResume],
+  );
+
 
   const onPointerDown = (e: React.PointerEvent) => {
     drag.current = { active: true, lastX: e.clientX, moved: false };
@@ -92,6 +104,18 @@ export function DirectionWheel() {
     snap();
     scheduleResume();
   };
+
+  const openDirection = () => {
+    // Placeholder: direction pages are not built yet.
+  };
+
+  const activate = (i: number, isActive: boolean) => {
+    if (drag.current.moved) return;
+    if (isActive) openDirection();
+    else goTo(i);
+  };
+
+
 
   const activeIndex = (() => {
     let best = 0;
@@ -174,8 +198,19 @@ export function DirectionWheel() {
         return (
           <div
             key={d.id}
+            role="button"
+            tabIndex={0}
             aria-current={isActive}
-            className="absolute"
+            aria-label={d.title}
+            onClick={() => activate(i, isActive)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                if (isActive) openDirection();
+                else goTo(i);
+              }
+            }}
+            className="wheel-card absolute cursor-pointer"
             style={{
               left: x,
               top: y,
@@ -187,6 +222,7 @@ export function DirectionWheel() {
               height: side,
             }}
           >
+
             <div
               className="bg-surface-1 relative h-full w-full overflow-hidden border"
               style={{
