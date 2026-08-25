@@ -136,7 +136,7 @@ export function NotFortuneTelling() {
         .nft-grid { display: grid; grid-template-columns: 1fr; align-items: start; position: relative; row-gap: 0; }
         .nft-col { display: contents; }
         .nft-line { display: none; }
-        .nft-col:not(:first-of-type) .nft-num {
+        .nft-col:not(:nth-child(3)) .nft-num {
           margin-top: 32px;
           padding-top: 32px;
           border-top: ${RULE};
@@ -149,7 +149,7 @@ export function NotFortuneTelling() {
             column-gap: 56px;
             row-gap: 0;
           }
-          .nft-col:not(:first-of-type) .nft-num {
+          .nft-col:not(:nth-child(3)) .nft-num {
             margin-top: 0;
             padding-top: 0;
             border-top: none;
