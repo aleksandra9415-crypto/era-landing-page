@@ -14,22 +14,8 @@ const gauss = () => {
   return Math.sqrt(-2 * Math.log(u)) * Math.cos(2 * Math.PI * v);
 };
 
-type FieldStar = {
-  hx: number;
-  hy: number;
-  x: number;
-  y: number;
-  r: number;
-  opacity: number;
-};
-
-const FOLLOW_R = 420;
-const FOLLOW_PULL = 90;
-const MIN_DIST = 30;
-const EASE = 0.08;
-
 /** Section background star field, drawn in code on a canvas. */
-function SectionStars({ count, follow }: { count: number; follow: boolean }) {
+function SectionStars({ count }: { count: number }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
@@ -42,18 +28,15 @@ function SectionStars({ count, follow }: { count: number; follow: boolean }) {
       getComputedStyle(document.documentElement).getPropertyValue("--text-primary").trim() ||
       "#E6F0EF";
 
-    let stars: FieldStar[] = [];
-    let w = 0;
-    let h = 0;
-
-    const build = () => {
+    const draw = () => {
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      w = canvas.clientWidth;
-      h = canvas.clientHeight;
+      const w = canvas.clientWidth;
+      const h = canvas.clientHeight;
       if (!w || !h) return;
       canvas.width = Math.floor(w * dpr);
       canvas.height = Math.floor(h * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
 
       const clusters = Array.from({ length: Math.floor(rand(5, 7)) }, () => ({
         x: rand(0, w),
@@ -64,7 +47,6 @@ function SectionStars({ count, follow }: { count: number; follow: boolean }) {
       const bright = 6;
       const mid = 20;
 
-      stars = [];
       for (let i = 0; i < count; i++) {
         let x: number;
         let y: number;
@@ -85,96 +67,19 @@ function SectionStars({ count, follow }: { count: number; follow: boolean }) {
           r = 1.1;
           opacity = 0.5;
         }
-        stars.push({ hx: x, hy: y, x, y, r, opacity });
-      }
-    };
-
-    const paint = () => {
-      ctx.clearRect(0, 0, w, h);
-      for (const s of stars) {
-        ctx.globalAlpha = s.opacity;
+        ctx.globalAlpha = opacity;
         ctx.fillStyle = color;
         ctx.beginPath();
-        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.arc(x, y, r, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.globalAlpha = 1;
     };
 
-    const onResize = () => {
-      build();
-      paint();
-    };
-
-    build();
-    paint();
-    window.addEventListener("resize", onResize);
-
-    if (!follow) {
-      return () => window.removeEventListener("resize", onResize);
-    }
-
-    const section = canvas.parentElement;
-    let cursor: { x: number; y: number } | null = null;
-    let raf = 0;
-    let settleAt = 0;
-
-    const tick = () => {
-      let moving = false;
-      for (const s of stars) {
-        let tx = s.hx;
-        let ty = s.hy;
-        if (cursor) {
-          const dx = cursor.x - s.hx;
-          const dy = cursor.y - s.hy;
-          const d = Math.hypot(dx, dy) || 0.0001;
-          if (d <= FOLLOW_R) {
-            const force = (1 - d / FOLLOW_R) ** 2;
-            const shift = Math.min(force * FOLLOW_PULL, Math.max(0, d - MIN_DIST));
-            tx = s.hx + (dx / d) * shift;
-            ty = s.hy + (dy / d) * shift;
-          }
-        }
-        s.x += (tx - s.x) * EASE;
-        s.y += (ty - s.y) * EASE;
-        if (Math.abs(tx - s.x) > 0.2 || Math.abs(ty - s.y) > 0.2) moving = true;
-      }
-      paint();
-
-      const now = performance.now();
-      if (moving || cursor) settleAt = now;
-      if (now - settleAt > 1000) {
-        raf = 0;
-        return;
-      }
-      raf = requestAnimationFrame(tick);
-    };
-
-    const startLoop = () => {
-      settleAt = performance.now();
-      if (!raf) raf = requestAnimationFrame(tick);
-    };
-
-    const onMove = (e: MouseEvent) => {
-      const rect = canvas.getBoundingClientRect();
-      cursor = { x: e.clientX - rect.left, y: e.clientY - rect.top };
-      startLoop();
-    };
-    const onLeave = () => {
-      cursor = null;
-      startLoop();
-    };
-
-    section?.addEventListener("mousemove", onMove);
-    section?.addEventListener("mouseleave", onLeave);
-
-    return () => {
-      window.removeEventListener("resize", onResize);
-      section?.removeEventListener("mousemove", onMove);
-      section?.removeEventListener("mouseleave", onLeave);
-      if (raf) cancelAnimationFrame(raf);
-    };
-  }, [count, follow]);
+    draw();
+    window.addEventListener("resize", draw);
+    return () => window.removeEventListener("resize", draw);
+  }, [count]);
 
   return (
     <canvas
@@ -366,7 +271,7 @@ export function DirectionsGrid() {
         paddingBottom: "clamp(40px, 5vh, 80px)",
       }}
     >
-      <SectionStars count={isMobile ? 45 : 90} follow={!isMobile && !reduced} />
+      <SectionStars count={isMobile ? 45 : 90} />
 
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-[4vw] md:px-6">
         <h2
