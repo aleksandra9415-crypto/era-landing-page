@@ -39,7 +39,10 @@ export const Route = createFileRoute("/")({
 function Index() {
   return (
     <main className="relative w-full bg-bg-page">
-      <div className="relative h-screen w-full overflow-hidden bg-bg-page">
+      <div
+        className="relative h-screen w-full overflow-hidden bg-bg-page"
+        style={{ paddingTop: "clamp(76px, 6.5vh, 104px)" }}
+      >
         <StarField />
         <ForegroundArc />
         <Grain />

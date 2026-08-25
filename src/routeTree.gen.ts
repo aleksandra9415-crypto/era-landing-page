@@ -11,7 +11,9 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as ConsentRouteImport } from './routes/consent'
+import { Route as LoginRouteImport } from './routes/login'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
@@ -26,9 +28,19 @@ const AboutRoute = AboutRouteImport.update({
   path: '/about',
   getParentRoute: () => rootRouteImport,
 } as any)
+const CabinetRoute = CabinetRouteImport.update({
+  id: '/cabinet',
+  path: '/cabinet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ConsentRoute = ConsentRouteImport.update({
   id: '/consent',
   path: '/consent',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const LoginRoute = LoginRouteImport.update({
+  id: '/login',
+  path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfferRoute = OfferRouteImport.update({
@@ -50,7 +62,9 @@ const SubscriptionTermsRoute = SubscriptionTermsRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
+  '/login': typeof LoginRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
@@ -58,7 +72,9 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
+  '/login': typeof LoginRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
@@ -67,7 +83,9 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
+  '/login': typeof LoginRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
@@ -75,15 +93,31 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    '/' | '/about' | '/consent' | '/offer' | '/privacy' | '/subscription-terms'
+    | '/'
+    | '/about'
+    | '/cabinet'
+    | '/consent'
+    | '/login'
+    | '/offer'
+    | '/privacy'
+    | '/subscription-terms'
   fileRoutesByTo: FileRoutesByTo
   to:
-    '/' | '/about' | '/consent' | '/offer' | '/privacy' | '/subscription-terms'
+    | '/'
+    | '/about'
+    | '/cabinet'
+    | '/consent'
+    | '/login'
+    | '/offer'
+    | '/privacy'
+    | '/subscription-terms'
   id:
     | '__root__'
     | '/'
     | '/about'
+    | '/cabinet'
     | '/consent'
+    | '/login'
     | '/offer'
     | '/privacy'
     | '/subscription-terms'
@@ -92,7 +126,9 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
+  CabinetRoute: typeof CabinetRoute
   ConsentRoute: typeof ConsentRoute
+  LoginRoute: typeof LoginRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
   SubscriptionTermsRoute: typeof SubscriptionTermsRoute
@@ -114,11 +150,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AboutRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/cabinet': {
+      id: '/cabinet'
+      path: '/cabinet'
+      fullPath: '/cabinet'
+      preLoaderRoute: typeof CabinetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/consent': {
       id: '/consent'
       path: '/consent'
       fullPath: '/consent'
       preLoaderRoute: typeof ConsentRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/login': {
+      id: '/login'
+      path: '/login'
+      fullPath: '/login'
+      preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offer': {
@@ -148,7 +198,9 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
+  CabinetRoute: CabinetRoute,
   ConsentRoute: ConsentRoute,
+  LoginRoute: LoginRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
   SubscriptionTermsRoute: SubscriptionTermsRoute,
