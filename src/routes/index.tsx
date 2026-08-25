@@ -59,7 +59,17 @@ function Index() {
         </div>
 
         <div className="pointer-events-none absolute inset-0 z-[15] w-full">
-          <div className="pointer-events-auto absolute left-[4vw] right-[4vw] top-[8vh] box-border overflow-visible md:left-auto md:right-[6vw] md:top-[44vh] md:w-[46vw] md:-translate-y-1/2">
+          <div
+            className="pointer-events-auto absolute left-[8vw] top-[8vh] box-border w-[84vw] overflow-visible md:top-[44vh] md:-translate-y-1/2"
+            style={{
+              ["--hero-text-left" as string]: "calc(75vw - var(--hero-card) / 2)",
+            }}
+          >
+            <div className="hero-text-block">
+              <Headline />
+            </div>
+          </div>
+
             <Headline />
           </div>
         </div>
