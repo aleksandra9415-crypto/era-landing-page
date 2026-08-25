@@ -1,9 +1,9 @@
-import matrixImg from "@/assets/matrix.jpg";
+import matrixImg from "@/assets/matrix.png.asset.json";
 import natalImg from "@/assets/natal.jpg";
 import humandesignImg from "@/assets/humandesign.png.asset.json";
 import numerologyImg from "@/assets/numerology.jpg";
 import tarotImg from "@/assets/tarot.png.asset.json";
-import synastryImg from "@/assets/synastry.jpg";
+import synastryImg from "@/assets/synastry.png.asset.json";
 
 export type Direction = {
   id: "matrix" | "natal" | "humandesign" | "numerology" | "tarot" | "synastry";
