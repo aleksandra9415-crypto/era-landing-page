@@ -131,7 +131,7 @@ export function DirectionWheel() {
   })();
 
   const { centerX, centerY, r, mobile } = metrics;
-  const side = mobile ? "min(70vw, 42vh)" : "min(30vw, 48vh)";
+  const side = mobile ? "min(70vw, 42vh)" : "var(--hero-card)";
 
   return (
     <div
