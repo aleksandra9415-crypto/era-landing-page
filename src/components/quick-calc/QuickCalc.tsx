@@ -168,7 +168,7 @@ export function QuickCalc() {
           <div
             className="mt-10 text-center"
             style={{
-              animation: reduced ? "none" : "fade-in 800ms ease-out both",
+              animation: reduced ? "none" : "qc-result-in 800ms ease-out both",
             }}
           >
             <div
