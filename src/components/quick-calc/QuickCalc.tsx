@@ -19,7 +19,17 @@ function Chevron() {
   );
 }
 
-export function QuickCalc() {
+type QuickCalcProps = {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+};
+
+export function QuickCalc({
+  id = "quick-calc",
+  title = "Посмотри свой центральный аркан",
+  subtitle = "Одно число, вокруг которого собирается вся матрица. Считается из даты рождения, без регистрации",
+}: QuickCalcProps = {}) {
   const reduced = useReducedMotion();
   const currentYear = new Date().getFullYear();
   const years = useMemo(
