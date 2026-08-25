@@ -1,4 +1,4 @@
-import tarotImg from "@/assets/tarot.jpg";
+import tarotImg from "@/assets/tarot.png.asset.json";
 import { Section, CARD_GRADIENT } from "./Section";
 
 const STEPS = [
