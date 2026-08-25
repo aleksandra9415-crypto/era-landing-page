@@ -84,14 +84,13 @@ export function QuickCalc({
           className="text-center font-display text-text-primary"
           style={{ fontSize: "clamp(32px, 3.4vw, 64px)", letterSpacing: "0.01em" }}
         >
-          Посмотри свой центральный аркан
+          {title}
         </h2>
         <p
           className="mt-4 text-center text-text-secondary"
           style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
         >
-          Одно число, вокруг которого собирается вся матрица. Считается из даты рождения,
-          без регистрации
+          {subtitle}
         </p>
 
         {stage !== "result" ? (
