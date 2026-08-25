@@ -217,7 +217,7 @@ export function DirectionWheel() {
               >
                 <h2
                   className="font-display text-text-primary leading-tight"
-                  style={{ fontSize: "clamp(20px, 1.7vw, 34px)" }}
+                  style={{ fontSize: "clamp(24px, 2.1vw, 40px)", letterSpacing: "0.01em" }}
                 >
                   {d.title}
                 </h2>
