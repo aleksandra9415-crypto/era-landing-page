@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -40,6 +41,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SubscriptionTermsRoute = SubscriptionTermsRouteImport.update({
+  id: '/subscription-terms',
+  path: '/subscription-terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -47,6 +53,7 @@ export interface FileRoutesByFullPath {
   '/consent': typeof ConsentRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/subscription-terms': typeof SubscriptionTermsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -54,6 +61,7 @@ export interface FileRoutesByTo {
   '/consent': typeof ConsentRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/subscription-terms': typeof SubscriptionTermsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -62,13 +70,23 @@ export interface FileRoutesById {
   '/consent': typeof ConsentRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/subscription-terms': typeof SubscriptionTermsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/about' | '/consent' | '/offer' | '/privacy'
+  fullPaths:
+    '/' | '/about' | '/consent' | '/offer' | '/privacy' | '/subscription-terms'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/consent' | '/offer' | '/privacy'
-  id: '__root__' | '/' | '/about' | '/consent' | '/offer' | '/privacy'
+  to:
+    '/' | '/about' | '/consent' | '/offer' | '/privacy' | '/subscription-terms'
+  id:
+    | '__root__'
+    | '/'
+    | '/about'
+    | '/consent'
+    | '/offer'
+    | '/privacy'
+    | '/subscription-terms'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -77,6 +95,7 @@ export interface RootRouteChildren {
   ConsentRoute: typeof ConsentRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
+  SubscriptionTermsRoute: typeof SubscriptionTermsRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -116,6 +135,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/subscription-terms': {
+      id: '/subscription-terms'
+      path: '/subscription-terms'
+      fullPath: '/subscription-terms'
+      preLoaderRoute: typeof SubscriptionTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
@@ -125,6 +151,7 @@ const rootRouteChildren: RootRouteChildren = {
   ConsentRoute: ConsentRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
+  SubscriptionTermsRoute: SubscriptionTermsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
