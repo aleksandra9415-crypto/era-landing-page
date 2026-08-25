@@ -5,7 +5,8 @@ import { useReducedMotion } from "@/hooks/use-reduced-motion";
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 const selectClass =
-  "h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary outline-none transition-colors focus:border-text-accent";
+  "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
+
 
 const ARC_H = "clamp(140px, 11vw, 280px)";
 
