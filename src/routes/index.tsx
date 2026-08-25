@@ -58,7 +58,7 @@ function Index() {
           <DirectionWheel />
         </div>
 
-        <div className="pointer-events-none absolute inset-0 z-[15] w-full">
+        <div className="pointer-events-none absolute inset-0 z-[40] w-full md:z-[15]">
           <div className="hero-text-block pointer-events-auto">
             <Headline />
           </div>

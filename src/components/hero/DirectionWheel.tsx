@@ -11,8 +11,8 @@ function computeMetrics(): Metrics {
   const vw = typeof window === "undefined" ? 1440 : window.innerWidth;
   const vh = typeof window === "undefined" ? 900 : window.innerHeight;
   const mobile = vw < 768;
-  const r = mobile ? 1.1 * vw : 0.62 * vh;
-  const apexY = (mobile ? 0.58 : 0.44) * vh;
+  const r = mobile ? 0.85 * vw : 0.62 * vh;
+  const apexY = mobile ? 0.26 * vh : 0.44 * vh;
   return {
     r,
     centerX: (mobile ? 0.5 : 0.3) * vw,
@@ -30,7 +30,14 @@ const wrapDeg = (v: number) => {
 
 export function DirectionWheel() {
   const reduced = useReducedMotion();
-  const [metrics, setMetrics] = useState<Metrics>(() => computeMetrics());
+  // SSR-safe initial state: always render desktop metrics on the first pass
+  // to avoid hydration mismatch. Client-side resize effect updates it after mount.
+  const [metrics, setMetrics] = useState<Metrics>({
+    r: 0.62 * 900,
+    centerX: 0.3 * 1440,
+    centerY: 0.44 * 900 + 0.62 * 900,
+    mobile: false,
+  });
   const [offset, setOffset] = useState(0);
   const [duration, setDuration] = useState(650);
   const [interacting, setInteracting] = useState(false);
@@ -131,7 +138,7 @@ export function DirectionWheel() {
   })();
 
   const { centerX, centerY, r, mobile } = metrics;
-  const side = mobile ? "min(70vw, 42vh)" : "var(--hero-card)";
+  const side = mobile ? "min(62vw, 36vh)" : "var(--hero-card)";
 
   return (
     <div

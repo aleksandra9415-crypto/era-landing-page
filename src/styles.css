@@ -155,11 +155,20 @@
   overflow: visible;
 }
 
+@media (max-width: 767px) {
+  .hero-text-block {
+    top: auto;
+    bottom: 4vh;
+    transform: none;
+  }
+}
+
 @media (min-width: 768px) {
   .hero-text-block {
     left: auto;
     right: 10vw;
     top: 44vh;
+    bottom: auto;
     width: min(46vw, calc(var(--hero-headline-size) * 6.2));
     transform: translateY(-50%);
   }
