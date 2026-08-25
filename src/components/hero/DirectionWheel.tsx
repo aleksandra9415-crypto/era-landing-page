@@ -108,6 +108,8 @@ export function DirectionWheel() {
   })();
 
   const { centerX, centerY, r, mobile } = metrics;
+  const side = mobile ? "min(70vw, 42vh)" : "min(30vw, 48vh)";
+  const glyphSize = `calc(${side} * 0.22)`;
 
   return (
     <div
@@ -179,39 +181,59 @@ export function DirectionWheel() {
             style={{
               left: x,
               top: y,
-              transform: `translate(-50%, -50%)${isActive ? "" : " scale(0.7)"}`,
-              opacity: isActive ? 1 : 0.4,
-              filter: isActive ? "none" : "blur(1.5px)",
+              transform: `translate(-50%, -50%)${isActive ? "" : " scale(0.55)"}`,
+              opacity: isActive ? 1 : 0.35,
+              filter: isActive ? "none" : "blur(2px)",
               transition: `left ${duration}ms ease-out, top ${duration}ms ease-out, transform 400ms ease-out, opacity 400ms ease-out, filter 400ms ease-out`,
-              width: mobile ? "70vw" : "clamp(280px, 16vw, 420px)",
+              width: side,
+              height: side,
             }}
           >
             <div
-              className="bg-surface-1 flex flex-col items-start gap-4 border"
+              className="bg-surface-1 flex h-full w-full flex-col border"
               style={{
                 borderColor: "var(--border)",
-                borderRadius: 16,
-                padding: 28,
+                borderRadius: 20,
+                padding: 32,
+                boxSizing: "border-box",
               }}
             >
-              <Glyph name={d.id} size={64} />
-              <h2
-                className="font-display text-text-primary leading-tight"
-                style={{ fontSize: 24 }}
+              {/* image area: fixed share of the card height, photo goes here later */}
+              <div
+                className="flex items-center justify-center"
+                style={{ height: "58%", flex: "0 0 58%" }}
               >
-                {d.title}
-              </h2>
-              {isActive && (
-                <>
-                  <p className="text-text-secondary text-[15px] leading-snug">{d.desc}</p>
-                  <button
-                    type="button"
-                    className="text-text-accent bg-transparent text-[15px] hover:underline"
-                  >
-                    Открыть
-                  </button>
-                </>
-              )}
+                <Glyph name={d.id} size={glyphSize} />
+              </div>
+
+              <div
+                className="flex flex-col justify-end gap-3 text-left"
+                style={{ height: "42%", flex: "0 0 42%" }}
+              >
+                <h2
+                  className="font-display text-text-primary leading-tight"
+                  style={{ fontSize: "clamp(20px, 1.7vw, 34px)" }}
+                >
+                  {d.title}
+                </h2>
+                {isActive && (
+                  <>
+                    <p
+                      className="text-text-secondary leading-snug"
+                      style={{ fontSize: "clamp(14px, 1.1vw, 19px)" }}
+                    >
+                      {d.desc}
+                    </p>
+                    <button
+                      type="button"
+                      className="text-text-accent self-start bg-transparent hover:underline"
+                      style={{ fontSize: "clamp(14px, 1.1vw, 19px)" }}
+                    >
+                      Открыть
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         );
