@@ -38,8 +38,8 @@ function Index() {
         <DirectionWheel />
       </div>
 
-      <div className="pointer-events-none relative z-[15] mx-auto flex h-full max-w-[1440px] items-start px-6 pt-28 md:items-center md:justify-end md:px-12 md:pt-0">
-        <div className="pointer-events-auto md:max-w-[46%]">
+      <div className="pointer-events-none absolute inset-0 z-[15] w-full">
+        <div className="pointer-events-auto absolute left-[4vw] right-[4vw] top-[8vh] md:left-[62vw] md:right-[6vw] md:top-[22vh] md:bottom-[42vh]">
           <Headline />
         </div>
       </div>
