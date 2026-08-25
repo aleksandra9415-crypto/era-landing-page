@@ -105,6 +105,18 @@ export function DirectionWheel() {
     scheduleResume();
   };
 
+  const openDirection = () => {
+    // Placeholder: direction pages are not built yet.
+  };
+
+  const activate = (i: number, isActive: boolean) => {
+    if (drag.current.moved) return;
+    if (isActive) openDirection();
+    else goTo(i);
+  };
+
+
+
   const activeIndex = (() => {
     let best = 0;
     let bestAbs = Infinity;
