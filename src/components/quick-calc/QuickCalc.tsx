@@ -181,16 +181,6 @@ export function QuickCalc({
         paddingBottom: "clamp(120px, 14vh, 220px)",
       }}
     >
-      {/* inner edge highlight */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[60px]"
-        style={{
-          background: "linear-gradient(to bottom, rgba(12, 79, 88, 0.4), rgba(12, 79, 88, 0))",
-          borderTopLeftRadius: `100% ${ARC_H}`,
-          borderTopRightRadius: `100% ${ARC_H}`,
-        }}
-      />
 
 
       {/* grain */}
