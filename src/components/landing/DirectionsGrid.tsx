@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { directions } from "@/lib/directions";
 import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
 
