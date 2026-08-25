@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { directions } from "@/lib/directions";
-import { Glyph } from "./Glyph";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const STEP = 60;
@@ -109,7 +108,6 @@ export function DirectionWheel() {
 
   const { centerX, centerY, r, mobile } = metrics;
   const side = mobile ? "min(70vw, 42vh)" : "min(30vw, 48vh)";
-  const glyphSize = `calc(${side} * 0.22)`;
 
   return (
     <div
@@ -190,25 +188,32 @@ export function DirectionWheel() {
             }}
           >
             <div
-              className="bg-surface-1 flex h-full w-full flex-col border"
+              className="bg-surface-1 relative h-full w-full overflow-hidden border"
               style={{
                 borderColor: "var(--border)",
                 borderRadius: 20,
-                padding: 32,
-                boxSizing: "border-box",
+                borderWidth: 1,
               }}
             >
-              {/* image area: fixed share of the card height, photo goes here later */}
-              <div
-                className="flex items-center justify-center"
-                style={{ height: "58%", flex: "0 0 58%" }}
-              >
-                <Glyph name={d.id} size={glyphSize} />
-              </div>
+              <img
+                src={d.image}
+                alt=""
+                aria-hidden="true"
+                className="absolute inset-0 h-full w-full object-cover"
+              />
 
               <div
-                className="flex flex-col justify-end gap-3 text-left"
-                style={{ height: "42%", flex: "0 0 42%" }}
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0"
+                style={{
+                  background:
+                    "linear-gradient(to bottom, rgba(3, 25, 30, 0) 40%, rgba(3, 25, 30, 0.55) 60%, rgba(3, 25, 30, 0.88) 78%, rgba(3, 25, 30, 0.97) 100%)",
+                }}
+              />
+
+              <div
+                className="absolute bottom-0 left-0 right-0 flex flex-col justify-end text-left"
+                style={{ padding: 32 }}
               >
                 <h2
                   className="font-display text-text-primary leading-tight"
@@ -220,14 +225,14 @@ export function DirectionWheel() {
                   <>
                     <p
                       className="text-text-secondary leading-snug"
-                      style={{ fontSize: "clamp(14px, 1.1vw, 19px)" }}
+                      style={{ fontSize: "clamp(14px, 1.1vw, 19px)", marginTop: 8 }}
                     >
                       {d.desc}
                     </p>
                     <button
                       type="button"
                       className="text-text-accent self-start bg-transparent hover:underline"
-                      style={{ fontSize: "clamp(14px, 1.1vw, 19px)" }}
+                      style={{ fontSize: "clamp(14px, 1.1vw, 19px)", marginTop: 16 }}
                     >
                       Открыть
                     </button>

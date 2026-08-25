@@ -1,15 +1,23 @@
+import matrixImg from "@/assets/matrix.jpg";
+import natalImg from "@/assets/natal.jpg";
+import humandesignImg from "@/assets/humandesign.jpg";
+import numerologyImg from "@/assets/numerology.jpg";
+import tarotImg from "@/assets/tarot.jpg";
+import synastryImg from "@/assets/synastry.jpg";
+
 export type Direction = {
   id: "matrix" | "natal" | "humandesign" | "numerology" | "tarot" | "synastry";
   title: string;
   desc: string;
+  image: string;
 };
 
 /** Single source of truth for the wheel. */
 export const directions: Direction[] = [
-  { id: "matrix", title: "Матрица судьбы", desc: "Твой рисунок в 22 арканах" },
-  { id: "natal", title: "Натальная карта", desc: "Небо в минуту твоего рождения" },
-  { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле" },
-  { id: "numerology", title: "Нумерология", desc: "Числа, из которых ты собран" },
-  { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя" },
-  { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система" },
+  { id: "matrix", title: "Матрица судьбы", desc: "Твой рисунок в 22 арканах", image: matrixImg },
+  { id: "natal", title: "Натальная карта", desc: "Небо в минуту твоего рождения", image: natalImg },
+  { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле", image: humandesignImg },
+  { id: "numerology", title: "Нумерология", desc: "Числа, из которых ты собран", image: numerologyImg },
+  { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя", image: tarotImg },
+  { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система", image: synastryImg },
 ];
