@@ -1,91 +1,247 @@
+import { useState } from "react";
 import { Section } from "./Section";
 
-const PLANS = [
+type Plan = {
+  id: string;
+  title: string;
+  lead: string;
+  price?: string;
+  note?: string;
+  priceMonth?: string;
+  priceYear?: string;
+  noteMonth?: string;
+  noteYear?: string;
+  features: string[];
+  warning?: string;
+  action: string;
+  primary: boolean;
+};
+
+const PLANS: Plan[] = [
   {
     id: "free",
-    name: "Знакомство",
+    title: "Знакомство",
+    lead: "Если хочется просто посмотреть и ничего пока не решать",
     price: "0 ₽",
-    content: "Расчёт матрицы и базовый разбор",
-    main: false,
-  },
-  {
-    id: "sub",
-    name: "Подписка",
-    price: "690 ₽/мес или 4 900 ₽/год",
-    content: "Всё без ограничений",
-    main: true,
+    note: "Навсегда",
+    features: [
+      "Центральный аркан по дате рождения",
+      "Короткий разбор: что это за число и о чём оно",
+      "Без регистрации и без карты",
+    ],
+    action: "Посмотреть свой аркан",
+    primary: false,
   },
   {
     id: "trial",
-    name: "Пробный доступ",
-    price: "49 ₽ / 3 дня",
-    content: "Всё без ограничений на 3 дня",
-    main: false,
+    title: "Пробный доступ",
+    lead: "Если уже интересно, но платить сразу за месяц не хочется",
+    price: "49 ₽",
+    note: "Три дня полного доступа",
+    features: [
+      "Все шесть систем, полные разборы",
+      "Своё небо на минуту рождения",
+      "Дневник наблюдений",
+      "Отменить можно в первый же день",
+    ],
+    warning: "Через три дня — 690 ₽ в месяц, если не отменить",
+    action: "Открыть на три дня",
+    primary: false,
+  },
+  {
+    id: "sub",
+    title: "Подписка",
+    lead: "Если хочется разбираться в себе не один вечер, а спокойно и подолгу",
+    priceMonth: "690 ₽",
+    priceYear: "4 900 ₽",
+    noteMonth: "В месяц",
+    noteYear: "В год — это 408 ₽ в месяц",
+    features: [
+      "Всё из пробного, без ограничения по времени",
+      "Профили близких: партнёр, ребёнок, коллега",
+      "Совместимость между любыми двумя профилями",
+      "Карта дня утром в Telegram",
+      "Разборы обновляются вместе с транзитами",
+      "Отмена в один шаг, без звонков и писем",
+    ],
+    action: "Оформить подписку",
+    primary: true,
   },
 ];
 
-/** Mobile order puts «Подписка» first; desktop keeps Знакомство / Пробный / Подписка. */
-const DESKTOP_ORDER: Record<string, string> = {
-  free: "md:order-1",
-  trial: "md:order-2",
-  sub: "md:order-3",
+const MOBILE_ORDER: Record<string, string> = {
+  sub: "order-1 md:order-none",
+  trial: "order-2 md:order-none",
+  free: "order-3 md:order-none",
 };
 
 export function Pricing() {
+  const [period, setPeriod] = useState<"month" | "year">("year");
+
   return (
     <Section
       id="pricing"
       title="Тарифы"
       subtitle="Один тариф открывает всё. Никаких докупок внутри"
     >
-      <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-3">
-        {PLANS.map((p) => (
+      <div className="pricing-wide">
+        {/* Period switch */}
+        <div className="mt-7 flex justify-center">
           <div
-            key={p.id}
-            className={`flex flex-col rounded-[20px] bg-surface-1 p-8 ${DESKTOP_ORDER[p.id]}`}
-            style={{
-              border: p.main ? "1px solid var(--text-accent)" : "1px solid var(--border)",
-            }}
+            className="flex items-center rounded-full bg-surface-1 p-1"
+            style={{ border: "1px solid var(--border)" }}
+            role="group"
+            aria-label="Период оплаты"
           >
-            {p.main && (
-              <div className="text-text-accent" style={{ fontSize: 13 }}>
-                Основной
-              </div>
-            )}
-            <h3
-              className={`font-display text-text-primary ${p.main ? "mt-1" : ""}`}
-              style={{ fontSize: 26, fontWeight: 400, letterSpacing: "0.01em" }}
-            >
-              {p.name}
-            </h3>
-            <div className="mt-3 text-text-primary" style={{ fontSize: 17 }}>
-              {p.price}
-            </div>
-            <p className="mt-3 flex-1 text-text-secondary" style={{ fontSize: 17 }}>
-              {p.content}
-            </p>
-            {p.main ? (
-              <button
-                type="button"
-                className="mt-8 h-14 w-full rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-              >
-                Начать
-              </button>
-            ) : (
-              <a
-                href="#quick-calc"
-                className="mt-8 self-start text-text-accent underline-offset-4 hover:underline"
-                style={{ fontSize: 15 }}
-              >
-                Попробовать
-              </a>
-            )}
+            {(["month", "year"] as const).map((p) => {
+              const active = period === p;
+              return (
+                <button
+                  key={p}
+                  type="button"
+                  aria-pressed={active}
+                  onClick={() => setPeriod(p)}
+                  className="pricing-period"
+                  data-active={active}
+                >
+                  {p === "month" ? "Месяц" : "Год"}
+                  {p === "year" && (
+                    <span className="ml-2 text-text-accent" style={{ fontSize: 12 }}>
+                      −41%
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
-        ))}
+        </div>
+
+        {/* Cards */}
+        <div className="pricing-grid mt-10">
+          {PLANS.map((plan) => {
+            const price =
+              plan.id === "sub"
+                ? period === "year"
+                  ? plan.priceYear
+                  : plan.priceMonth
+                : plan.price;
+            const note =
+              plan.id === "sub"
+                ? period === "year"
+                  ? plan.noteYear
+                  : plan.noteMonth
+                : plan.note;
+
+            return (
+              <div
+                key={plan.id}
+                className={`pricing-card ${MOBILE_ORDER[plan.id]}`}
+                data-primary={plan.primary}
+              >
+                {plan.primary && <span className="pricing-card-glow" aria-hidden="true" />}
+
+                <div className="relative flex h-full flex-col">
+                  {plan.primary && (
+                    <div
+                      className="text-text-accent"
+                      style={{
+                        fontSize: 12,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.08em",
+                        marginBottom: 10,
+                      }}
+                    >
+                      Основной
+                    </div>
+                  )}
+
+                  <h3
+                    className="font-display text-text-primary"
+                    style={{ fontSize: "clamp(20px, 1.6vw, 28px)", fontWeight: 400, lineHeight: 1.15 }}
+                  >
+                    {plan.title}
+                  </h3>
+
+                  <p
+                    className="text-text-secondary"
+                    style={{ fontSize: "clamp(13px, 1.05vw, 16px)", lineHeight: 1.45, marginTop: 8 }}
+                  >
+                    {plan.lead}
+                  </p>
+
+                  <div
+                    className="font-mono text-text-primary"
+                    style={{ fontSize: "clamp(32px, 2.9vw, 50px)", marginTop: 22, lineHeight: 1.05 }}
+                  >
+                    {price}
+                  </div>
+
+                  <div
+                    className="text-text-secondary"
+                    style={{ fontSize: "clamp(13px, 1vw, 15px)", marginTop: 6 }}
+                  >
+                    {note}
+                  </div>
+
+                  <div
+                    style={{
+                      marginTop: 22,
+                      height: 1,
+                      background: "var(--border)",
+                      opacity: 0.35,
+                    }}
+                  />
+
+                  <ul className="flex flex-col" style={{ marginTop: 20, gap: 12 }}>
+                    {plan.features.map((f) => (
+                      <li
+                        key={f}
+                        className="flex text-text-secondary"
+                        style={{ fontSize: "clamp(13px, 1.05vw, 16px)", lineHeight: 1.5 }}
+                      >
+                        <span
+                          aria-hidden="true"
+                          className="text-text-accent"
+                          style={{ marginRight: 10 }}
+                        >
+                          ·
+                        </span>
+                        <span>{f}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  {plan.warning && (
+                    <p
+                      className="text-text-secondary"
+                      style={{ fontSize: 12, opacity: 0.75, marginTop: 16 }}
+                    >
+                      {plan.warning}
+                    </p>
+                  )}
+
+                  <div className="mt-auto pt-7">
+                    <button
+                      type="button"
+                      onClick={() => {}}
+                      className={plan.primary ? "pricing-btn-solid" : "pricing-btn-outline"}
+                    >
+                      {plan.action}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+
+        <p
+          className="mx-auto mt-8 text-center text-text-secondary"
+          style={{ fontSize: "clamp(14px, 1.1vw, 17px)" }}
+        >
+          Подписка отменяется в один шаг в личном кабинете. Без звонков и писем в поддержку
+        </p>
       </div>
-      <p className="mt-8 text-center text-text-secondary" style={{ fontSize: 15 }}>
-        Подписка отменяется в один шаг в личном кабинете. Без звонков и писем в поддержку.
-      </p>
     </Section>
   );
 }
