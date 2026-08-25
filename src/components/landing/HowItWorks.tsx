@@ -1,9 +1,11 @@
-import { useState, type KeyboardEvent } from "react";
+import { useState, type KeyboardEvent, useRef } from "react";
 import cardBack from "@/assets/card-back.jpg.asset.json";
 import face1 from "@/assets/step-1.jpg.asset.json";
 import face2 from "@/assets/step-2.jpg.asset.json";
 import face3 from "@/assets/step-3.jpg.asset.json";
 import { Section } from "./Section";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+
 
 const STEPS = [
   {
