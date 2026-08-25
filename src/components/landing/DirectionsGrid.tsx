@@ -212,11 +212,11 @@ function DirectionCard({
                   top: 0,
                   backgroundColor: "var(--text-primary)",
                   boxShadow: "0 0 10px 2px rgba(230, 240, 239, 0.45)",
-                  opacity: active ? 0.9 : 0.35,
+                  opacity: active ? 0 : 0.9,
                   transform: `translate3d(${pos.x - s.size / 2}px, ${pos.y - s.size / 2}px, 0)`,
-                  transition:
-                    "transform 800ms cubic-bezier(0.22, 1, 0.36, 1), opacity 800ms cubic-bezier(0.22, 1, 0.36, 1)",
-                  transitionDelay: `${active ? s.delay : 220 - s.delay}ms`,
+                  transition: active
+                    ? `transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${s.delay}ms, opacity 260ms ease-in ${440 + s.delay}ms`
+                    : `transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${200 - s.delay}ms, opacity 300ms ease-out 0ms`,
                 }}
               />
             );
