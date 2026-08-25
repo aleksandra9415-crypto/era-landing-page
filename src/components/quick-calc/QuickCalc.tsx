@@ -114,6 +114,7 @@ export function QuickCalc({
   title = "Посмотри свой центральный аркан",
   subtitle = "Одно число, вокруг которого собирается вся матрица. Считается из даты рождения, без регистрации",
 }: QuickCalcProps = {}) {
+  const isHeroOverlap = id === "quick-calc";
   const reduced = useReducedMotion();
   const currentYear = new Date().getFullYear();
   const years = useMemo(
@@ -170,7 +171,7 @@ export function QuickCalc({
   return (
     <section
       id={id}
-      className="qc-plate relative z-[2] w-full overflow-hidden"
+      className={`qc-plate relative w-full overflow-hidden ${isHeroOverlap ? "z-[30]" : "z-[2]"}`}
       style={{
         background: "#000000",
         borderTop: "2px solid rgba(159, 186, 185, 0.5)",
