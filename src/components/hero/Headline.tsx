@@ -21,12 +21,12 @@ export function Headline() {
   }, [reduced]);
 
   return (
-    <div className="flex h-full flex-col items-start justify-center md:items-end">
+    <div className="flex h-full flex-col items-start justify-center overflow-visible">
       {/* All words stay in the DOM for SEO; visibility is CSS-driven. */}
       {/* The invisible longest word fixes the container width so the left */}
       {/* alignment line does not shift when the active word changes. */}
       <h1
-        className="relative whitespace-nowrap font-display font-bold uppercase text-text-primary leading-[1.05] text-left md:text-right text-[clamp(30px,8.5vw,60px)] md:text-[clamp(36px,5.2vw,150px)]"
+        className="relative whitespace-nowrap text-left font-display font-bold uppercase text-text-primary leading-[1.05] text-[clamp(30px,8.5vw,60px)] md:text-[clamp(36px,5.2vw,150px)]"
         style={{ minHeight: "1.05em" }}
       >
         {WORDS.map((w, i) => (
@@ -45,7 +45,7 @@ export function Headline() {
           <p
             key={w.word}
             aria-hidden={i !== index}
-            className={`word-slot text-text-secondary text-left text-[clamp(15px,1.2vw,22px)] leading-snug md:whitespace-nowrap md:text-right ${
+            className={`word-slot text-left text-text-secondary text-[clamp(15px,1.2vw,22px)] leading-snug md:whitespace-nowrap ${
               i === index ? "word-slot-active" : "word-slot-leaving"
             }`}
           >
@@ -56,7 +56,7 @@ export function Headline() {
 
       <button
         type="button"
-        className="bg-accent mt-[32px] self-start rounded-lg md:self-end text-[16px] text-white transition-opacity hover:opacity-90"
+        className="bg-accent mt-[32px] self-start rounded-lg text-[16px] text-white transition-opacity hover:opacity-90"
         style={{ padding: "16px 32px" }}
       >
         Рассчитать бесплатно
