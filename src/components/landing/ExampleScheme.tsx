@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Section } from "./Section";
+import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
 import { centralArcanum, digitSum, reduceTo22 } from "@/lib/arcana";
 
 const demoDate = { day: 15, month: 7, year: 1990 };
@@ -17,7 +18,8 @@ type SchemeNode = {
   id: NodeId;
   value: number;
   label: string;
-  formula: string;
+  sum: string;
+  reduce: string;
   text: string;
   sources: SourceId[];
   x: number;
@@ -29,7 +31,8 @@ const nodes: SchemeNode[] = [
     id: "A",
     value: A,
     label: "день",
-    formula: `день = ${A}`,
+    sum: `день = ${A}`,
+    reduce: "",
     text: "Число дня берётся как есть, если оно не больше 22",
     sources: ["date-day"],
     x: 6,
@@ -39,7 +42,8 @@ const nodes: SchemeNode[] = [
     id: "B",
     value: B,
     label: "месяц",
-    formula: `июль = ${B}`,
+    sum: `июль = ${B}`,
+    reduce: "",
     text: "Номер месяца всегда от 1 до 12, свёртка не нужна",
     sources: ["date-month"],
     x: 50,
@@ -49,7 +53,8 @@ const nodes: SchemeNode[] = [
     id: "C",
     value: C,
     label: "год",
-    formula: `${String(demoDate.year).split("").join(" + ")} = ${C}`,
+    sum: `${String(demoDate.year).split("").join(" + ")} = ${C}`,
+    reduce: "",
     text: "Цифры года складываются между собой",
     sources: ["date-year"],
     x: 94,
@@ -59,9 +64,8 @@ const nodes: SchemeNode[] = [
     id: "D",
     value: D,
     label: "сумма",
-    formula: `${A} + ${B} + ${C} = ${A + B + C} → ${String(A + B + C)
-      .split("")
-      .join(" + ")} = ${D}`,
+    sum: `${A} + ${B} + ${C} = ${A + B + C}`,
+    reduce: `${A + B + C} → ${String(A + B + C).split("").join(" + ")} = ${D}`,
     text: "Сумма первых трёх. Всё, что больше 22, сворачивается сложением цифр",
     sources: ["A", "B", "C"],
     x: 50,
@@ -71,9 +75,8 @@ const nodes: SchemeNode[] = [
     id: "E",
     value: E,
     label: "центр",
-    formula: `${A} + ${B} + ${C} + ${D} = ${A + B + C + D} → ${String(A + B + C + D)
-      .split("")
-      .join(" + ")} = ${E}`,
+    sum: `${A} + ${B} + ${C} + ${D} = ${A + B + C + D}`,
+    reduce: `${A + B + C + D} → ${String(A + B + C + D).split("").join(" + ")} = ${E}`,
     text: "Сумма всех четырёх. Это центральный аркан — Колесо Фортуны",
     sources: ["A", "B", "C", "D"],
     x: 50,
@@ -92,12 +95,41 @@ const edges: [NodeId, NodeId][] = [
   ["D", "E"],
 ];
 
+const spokes: NodeId[] = ["A", "B", "C", "D"];
+const cycle: NodeId[] = ["E", "A", "B", "C", "D"];
+
 const byId = (id: NodeId) => nodes.find((n) => n.id === id)!;
 
 export function ExampleScheme() {
+  const reduced = useReducedMotion();
+  const isMobile = useIsMobile();
   const [pinned, setPinned] = useState<NodeId>("E");
   const [hovered, setHovered] = useState<NodeId | null>(null);
-  const activeId = hovered ?? pinned;
+  const [autoIndex, setAutoIndex] = useState(0);
+  const [autoOn, setAutoOn] = useState(true);
+  const autoRef = useRef(true);
+
+  useEffect(() => {
+    if (reduced) {
+      setAutoOn(false);
+      autoRef.current = false;
+    }
+  }, [reduced]);
+
+  useEffect(() => {
+    if (!autoOn || reduced) return;
+    const t = setInterval(() => setAutoIndex((i) => (i + 1) % cycle.length), 3500);
+    return () => clearInterval(t);
+  }, [autoOn, reduced]);
+
+  const stopAuto = () => {
+    if (autoRef.current) {
+      autoRef.current = false;
+      setAutoOn(false);
+    }
+  };
+
+  const activeId: NodeId = autoOn && !reduced ? cycle[autoIndex]! : (hovered ?? pinned);
   const active = byId(activeId);
 
   const isSource = (id: SourceId) => active.sources.includes(id);
@@ -108,7 +140,7 @@ export function ExampleScheme() {
     <span
       id={id}
       className="scheme-transition"
-      style={{ color: isSource(id) ? "var(--text-accent)" : "var(--text-secondary)" }}
+      style={{ color: isSource(id) ? "var(--text-accent)" : "var(--text-primary)" }}
     >
       {text}
     </span>
@@ -119,15 +151,22 @@ export function ExampleScheme() {
       title="Каждое число можно проверить"
       subtitle="Матрица — это арифметика. Мы показываем, откуда взялось каждое число в твоём разборе"
     >
-      <div className="mt-12 flex flex-col items-center gap-12 md:flex-row md:items-center md:gap-10">
-        {/* Left: scheme */}
-        <div className="flex w-full flex-col items-center md:w-[55%]">
+      <div className="scheme-layout mx-auto mt-12 flex max-w-[1240px] flex-col gap-10 md:mt-16">
+        {/* 1 — date */}
+        <div className="scheme-date">
+          <p
+            className="text-text-secondary"
+            style={{ fontSize: 13, letterSpacing: "0.08em", textTransform: "uppercase" }}
+          >
+            Пример даты рождения
+          </p>
           <div
             className="flex items-baseline gap-2"
             style={{
+              marginTop: 10,
               fontFamily: "var(--font-mono)",
-              fontSize: "clamp(22px, 1.8vw, 32px)",
-              color: "var(--text-secondary)",
+              fontSize: "clamp(30px, 2.6vw, 48px)",
+              color: "var(--text-primary)",
             }}
           >
             {datePart("date-day", "15")}
@@ -136,11 +175,22 @@ export function ExampleScheme() {
             <span>.</span>
             {datePart("date-year", "1990")}
           </div>
+        </div>
+
+        {/* 2 — diamond */}
+        <div className="scheme-diagram flex flex-col items-center">
+          <p className="text-center text-text-secondary" style={{ fontSize: 14 }}>
+            {isMobile
+              ? "Нажми на число — увидишь, откуда оно взялось"
+              : "Наведи на число — увидишь, откуда оно взялось"}
+          </p>
 
           <div
-            className="relative mt-8 w-[min(320px,86vw)] md:w-[min(440px,40vw)]"
+            className="relative mt-6 w-[min(320px,86vw)] md:w-[min(520px,42vw)]"
             style={{ aspectRatio: "1 / 1" }}
           >
+            <div className="scheme-halo pointer-events-none absolute inset-0" aria-hidden="true" />
+
             <svg
               viewBox="0 0 100 100"
               preserveAspectRatio="none"
@@ -168,10 +218,23 @@ export function ExampleScheme() {
               })}
             </svg>
 
+            {!reduced &&
+              spokes.map((id) => (
+                <span
+                  key={`pulse-${id}`}
+                  aria-hidden="true"
+                  className={`scheme-pulse scheme-pulse-${id.toLowerCase()}`}
+                />
+              ))}
+
             {nodes.map((n) => {
               const isActive = n.id === activeId;
               const source = isSource(n.id);
               const center = n.id === "E";
+              const select = () => {
+                stopAuto();
+                setPinned(n.id);
+              };
               return (
                 <div
                   key={n.id}
@@ -183,18 +246,24 @@ export function ExampleScheme() {
                     tabIndex={0}
                     aria-pressed={isActive}
                     aria-label={`${n.label}: ${n.value}`}
-                    onMouseEnter={() => setHovered(n.id)}
+                    onMouseEnter={() => {
+                      stopAuto();
+                      setHovered(n.id);
+                    }}
                     onMouseLeave={() => setHovered(null)}
-                    onFocus={() => setHovered(n.id)}
+                    onFocus={() => {
+                      stopAuto();
+                      setHovered(n.id);
+                    }}
                     onBlur={() => setHovered(null)}
-                    onClick={() => setPinned(n.id)}
+                    onClick={select}
                     onKeyDown={(e) => {
                       if (e.key === "Enter" || e.key === " ") {
                         e.preventDefault();
-                        setPinned(n.id);
+                        select();
                       }
                     }}
-                    className="scheme-node scheme-transition flex cursor-pointer items-center justify-center rounded-full bg-surface-1"
+                    className="scheme-node scheme-transition relative flex cursor-pointer items-center justify-center rounded-full bg-surface-1"
                     style={{
                       width: center ? "var(--node-center)" : "var(--node-size)",
                       height: center ? "var(--node-center)" : "var(--node-size)",
@@ -228,9 +297,9 @@ export function ExampleScheme() {
           </div>
         </div>
 
-        {/* Right: explanation panel */}
-        <div className="w-full md:w-[45%]">
-          <div className="relative" style={{ minHeight: 200 }}>
+        {/* 3 — panel, note, button */}
+        <div className="scheme-panel-col">
+          <div className="relative" style={{ minHeight: 190 }}>
             {nodes.map((n) => (
               <div
                 key={n.id}
@@ -244,25 +313,60 @@ export function ExampleScheme() {
                 <p
                   style={{
                     fontFamily: "var(--font-mono)",
-                    fontSize: "clamp(20px, 1.7vw, 30px)",
+                    fontSize: "clamp(22px, 1.9vw, 34px)",
                     color: "var(--text-accent)",
                     lineHeight: 1.3,
                   }}
                 >
-                  {n.formula}
+                  {n.sum}
+                </p>
+                <p
+                  style={{
+                    fontFamily: "var(--font-mono)",
+                    fontSize: "clamp(17px, 1.4vw, 24px)",
+                    color: "var(--text-accent)",
+                    opacity: 0.75,
+                    marginTop: 6,
+                    lineHeight: 1.3,
+                    minHeight: "1.3em",
+                  }}
+                >
+                  {n.reduce || "\u00A0"}
                 </p>
                 <p
                   className="text-text-secondary"
-                  style={{ fontSize: "clamp(15px, 1.15vw, 19px)", marginTop: 16, lineHeight: 1.5 }}
+                  style={{
+                    fontSize: "clamp(15px, 1.15vw, 19px)",
+                    marginTop: 18,
+                    lineHeight: 1.5,
+                  }}
                 >
                   {n.text}
                 </p>
               </div>
             ))}
           </div>
-          <p className="text-text-secondary" style={{ marginTop: 32, fontSize: 15 }}>
+
+          <p className="text-text-secondary" style={{ marginTop: 40, fontSize: 15 }}>
             В полном разборе так раскрывается каждое из 22 чисел матрицы
           </p>
+
+          <button
+            type="button"
+            onClick={() => {}}
+            className="w-full text-white transition-opacity hover:opacity-90 md:w-auto"
+            style={{
+              marginTop: 20,
+              background: "var(--accent)",
+              borderRadius: 12,
+              height: 54,
+              paddingLeft: 40,
+              paddingRight: 40,
+              fontSize: 16,
+            }}
+          >
+            Узнать свои числа
+          </button>
         </div>
       </div>
     </Section>
