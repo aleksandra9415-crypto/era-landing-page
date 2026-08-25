@@ -19,7 +19,17 @@ function Chevron() {
   );
 }
 
-export function QuickCalc() {
+type QuickCalcProps = {
+  id?: string;
+  title?: string;
+  subtitle?: string;
+};
+
+export function QuickCalc({
+  id = "quick-calc",
+  title = "Посмотри свой центральный аркан",
+  subtitle = "Одно число, вокруг которого собирается вся матрица. Считается из даты рождения, без регистрации",
+}: QuickCalcProps = {}) {
   const reduced = useReducedMotion();
   const currentYear = new Date().getFullYear();
   const years = useMemo(
@@ -62,7 +72,7 @@ export function QuickCalc() {
 
   return (
     <section
-      id="quick-calc"
+      id={id}
       className="relative w-full bg-bg-page"
       style={{
         paddingTop: "clamp(80px, 10vh, 160px)",
@@ -74,14 +84,13 @@ export function QuickCalc() {
           className="text-center font-display text-text-primary"
           style={{ fontSize: "clamp(32px, 3.4vw, 64px)", letterSpacing: "0.01em" }}
         >
-          Посмотри свой центральный аркан
+          {title}
         </h2>
         <p
           className="mt-4 text-center text-text-secondary"
           style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
         >
-          Одно число, вокруг которого собирается вся матрица. Считается из даты рождения,
-          без регистрации
+          {subtitle}
         </p>
 
         {stage !== "result" ? (
