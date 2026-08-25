@@ -8,7 +8,6 @@ const selectClass =
   "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
 
 
-const ARC_H = "clamp(140px, 11vw, 280px)";
 
 type OrbitSpec = {
   /** radius in % of area width */
@@ -173,24 +172,33 @@ export function QuickCalc({
       className="qc-plate relative z-[2] w-full overflow-hidden"
       style={{
         background: "#000000",
-        borderTop: "2px solid rgba(159, 186, 185, 0.5)",
-        borderTopLeftRadius: `100% ${ARC_H}`,
-        borderTopRightRadius: `100% ${ARC_H}`,
-        marginTop: `calc(-1 * ${ARC_H})`,
-        paddingTop: `calc(${ARC_H} + 60px)`,
+        paddingTop: 60,
         paddingBottom: "clamp(120px, 14vh, 220px)",
       }}
     >
-      {/* inner edge highlight */}
+      {/* geometric wedge top */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[60px]"
-        style={{
-          background: "linear-gradient(to bottom, rgba(12, 79, 88, 0.4), rgba(12, 79, 88, 0))",
-          borderTopLeftRadius: `100% ${ARC_H}`,
-          borderTopRightRadius: `100% ${ARC_H}`,
-        }}
-      />
+        className="qc-wedge pointer-events-none absolute inset-x-0 bottom-full left-0 right-0 z-[1]"
+        style={{ lineHeight: 0 }}
+      >
+        <svg
+          viewBox="0 0 1600 200"
+          preserveAspectRatio="none"
+          xmlns="http://www.w3.org/2000/svg"
+          style={{ display: "block", width: "100%", height: "100%" }}
+          aria-hidden="true"
+        >
+          <polygon points="0,200 448,6 1600,194 1600,200" fill="#000000" />
+          <polyline
+            points="0,200 448,6 1600,194"
+            fill="none"
+            stroke="rgba(182,206,205,0.55)"
+            strokeWidth="2"
+          />
+        </svg>
+      </div>
+
 
 
       {/* grain */}
