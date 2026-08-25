@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { arcana, MONTHS, centralArcanum, isValidDate } from "@/lib/arcana";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
@@ -6,6 +6,25 @@ const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
 const selectClass =
   "h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary outline-none transition-colors focus:border-text-accent";
+
+const ARC_H = "clamp(90px, 7vw, 180px)";
+
+type OrbitSpec = {
+  /** radius in % of area width */
+  r: number;
+  squash: number;
+  tilt: number;
+  period: number;
+  dot: number;
+  opacity: number;
+  phases: number[];
+};
+
+const ORBITS: OrbitSpec[] = [
+  { r: 34, squash: 0.32, tilt: -18, period: 12, dot: 5, opacity: 0.9, phases: [0, 180] },
+  { r: 44, squash: 0.26, tilt: 28, period: 19, dot: 4, opacity: 0.6, phases: [0] },
+  { r: 52, squash: 0.4, tilt: -62, period: 27, dot: 3, opacity: 0.45, phases: [0, 140] },
+];
 
 function Chevron() {
   return (
@@ -16,6 +35,66 @@ function Chevron() {
     >
       <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.5" />
     </svg>
+  );
+}
+
+function Orbits({ speedFactor, dim, still }: { speedFactor: number; dim: boolean; still: boolean }) {
+  return (
+    <div
+      aria-hidden="true"
+      className="absolute inset-0 transition-opacity duration-700"
+      style={{ opacity: dim ? 0.35 : 1 }}
+    >
+      {/* orbit lines */}
+      {ORBITS.map((o, i) => (
+        <div
+          key={`line-${i}`}
+          className="absolute left-1/2 top-1/2 aspect-square rounded-full border border-border"
+          style={{
+            width: `${o.r * 2}%`,
+            opacity: 0.22,
+            transform: `translate(-50%, -50%) rotate(${o.tilt}deg) scaleY(${o.squash})`,
+          }}
+        />
+      ))}
+
+      {/* stars */}
+      {ORBITS.map((o, i) => (
+        <div
+          key={`orbit-${i}`}
+          className="absolute left-1/2 top-1/2 aspect-square"
+          style={{
+            width: `${o.r * 2}%`,
+            transform: `translate(-50%, -50%) rotate(${o.tilt}deg) scaleY(${o.squash})`,
+          }}
+        >
+          {o.phases.map((phase) => (
+            <div
+              key={phase}
+              className="absolute inset-0"
+              style={{
+                animation: still
+                  ? "none"
+                  : `qc-orbit-spin ${o.period / speedFactor}s linear infinite`,
+                animationDelay: still ? undefined : `-${(phase / 360) * (o.period / speedFactor)}s`,
+                transform: still ? `rotate(${phase}deg)` : undefined,
+                transition: "none",
+              }}
+            >
+              <div
+                className="absolute left-1/2 top-0 rounded-full bg-text-primary"
+                style={{
+                  width: o.dot,
+                  height: o.dot,
+                  opacity: o.opacity,
+                  transform: `translate(-50%, -50%) scaleY(${1 / o.squash})`,
+                }}
+              />
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -42,21 +121,33 @@ export function QuickCalc({
   const [year, setYear] = useState("");
   const [stage, setStage] = useState<"form" | "loading" | "result">("form");
   const [result, setResult] = useState<number | null>(null);
+  const [fast, setFast] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const slowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(
+    () => () => {
+      if (timer.current) clearTimeout(timer.current);
+      if (slowTimer.current) clearTimeout(slowTimer.current);
+    },
+    [],
+  );
 
   const complete = day !== "" && month !== "" && year !== "";
-  const dateInvalid =
-    complete && !isValidDate(Number(day), Number(month), Number(year));
+  const dateInvalid = complete && !isValidDate(Number(day), Number(month), Number(year));
 
   const handleSubmit = () => {
     if (!complete || dateInvalid) return;
     const value = centralArcanum(Number(day), Number(month), Number(year));
     setStage("loading");
+    if (!reduced) setFast(true);
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(
       () => {
         setResult(value);
         setStage("result");
+        if (slowTimer.current) clearTimeout(slowTimer.current);
+        slowTimer.current = setTimeout(() => setFast(false), 100);
       },
       reduced ? 200 : 1200,
     );
@@ -65,6 +156,7 @@ export function QuickCalc({
   const reset = () => {
     if (timer.current) clearTimeout(timer.current);
     setResult(null);
+    setFast(false);
     setStage("form");
   };
 
@@ -73,151 +165,237 @@ export function QuickCalc({
   return (
     <section
       id={id}
-      className="relative w-full bg-bg-page"
+      className="qc-plate relative z-[2] w-full overflow-hidden"
       style={{
-        paddingTop: "clamp(80px, 10vh, 160px)",
-        paddingBottom: "clamp(80px, 10vh, 160px)",
+        background: "#000000",
+        borderTop: "1px solid var(--border)",
+        borderTopLeftRadius: `100% ${ARC_H}`,
+        borderTopRightRadius: `100% ${ARC_H}`,
+        marginTop: `calc(-1 * ${ARC_H})`,
+        boxShadow: "0 -40px 90px rgba(0, 0, 0, 0.8)",
+        paddingTop: `calc(${ARC_H} + 40px + clamp(40px, 6vh, 100px))`,
+        paddingBottom: "clamp(120px, 14vh, 220px)",
       }}
     >
-      <div className="mx-auto w-full max-w-[720px] px-[4vw] md:px-6">
-        <h2
-          className="text-center font-display text-text-primary"
-          style={{ fontSize: "clamp(32px, 3.4vw, 64px)", letterSpacing: "0.01em" }}
-        >
-          {title}
-        </h2>
-        <p
-          className="mt-4 text-center text-text-secondary"
-          style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
-        >
-          {subtitle}
-        </p>
+      {/* edge light */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[160px]"
+        style={{
+          background: "linear-gradient(to bottom, rgba(12, 79, 88, 0.45), rgba(12, 79, 88, 0))",
+          maskImage: "linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.3))",
+          WebkitMaskImage: "linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.3))",
+          borderTopLeftRadius: `100% ${ARC_H}`,
+          borderTopRightRadius: `100% ${ARC_H}`,
+        }}
+      />
 
-        {stage !== "result" ? (
-          <div className="mt-10">
-            <div className="flex flex-col gap-3 md:flex-row">
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="qc-day">
-                  День
-                </label>
-                <select
-                  id="qc-day"
-                  className={selectClass}
-                  value={day}
-                  onChange={(e) => setDay(e.target.value)}
-                >
-                  <option value="">День</option>
-                  {DAYS.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
+      {/* grain */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-[3]"
+        style={{ opacity: 0.04 }}
+      >
+        <svg className="h-full w-full">
+          <filter id={`qc-grain-${id}`}>
+            <feTurbulence
+              type="fractalNoise"
+              baseFrequency="0.9"
+              numOctaves="2"
+              stitchTiles="stitch"
+            />
+          </filter>
+          <rect width="100%" height="100%" filter={`url(#qc-grain-${id})`} />
+        </svg>
+      </div>
 
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="qc-month">
-                  Месяц
-                </label>
-                <select
-                  id="qc-month"
-                  className={selectClass}
-                  value={month}
-                  onChange={(e) => setMonth(e.target.value)}
-                >
-                  <option value="">Месяц</option>
-                  {MONTHS.map((m, i) => (
-                    <option key={m} value={i + 1}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
+      {/* bottom dissolve */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[200px]"
+        style={{
+          background: "linear-gradient(to bottom, rgba(3, 25, 30, 0), var(--bg-page))",
+        }}
+      />
 
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="qc-year">
-                  Год
-                </label>
-                <select
-                  id="qc-year"
-                  className={selectClass}
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                >
-                  <option value="">Год</option>
-                  {years.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-            </div>
-
-            {dateInvalid && (
-              <p className="mt-3 text-[15px] text-text-danger">
-                Такой даты не существует — проверь день и месяц
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!complete || dateInvalid || stage === "loading"}
-              className="mt-5 h-14 w-full rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
-              style={{ opacity: !complete || dateInvalid ? 0.4 : 1 }}
-            >
-              {stage === "loading" ? "Считаем" : "Показать"}
-            </button>
-          </div>
-        ) : (
-          <div
-            className="mt-10 text-center"
+      <div
+        className="relative z-[4] mx-auto flex w-full max-w-[1400px] flex-col items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-0"
+        style={{ paddingLeft: "clamp(24px, 6vw, 120px)", paddingRight: "clamp(24px, 6vw, 120px)" }}
+      >
+        {/* left column */}
+        <div className="w-full text-left md:w-[46%]">
+          <h2
+            className="font-display text-text-primary"
             style={{
-              animation: reduced ? "none" : "qc-result-in 800ms ease-out both",
+              fontSize: "clamp(32px, 3.4vw, 64px)",
+              letterSpacing: "0.01em",
+              lineHeight: 1.08,
             }}
           >
-            <div
-              className="font-mono text-text-accent"
-              style={{ fontSize: "clamp(72px, 9vw, 160px)", lineHeight: 1 }}
-            >
-              {card?.n}
-            </div>
-            <div
-              className="mt-2 font-display text-text-primary"
-              style={{ fontSize: "clamp(28px, 3vw, 52px)", letterSpacing: "0.01em" }}
-            >
-              {card?.name}
-            </div>
-            <p
-              className="mt-4 text-text-secondary"
-              style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
-            >
-              {card?.line}
-            </p>
+            {title}
+          </h2>
+          <p className="mt-4 text-text-secondary" style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}>
+            {subtitle}
+          </p>
 
-            <button
-              type="button"
-              onClick={() => {}}
-              className="mt-8 h-14 rounded-[12px] bg-accent px-8 text-[17px] font-medium text-primary-foreground"
+          {stage !== "result" ? (
+            <div className="mt-10">
+              <div className="flex flex-col gap-3 md:flex-row">
+                <div className="relative flex-1">
+                  <label className="sr-only" htmlFor={`${id}-day`}>
+                    День
+                  </label>
+                  <select
+                    id={`${id}-day`}
+                    className={selectClass}
+                    value={day}
+                    onChange={(e) => setDay(e.target.value)}
+                  >
+                    <option value="">День</option>
+                    {DAYS.map((d) => (
+                      <option key={d} value={d}>
+                        {d}
+                      </option>
+                    ))}
+                  </select>
+                  <Chevron />
+                </div>
+
+                <div className="relative flex-1">
+                  <label className="sr-only" htmlFor={`${id}-month`}>
+                    Месяц
+                  </label>
+                  <select
+                    id={`${id}-month`}
+                    className={selectClass}
+                    value={month}
+                    onChange={(e) => setMonth(e.target.value)}
+                  >
+                    <option value="">Месяц</option>
+                    {MONTHS.map((m, i) => (
+                      <option key={m} value={i + 1}>
+                        {m}
+                      </option>
+                    ))}
+                  </select>
+                  <Chevron />
+                </div>
+
+                <div className="relative flex-1">
+                  <label className="sr-only" htmlFor={`${id}-year`}>
+                    Год
+                  </label>
+                  <select
+                    id={`${id}-year`}
+                    className={selectClass}
+                    value={year}
+                    onChange={(e) => setYear(e.target.value)}
+                  >
+                    <option value="">Год</option>
+                    {years.map((y) => (
+                      <option key={y} value={y}>
+                        {y}
+                      </option>
+                    ))}
+                  </select>
+                  <Chevron />
+                </div>
+              </div>
+
+              {dateInvalid && (
+                <p className="mt-3 text-[15px] text-text-danger">
+                  Такой даты не существует — проверь день и месяц
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={handleSubmit}
+                disabled={!complete || dateInvalid || stage === "loading"}
+                className="mt-5 h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
+                style={{ opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1 }}
+              >
+                {stage === "loading" ? "Считаем" : "Показать"}
+              </button>
+            </div>
+          ) : (
+            <div
+              className="mt-10"
+              style={{ animation: reduced ? "none" : "qc-result-in 800ms ease-out both" }}
             >
-              Открыть полный разбор
-            </button>
-            <p className="mt-3 text-[14px] text-text-secondary">
-              Для полного разбора понадобятся ещё время и место рождения
-            </p>
-            <button
-              type="button"
-              onClick={reset}
-              className="mt-4 bg-transparent text-[15px] text-text-accent underline-offset-4 hover:underline"
-            >
-              Другая дата
-            </button>
+              <button
+                type="button"
+                className="h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground"
+              >
+                Открыть полный разбор
+              </button>
+              <p className="mt-3 text-[14px] text-text-secondary">
+                Для полного разбора понадобятся ещё время и место рождения
+              </p>
+              <button
+                type="button"
+                onClick={reset}
+                className="mt-4 bg-transparent text-[15px] text-text-accent underline-offset-4 hover:underline"
+              >
+                Другая дата
+              </button>
+            </div>
+          )}
+        </div>
+
+        {/* right column — result area */}
+        <div className="w-full md:w-[46%]">
+          <div className="relative mx-auto aspect-square w-full">
+            <Orbits speedFactor={fast ? 4 : 1} dim={stage === "result"} still={reduced} />
+
+            {stage !== "result" ? (
+              <div
+                className="absolute inset-0 flex items-center justify-center"
+                style={{
+                  opacity: stage === "loading" ? 0 : 1,
+                  transform: stage === "loading" ? "scale(0.85)" : "scale(1)",
+                  transition: reduced ? "none" : "opacity 500ms ease-out, transform 500ms ease-out",
+                }}
+              >
+                <span
+                  className="font-mono text-text-accent"
+                  style={{ fontSize: "clamp(100px, 12vw, 220px)", lineHeight: 1 }}
+                  aria-hidden="true"
+                >
+                  ?
+                </span>
+              </div>
+            ) : (
+              <div
+                className="absolute inset-0 flex flex-col items-center justify-center px-4 text-center"
+                style={{ animation: reduced ? "none" : "qc-result-in 800ms ease-out both" }}
+              >
+                <div
+                  className="font-mono text-text-accent"
+                  style={{ fontSize: "clamp(100px, 12vw, 220px)", lineHeight: 1 }}
+                >
+                  {card?.n}
+                </div>
+                <div
+                  className="mt-2 font-display text-text-primary"
+                  style={{
+                    fontSize: "clamp(28px, 3vw, 52px)",
+                    letterSpacing: "0.01em",
+                    lineHeight: 1.08,
+                  }}
+                >
+                  {card?.name}
+                </div>
+                <p
+                  className="mt-4 max-w-[340px] text-text-secondary"
+                  style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
+                >
+                  {card?.line}
+                </p>
+              </div>
+            )}
           </div>
-        )}
+        </div>
       </div>
     </section>
   );
