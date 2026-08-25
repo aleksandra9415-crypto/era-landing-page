@@ -164,12 +164,14 @@ function DirectionCard({
   image,
   starsEnabled,
   liftEnabled,
+  reducedMotion,
 }: {
   title: string;
   desc: string;
   image: string;
   starsEnabled: boolean;
   liftEnabled: boolean;
+  reducedMotion: boolean;
 }) {
   const [active, setActive] = useState(false);
   const [card, setCard] = useState(0);
