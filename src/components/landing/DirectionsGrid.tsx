@@ -313,6 +313,7 @@ export function DirectionsGrid() {
               image={d.image}
               starsEnabled={!isMobile && !reduced}
               liftEnabled={!reduced}
+              reducedMotion={reduced}
             />
           ))}
         </div>
