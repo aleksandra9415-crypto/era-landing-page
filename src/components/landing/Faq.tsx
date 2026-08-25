@@ -41,7 +41,7 @@ export function Faq() {
               style={{ fontSize: 17 }}
             >
               {item.q}
-              <span className="text-text-accent peer-checked:hidden" aria-hidden="true">
+              <span className="text-text-accent" aria-hidden="true">
                 +
               </span>
             </label>
