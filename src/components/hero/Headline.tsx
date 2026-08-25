@@ -21,12 +21,12 @@ export function Headline() {
   }, [reduced]);
 
   return (
-    <div className="flex h-full flex-col items-start justify-center">
+    <div className="flex h-full flex-col items-start justify-center md:items-end">
       {/* All words stay in the DOM for SEO; visibility is CSS-driven. */}
       {/* The invisible longest word fixes the container width so the left */}
       {/* alignment line does not shift when the active word changes. */}
       <h1
-        className="relative whitespace-nowrap max-w-full font-display font-bold uppercase text-text-primary leading-[1.05] text-[clamp(32px,9vw,64px)] md:text-[clamp(40px,6.2vw,170px)]"
+        className="relative whitespace-nowrap font-display font-bold uppercase text-text-primary leading-[1.05] text-left md:text-right text-[clamp(30px,8.5vw,60px)] md:text-[clamp(36px,5.2vw,150px)]"
         style={{ minHeight: "1.05em" }}
       >
         {WORDS.map((w, i) => (
@@ -40,12 +40,12 @@ export function Headline() {
         <span className="invisible">СХОДИТСЯ</span>
       </h1>
 
-      <div className="relative mt-5 h-[2.75em] w-full">
+      <div className="relative mt-[20px] h-[2.75em] w-full md:h-[1.5em]">
         {WORDS.map((w, i) => (
           <p
             key={w.word}
             aria-hidden={i !== index}
-            className={`word-slot text-text-secondary text-[clamp(15px,1.2vw,22px)] leading-snug ${
+            className={`word-slot text-text-secondary text-left text-[clamp(15px,1.2vw,22px)] leading-snug md:whitespace-nowrap md:text-right ${
               i === index ? "word-slot-active" : "word-slot-leaving"
             }`}
           >
@@ -56,7 +56,7 @@ export function Headline() {
 
       <button
         type="button"
-        className="bg-accent mt-8 rounded-lg text-[16px] text-white transition-opacity hover:opacity-90"
+        className="bg-accent mt-[32px] self-start rounded-lg md:self-end text-[16px] text-white transition-opacity hover:opacity-90"
         style={{ padding: "16px 32px" }}
       >
         Рассчитать бесплатно
