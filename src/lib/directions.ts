@@ -18,6 +18,6 @@ export const directions: Direction[] = [
   { id: "natal", title: "Натальная карта", desc: "Небо в минуту твоего рождения", image: natalImg },
   { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле", image: humandesignImg },
   { id: "numerology", title: "Нумерология", desc: "Числа, из которых ты собран", image: numerologyImg },
-  { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя", image: tarotImg },
+  { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя", image: tarotImg.url },
   { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система", image: synastryImg },
 ];

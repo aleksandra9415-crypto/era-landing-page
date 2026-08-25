@@ -22,7 +22,7 @@ export function HowItWorks() {
             style={{ aspectRatio: "2 / 3" }}
           >
             <img
-              src={tarotImg}
+              src={tarotImg.url}
               alt=""
               aria-hidden="true"
               className="absolute inset-0 h-full w-full object-cover"
