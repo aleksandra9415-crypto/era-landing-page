@@ -169,7 +169,7 @@ export function ExampleScheme() {
               color: "var(--text-primary)",
             }}
           >
-            {datePart("date-day", "15")}
+            {datePart("date-day", "26")}
             <span>.</span>
             {datePart("date-month", "07")}
             <span>.</span>
@@ -179,14 +179,8 @@ export function ExampleScheme() {
 
         {/* 2 — diamond */}
         <div className="scheme-diagram flex flex-col items-center">
-          <p className="text-center text-text-secondary" style={{ fontSize: 14 }}>
-            {isMobile
-              ? "Нажми на число — увидишь, откуда оно взялось"
-              : "Наведи на число — увидишь, откуда оно взялось"}
-          </p>
-
           <div
-            className="relative mt-6 w-[min(320px,86vw)] md:w-[min(520px,42vw)]"
+            className="relative w-[min(320px,86vw)] md:w-[min(520px,42vw)]"
             style={{ aspectRatio: "1 / 1" }}
           >
             <div className="scheme-halo pointer-events-none absolute inset-0" aria-hidden="true" />
