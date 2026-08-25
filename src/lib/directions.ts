@@ -1,9 +1,9 @@
-import matrixImg from "@/assets/matrix.jpg";
+import matrixImg from "@/assets/matrix.png.asset.json";
 import natalImg from "@/assets/natal.jpg";
 import humandesignImg from "@/assets/humandesign.png.asset.json";
 import numerologyImg from "@/assets/numerology.jpg";
 import tarotImg from "@/assets/tarot.png.asset.json";
-import synastryImg from "@/assets/synastry.jpg";
+import synastryImg from "@/assets/synastry.png.asset.json";
 
 export type Direction = {
   id: "matrix" | "natal" | "humandesign" | "numerology" | "tarot" | "synastry";
@@ -14,10 +14,10 @@ export type Direction = {
 
 /** Single source of truth for the wheel. */
 export const directions: Direction[] = [
-  { id: "matrix", title: "Матрица судьбы", desc: "Твой рисунок в 22 арканах", image: matrixImg },
+  { id: "matrix", title: "Матрица судьбы", desc: "Твой рисунок в 22 арканах", image: matrixImg.url },
   { id: "natal", title: "Натальная карта", desc: "Небо в минуту твоего рождения", image: natalImg },
   { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле", image: humandesignImg.url },
   { id: "numerology", title: "Нумерология", desc: "Числа, из которых ты собран", image: numerologyImg },
   { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя", image: tarotImg.url },
-  { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система", image: synastryImg },
+  { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система", image: synastryImg.url },
 ];
