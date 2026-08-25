@@ -1,4 +1,4 @@
-import tarotImg from "@/assets/tarot.jpg";
+import tarotImg from "@/assets/tarot.png.asset.json";
 import { Section, CARD_GRADIENT } from "./Section";
 
 const STEPS = [
@@ -22,7 +22,7 @@ export function HowItWorks() {
             style={{ aspectRatio: "2 / 3" }}
           >
             <img
-              src={tarotImg}
+              src={tarotImg.url}
               alt=""
               aria-hidden="true"
               className="absolute inset-0 h-full w-full object-cover"
