@@ -90,6 +90,52 @@ function SectionStars({ count }: { count: number }) {
   );
 }
 
+type CardStar = {
+  id: number;
+  fromX: number;
+  fromY: number;
+  toX: number;
+  toY: number;
+  size: number;
+  opacity: number;
+  delay: number;
+};
+
+const INSET = 24;
+
+/** Target point on the card perimeter, 24px inside the contour. */
+function perimeterPos(i: number, total: number) {
+  const t = (i + 0.5) / total;
+  const p = t * 4; // four sides
+  const a = INSET;
+  const b = 100 - INSET / 4; // in percent-ish space handled below
+  void b;
+  if (p < 1) return { x: `calc(${p * 100}% - ${p * 2 * a}px + ${a}px)`, y: `${a}px` };
+  if (p < 2) {
+    const q = p - 1;
+    return { x: `calc(100% - ${a}px)`, y: `calc(${q * 100}% - ${q * 2 * a}px + ${a}px)` };
+  }
+  if (p < 3) {
+    const q = 1 - (p - 2);
+    return { x: `calc(${q * 100}% - ${q * 2 * a}px + ${a}px)`, y: `calc(100% - ${a}px)` };
+  }
+  const q = 1 - (p - 3);
+  return { x: `${a}px`, y: `calc(${q * 100}% - ${q * 2 * a}px + ${a}px)` };
+}
+
+function buildCardStars(count: number): CardStar[] {
+  return Array.from({ length: count }, (_, i) => ({
+    id: i,
+    fromX: rand(-38, 138),
+    fromY: rand(-38, 138),
+    toX: 0,
+    toY: 0,
+    size: rand(1.4, 2.8),
+    opacity: rand(0.45, 0.95),
+    delay: rand(0, 120),
+  }));
+}
+
 function DirectionCard({
   title,
   desc,
@@ -104,9 +150,35 @@ function DirectionCard({
   reducedMotion: boolean;
 }) {
   const [active, setActive] = useState(false);
+  const stars = useMemo(() => buildCardStars(14), []);
 
   return (
     <div className="relative h-[var(--card)] w-[var(--card)]">
+      {!reducedMotion && (
+        <div aria-hidden="true" className="pointer-events-none absolute inset-0 z-0">
+          {stars.map((s, i) => {
+            const target = perimeterPos(i, stars.length);
+            return (
+              <span
+                key={s.id}
+                className="absolute rounded-full bg-text-primary"
+                style={{
+                  width: s.size,
+                  height: s.size,
+                  left: active ? target.x : `${s.fromX}%`,
+                  top: active ? target.y : `${s.fromY}%`,
+                  opacity: active ? 0 : s.opacity,
+                  transform: "translate(-50%, -50%)",
+                  boxShadow: "0 0 6px rgba(230, 240, 239, 0.7)",
+                  transition: active
+                    ? `left 700ms cubic-bezier(0.22, 0.8, 0.2, 1) ${s.delay}ms, top 700ms cubic-bezier(0.22, 0.8, 0.2, 1) ${s.delay}ms, opacity 260ms ease-in 440ms`
+                    : `left 520ms ease-out ${s.delay}ms, top 520ms ease-out ${s.delay}ms, opacity 240ms ease-out 120ms`,
+                }}
+              />
+            );
+          })}
+        </div>
+      )}
       <button
         type="button"
         onClick={() => {}}
