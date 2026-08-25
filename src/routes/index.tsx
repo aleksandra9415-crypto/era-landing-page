@@ -1,24 +1,47 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { Header } from "@/components/hero/Header";
+import { StarField } from "@/components/hero/StarField";
+import { DirectionRing } from "@/components/hero/DirectionRing";
+import { ForegroundArc } from "@/components/hero/ForegroundArc";
+import { Headline } from "@/components/hero/Headline";
+import { Grain } from "@/components/hero/Grain";
 
-// No head() here: the home route inherits title/description/og/twitter from
-// __root.tsx, and ships no og:image so serve-time hosting can inject the
-// project's social preview (explicit og:image or latest screenshot).
 export const Route = createFileRoute("/")({
+  head: () => ({
+    meta: [
+      { title: "Моя.Эра — шесть систем, один твой рисунок" },
+      {
+        name: "description",
+        content:
+          "Матрица судьбы, натальная карта, дизайн человека, нумерология, таро и совместимость — шесть расчётов по дате рождения в одном сервисе.",
+      },
+      { property: "og:title", content: "Моя.Эра — шесть систем, один твой рисунок" },
+      {
+        property: "og:description",
+        content:
+          "Шесть систем считают тебя по-разному. И сходятся. Начни с бесплатного расчёта в Моя.Эра.",
+      },
+    ],
+  }),
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. See ./README.md for routing conventions.
 function Index() {
   return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
+    <main className="relative h-screen w-full overflow-hidden bg-bg-page">
+      <StarField />
+      <ForegroundArc />
+      <Grain />
+      <Header />
+
+      <div className="relative z-[15] mx-auto flex h-full max-w-[1440px] flex-col items-start justify-center gap-10 px-6 pt-24 md:grid md:grid-cols-2 md:items-center md:gap-0 md:px-12 md:pt-0">
+        <div className="order-2 flex justify-center md:order-1 md:justify-start">
+          <DirectionRing />
+        </div>
+        <div className="order-1 md:order-2 md:pl-8">
+          <Headline />
+        </div>
+      </div>
+    </main>
   );
 }
