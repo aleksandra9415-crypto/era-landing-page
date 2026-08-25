@@ -316,7 +316,7 @@ export function QuickCalc({
                 type="button"
                 onClick={handleSubmit}
                 disabled={!complete || dateInvalid || stage === "loading"}
-                className="mt-5 h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
+                className="qc-focus mt-5 h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
                 style={{ opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1 }}
               >
                 {stage === "loading" ? "Считаем" : "Показать"}
