@@ -198,8 +198,19 @@ export function DirectionWheel() {
         return (
           <div
             key={d.id}
+            role="button"
+            tabIndex={0}
             aria-current={isActive}
-            className="absolute"
+            aria-label={d.title}
+            onClick={() => activate(i, isActive)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                if (isActive) openDirection();
+                else goTo(i);
+              }
+            }}
+            className="wheel-card absolute cursor-pointer"
             style={{
               left: x,
               top: y,
@@ -211,6 +222,7 @@ export function DirectionWheel() {
               height: side,
             }}
           >
+
             <div
               className="bg-surface-1 relative h-full w-full overflow-hidden border"
               style={{
