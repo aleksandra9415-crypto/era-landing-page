@@ -72,7 +72,7 @@ export function DirectionRing() {
   const onPointerUp = () => {
     if (!dragRef.current.active) return;
     dragRef.current.active = false;
-    snapTo(((Math.round(-rotationRef.current / step) % COUNT) + COUNT * 10) % COUNT);
+    snapTo(((Math.round(-rotationRef.current / step) % COUNT) + COUNT) % COUNT);
   };
 
   return (
@@ -103,7 +103,8 @@ export function DirectionRing() {
 
       {/* items */}
       {DIRECTIONS.map((d, i) => {
-        const angle = (-90 + i * step + rotation) * (Math.PI / 180);
+        const offset = wrapOffset(i + pos);
+        const angle = (-90 + offset * step) * (Math.PI / 180);
         const x = Math.cos(angle) * radius;
         const y = Math.sin(angle) * radius;
         const isActive = i === activeIndex;
