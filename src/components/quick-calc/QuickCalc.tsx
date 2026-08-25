@@ -172,27 +172,25 @@ export function QuickCalc({
       className="qc-plate relative z-[2] w-full overflow-hidden"
       style={{
         background: "#000000",
-        borderTop: "1px solid var(--border)",
+        borderTop: "2px solid rgba(159, 186, 185, 0.5)",
         borderTopLeftRadius: `100% ${ARC_H}`,
         borderTopRightRadius: `100% ${ARC_H}`,
         marginTop: `calc(-1 * ${ARC_H})`,
-        boxShadow: "0 -40px 90px rgba(0, 0, 0, 0.8)",
-        paddingTop: `calc(${ARC_H} + 40px + clamp(40px, 6vh, 100px))`,
+        paddingTop: `calc(${ARC_H} + 60px)`,
         paddingBottom: "clamp(120px, 14vh, 220px)",
       }}
     >
-      {/* edge light */}
+      {/* inner edge highlight */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[160px]"
+        className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[60px]"
         style={{
-          background: "linear-gradient(to bottom, rgba(12, 79, 88, 0.45), rgba(12, 79, 88, 0))",
-          maskImage: "linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.3))",
-          WebkitMaskImage: "linear-gradient(to right, rgba(0,0,0,1), rgba(0,0,0,0.3))",
+          background: "linear-gradient(to bottom, rgba(12, 79, 88, 0.4), rgba(12, 79, 88, 0))",
           borderTopLeftRadius: `100% ${ARC_H}`,
           borderTopRightRadius: `100% ${ARC_H}`,
         }}
       />
+
 
       {/* grain */}
       <div
