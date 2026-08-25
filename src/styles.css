@@ -137,6 +137,25 @@
 :root {
   --hero-card: min(30vw, 48vh);
 }
+/* Hero: текстовый блок — шириной с карточку, по центру правой половины */
+.hero-text-block {
+  position: absolute;
+  left: 8vw;
+  top: 8vh;
+  width: 84vw;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+@media (min-width: 768px) {
+  .hero-text-block {
+    left: calc(75vw - var(--hero-card) / 2);
+    top: 44vh;
+    width: var(--hero-card);
+    transform: translateY(-50%);
+  }
+}
+
 
 /* Hero headline: кегль соразмерен карточке колеса */
 .hero-headline {
