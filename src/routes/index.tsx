@@ -28,21 +28,25 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="relative h-screen w-full overflow-hidden bg-bg-page">
-      <StarField />
-      <ForegroundArc />
-      <Grain />
-      <Header />
+    <main className="relative w-full bg-bg-page">
+      <div className="relative h-screen w-full overflow-hidden bg-bg-page">
+        <StarField />
+        <ForegroundArc />
+        <Grain />
+        <Header />
 
-      <div className="absolute inset-0 z-[12]">
-        <DirectionWheel />
-      </div>
+        <div className="absolute inset-0 z-[12]">
+          <DirectionWheel />
+        </div>
 
-      <div className="pointer-events-none absolute inset-0 z-[15] w-full">
-        <div className="pointer-events-auto absolute left-[4vw] right-[4vw] top-[8vh] box-border overflow-visible md:left-auto md:right-[6vw] md:top-[44vh] md:w-[46vw] md:-translate-y-1/2">
-          <Headline />
+        <div className="pointer-events-none absolute inset-0 z-[15] w-full">
+          <div className="pointer-events-auto absolute left-[4vw] right-[4vw] top-[8vh] box-border overflow-visible md:left-auto md:right-[6vw] md:top-[44vh] md:w-[46vw] md:-translate-y-1/2">
+            <Headline />
+          </div>
         </div>
       </div>
+
+      <QuickCalc />
     </main>
   );
 }
