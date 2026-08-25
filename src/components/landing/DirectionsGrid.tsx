@@ -234,9 +234,17 @@ function DirectionCard({
         className="group relative z-10 block h-full w-full cursor-pointer overflow-hidden text-left"
         style={{
           borderRadius: 18,
-          border: `1px solid ${active ? "color-mix(in srgb, var(--text-accent) 60%, transparent)" : "var(--border)"}`,
+          border: `1px solid ${active ? "rgba(255, 255, 255, 0.95)" : "var(--border)"}`,
+          boxShadow:
+            active && !reducedMotion
+              ? "0 0 26px rgba(230, 240, 239, 0.3), inset 0 0 14px rgba(230, 240, 239, 0.08)"
+              : "none",
           transform: liftEnabled && active ? "translateY(-6px)" : "translateY(0)",
-          transition: "transform 300ms ease, border-color 300ms ease",
+          transition: reducedMotion
+            ? "none"
+            : active
+              ? "transform 300ms ease, border-color 500ms ease-out 340ms, box-shadow 600ms ease-out 340ms"
+              : "transform 300ms ease, border-color 400ms ease-out, box-shadow 400ms ease-out",
           outlineOffset: 4,
         }}
       >
