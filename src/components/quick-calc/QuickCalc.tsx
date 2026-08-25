@@ -7,7 +7,7 @@ const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 const selectClass =
   "h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary outline-none transition-colors focus:border-text-accent";
 
-const ARC_H = "clamp(90px, 7vw, 180px)";
+const ARC_H = "clamp(140px, 11vw, 280px)";
 
 type OrbitSpec = {
   /** radius in % of area width */
@@ -21,10 +21,11 @@ type OrbitSpec = {
 };
 
 const ORBITS: OrbitSpec[] = [
-  { r: 34, squash: 0.32, tilt: -18, period: 12, dot: 5, opacity: 0.9, phases: [0, 180] },
-  { r: 44, squash: 0.26, tilt: 28, period: 19, dot: 4, opacity: 0.6, phases: [0] },
-  { r: 52, squash: 0.4, tilt: -62, period: 27, dot: 3, opacity: 0.45, phases: [0, 140] },
+  { r: 34, squash: 0.32, tilt: -18, period: 12, dot: 8, opacity: 1, phases: [0, 180] },
+  { r: 44, squash: 0.26, tilt: 28, period: 19, dot: 6, opacity: 0.75, phases: [0] },
+  { r: 52, squash: 0.4, tilt: -62, period: 27, dot: 5, opacity: 0.55, phases: [0, 140] },
 ];
+
 
 function Chevron() {
   return (
