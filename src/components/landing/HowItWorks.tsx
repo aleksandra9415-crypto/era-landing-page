@@ -164,6 +164,20 @@ function TarotCard({ step }: { step: (typeof STEPS)[number] }) {
 }
 
 export function HowItWorks() {
+  const reducedMotion = useReducedMotion();
+  const titleRef = useRef<HTMLHeadingElement>(null);
+
+  const scrollToDirections = () => {
+    const section = document.getElementById("directions");
+    if (!section) return;
+    const title = section.querySelector("h2") as HTMLHeadingElement | null;
+    section.scrollIntoView({ behavior: reducedMotion ? "auto" : "smooth" });
+    if (title) {
+      title.setAttribute("tabIndex", "-1");
+      title.focus({ preventScroll: true });
+    }
+  };
+
   return (
     <Section
       id="how"
@@ -178,6 +192,22 @@ export function HowItWorks() {
           <TarotCard key={s.title} step={s} />
         ))}
       </div>
+
+      <div className="mt-10 flex w-full justify-center md:mt-14">
+        <button
+          type="button"
+          onClick={scrollToDirections}
+          className="inline-flex items-center justify-center rounded-[12px] border border-[color-mix(in_srgb,var(--text-accent)_50%,transparent)] bg-transparent px-9 text-[--text-accent] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--text-accent)_100%,transparent)] hover:bg-[rgba(122,93,168,0.12)] focus:outline-none focus-visible:outline-[2px_solid_var(--text-accent)] focus-visible:outline-offset-[3px]"
+          style={{
+            width: "70vw",
+            height: 52,
+            fontSize: "clamp(15px, 1.1vw, 18px)",
+          }}
+        >
+          Какие шесть систем?
+        </button>
+      </div>
     </Section>
   );
 }
+
