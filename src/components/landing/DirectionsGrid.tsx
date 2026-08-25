@@ -96,6 +96,7 @@ export function DirectionsGrid() {
   const [size, setSize] = useState<{ w: number; h: number } | null>(null);
   const [hovered, setHovered] = useState<number | null>(null);
   const [flights, setFlights] = useState<Map<number, Flight> | null>(null);
+  const [returning, setReturning] = useState<Map<number, Flight> | null>(null);
   const [willChange, setWillChange] = useState(false);
   const returnTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -158,12 +159,14 @@ export function DirectionsGrid() {
     if (!animate) return;
     if (returnTimer.current) clearTimeout(returnTimer.current);
     setWillChange(true);
+    setReturning(null);
     setFlights(computeFlights(index));
   };
 
   const onLeave = () => {
     setHovered(null);
     if (!animate) return;
+    setReturning(flights);
     setFlights(null);
     if (returnTimer.current) clearTimeout(returnTimer.current);
     returnTimer.current = setTimeout(() => setWillChange(false), 1000);
@@ -200,10 +203,9 @@ export function DirectionsGrid() {
                 willChange: willChange ? "transform" : undefined,
                 transition: animate
                   ? f
-                    ? `transform 700ms ${EASE} ${f.delay}ms, opacity 240ms ease-in ${flightDelay + 460}ms`
-                    : `transform 700ms ${EASE} ${stars[i] && flights === null ? 0 : 0}ms, opacity 300ms ease 0ms`
+                    ? `transform 700ms ${EASE} ${f.delay}ms, opacity 240ms ease-in ${f.delay + 460}ms`
+                    : `transform 700ms ${EASE} ${returning?.get(i)?.back ?? 0}ms, opacity 300ms ease 0ms`
                   : "none",
-                transitionDelay: undefined,
               }}
             />
           );
