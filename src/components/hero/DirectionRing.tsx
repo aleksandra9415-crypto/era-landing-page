@@ -35,20 +35,29 @@ export function DirectionRing() {
     return () => cancelAnimationFrame(raf);
   }, [reduced, paused]);
 
-  const activeIndex =
-    ((Math.round(-rotationRef.current / step) % COUNT) + COUNT * 10) % COUNT;
+  /** continuous slot position; 0 = active (top of the ring/arc) */
+  const pos = rotationRef.current / step;
+  /** wrap an offset into (-COUNT/2, COUNT/2] so items spread evenly around */
+  const wrapOffset = (v: number) => {
+    let o = ((v % COUNT) + COUNT) % COUNT;
+    if (o > COUNT / 2) o -= COUNT;
+    return o;
+  };
+  const activeIndex = ((Math.round(-pos) % COUNT) + COUNT) % COUNT;
   const active = DIRECTIONS[activeIndex]!;
 
   const snapTo = useCallback(
     (index: number) => {
       setRotation((r) => {
         const target = -index * step;
-        const turns = Math.round((r - target) / 360);
-        return target + turns * 360;
+        const period = COUNT * step;
+        const turns = Math.round((r - target) / period);
+        return target + turns * period;
       });
     },
     [step],
   );
+
 
   const onPointerDown = (e: React.PointerEvent) => {
     dragRef.current = { active: true, lastX: e.clientX };
