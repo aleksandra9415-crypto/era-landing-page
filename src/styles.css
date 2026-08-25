@@ -64,6 +64,7 @@
   --color-text-primary: var(--text-primary);
   --color-text-secondary: var(--text-secondary);
   --color-text-accent: var(--text-accent);
+  --color-text-danger: var(--text-danger);
   --color-border: var(--border);
 
   --color-background: var(--background);
