@@ -9,7 +9,7 @@ const LINKS = [
 export function Header() {
   return (
     <header className="absolute inset-x-0 top-0 z-30 flex items-center justify-between px-6 py-6 md:px-12">
-      <img src={logoAsset.url} alt="Моя.Эра" className="h-8 w-auto" />
+      <img src={logoAsset.url} alt="Моя.Эра" className="h-12 w-auto md:h-14" />
       <nav className="hidden items-center gap-8 md:flex">
         {LINKS.map((l) => (
           <a

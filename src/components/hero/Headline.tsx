@@ -26,8 +26,8 @@ export function Headline() {
       {/* The invisible longest word fixes the container width so the left */}
       {/* alignment line does not shift when the active word changes. */}
       <h1
-        className="relative whitespace-nowrap text-left font-display uppercase text-text-primary leading-[1.05] text-[clamp(46px,7.2vw,190px)]"
-        style={{ minHeight: "1.05em", letterSpacing: "0.015em", fontWeight: 700 }}
+        className="relative whitespace-nowrap text-left font-display uppercase text-text-primary leading-[1.05] text-[clamp(48px,7.5vw,200px)]"
+        style={{ minHeight: "1.05em", letterSpacing: "0.02em", fontWeight: 400 }}
       >
         {WORDS.map((w, i) => (
           <span
