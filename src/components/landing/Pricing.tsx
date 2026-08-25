@@ -75,6 +75,29 @@ const MOBILE_ORDER: Record<string, string> = {
   free: "order-3 md:order-none",
 };
 
+function Price({ value }: { value: string }) {
+  const number = value.split(" ₽")[0];
+  return (
+    <div
+      className="font-mono text-text-primary"
+      style={{ fontSize: "clamp(32px, 2.9vw, 50px)", marginTop: 22, lineHeight: 1.05 }}
+    >
+      <span>{number}</span>
+      <span
+        style={{
+          fontSize: "62%",
+          color: "var(--text-primary)",
+          opacity: 0.7,
+          marginLeft: 6,
+          verticalAlign: "baseline",
+        }}
+      >
+        ₽
+      </span>
+    </div>
+  );
+}
+
 export function Pricing() {
   const [period, setPeriod] = useState<"month" | "year">("year");
 
@@ -141,25 +164,33 @@ export function Pricing() {
                 {plan.primary && <span className="pricing-card-glow" aria-hidden="true" />}
 
                 <div className="relative flex h-full flex-col">
-                  {plan.primary && (
-                    <div
-                      className="text-text-accent"
-                      style={{
-                        fontSize: 12,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.08em",
-                        marginBottom: 10,
-                      }}
-                    >
-                      Основной
-                    </div>
-                  )}
-
                   <h3
                     className="font-display text-text-primary"
-                    style={{ fontSize: "clamp(20px, 1.6vw, 28px)", fontWeight: 400, lineHeight: 1.15 }}
+                    style={{
+                      fontSize: "clamp(20px, 1.6vw, 28px)",
+                      fontWeight: 400,
+                      lineHeight: 1.15,
+                      display: "flex",
+                      alignItems: "baseline",
+                      justifyContent: "space-between",
+                      gap: 16,
+                    }}
                   >
-                    {plan.title}
+                    <span>{plan.title}</span>
+                    {plan.primary && (
+                      <span
+                        style={{
+                          fontFamily: "var(--font-sans)",
+                          fontSize: 12,
+                          color: "var(--text-accent)",
+                          textTransform: "uppercase",
+                          letterSpacing: "0.08em",
+                          whiteSpace: "nowrap",
+                        }}
+                      >
+                        Основной
+                      </span>
+                    )}
                   </h3>
 
                   <p
@@ -169,12 +200,7 @@ export function Pricing() {
                     {plan.lead}
                   </p>
 
-                  <div
-                    className="font-mono text-text-primary"
-                    style={{ fontSize: "clamp(32px, 2.9vw, 50px)", marginTop: 22, lineHeight: 1.05 }}
-                  >
-                    {price}
-                  </div>
+                  {price && <Price value={price} />}
 
                   <div
                     className="text-text-secondary"
