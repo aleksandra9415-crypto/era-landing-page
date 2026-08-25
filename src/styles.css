@@ -158,7 +158,7 @@
 @media (max-width: 767px) {
   .hero-text-block {
     top: auto;
-    bottom: 16vh;
+    bottom: 20vh;
     transform: none;
   }
 }
