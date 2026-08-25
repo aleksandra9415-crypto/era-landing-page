@@ -12,11 +12,12 @@ function computeMetrics(): Metrics {
   const vw = typeof window === "undefined" ? 1440 : window.innerWidth;
   const vh = typeof window === "undefined" ? 900 : window.innerHeight;
   const mobile = vw < 768;
-  const r = (mobile ? 1.3 : 0.58) * vw;
+  const r = mobile ? 1.1 * vw : 0.62 * vh;
+  const apexY = (mobile ? 0.58 : 0.44) * vh;
   return {
     r,
-    centerX: (mobile ? 0.5 : 0.42) * vw,
-    centerY: (mobile ? 0.62 : 0.56) * vh + r,
+    centerX: (mobile ? 0.5 : 0.3) * vw,
+    centerY: apexY + r,
     mobile,
   };
 }
@@ -121,6 +122,49 @@ export function DirectionWheel() {
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
     >
+      {/* visible orbit line, clipped by the screen edges */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute rounded-full border"
+        style={{
+          width: r * 2,
+          height: r * 2,
+          left: centerX,
+          top: centerY,
+          transform: "translate(-50%, -50%)",
+          borderColor: "var(--border)",
+          borderWidth: 1,
+          opacity: 0.35,
+        }}
+      />
+
+      {/* orbit dots, under the cards */}
+      {directions.map((d, i) => {
+        const angle = offset + i * STEP;
+        const rad = (angle * Math.PI) / 180;
+        const x = centerX + r * Math.sin(rad);
+        const y = centerY - r * Math.cos(rad);
+        const isActive = i === activeIndex;
+        const size = isActive ? 10 : 8;
+        return (
+          <div
+            key={`dot-${d.id}`}
+            aria-hidden="true"
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              width: size,
+              height: size,
+              left: x,
+              top: y,
+              transform: "translate(-50%, -50%)",
+              backgroundColor: isActive ? "var(--text-accent)" : "var(--surface-2)",
+              opacity: isActive ? 1 : 0.6,
+              transition: `left ${duration}ms ease-out, top ${duration}ms ease-out, width 400ms ease-out, height 400ms ease-out, background-color 400ms ease-out, opacity 400ms ease-out`,
+            }}
+          />
+        );
+      })}
+
       {directions.map((d, i) => {
         const angle = offset + i * STEP;
         const rad = (angle * Math.PI) / 180;
@@ -135,11 +179,11 @@ export function DirectionWheel() {
             style={{
               left: x,
               top: y,
-              transform: `translate(-50%, -50%)${isActive ? "" : " scale(0.75)"}`,
-              opacity: isActive ? 1 : 0.35,
-              filter: isActive ? "none" : "blur(2px)",
+              transform: `translate(-50%, -50%)${isActive ? "" : " scale(0.7)"}`,
+              opacity: isActive ? 1 : 0.4,
+              filter: isActive ? "none" : "blur(1.5px)",
               transition: `left ${duration}ms ease-out, top ${duration}ms ease-out, transform 400ms ease-out, opacity 400ms ease-out, filter 400ms ease-out`,
-              width: mobile ? "70vw" : "clamp(300px, 22vw, 400px)",
+              width: mobile ? "70vw" : "clamp(280px, 16vw, 420px)",
             }}
           >
             <div
@@ -147,7 +191,7 @@ export function DirectionWheel() {
               style={{
                 borderColor: "var(--border)",
                 borderRadius: 16,
-                padding: 32,
+                padding: 28,
               }}
             >
               <Glyph name={d.id} size={64} />
