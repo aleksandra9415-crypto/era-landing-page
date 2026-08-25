@@ -34,7 +34,7 @@ function buildStars(w: number, h: number, count: number): Star[] {
     let x: number;
     let y: number;
     if (i < clustered) {
-      const c = clusters[Math.floor(Math.random() * clusters.length)];
+      const c = clusters[Math.floor(Math.random() * clusters.length)]!;
       x = c.x + gauss() * c.spread;
       y = c.y + gauss() * c.spread;
     } else {

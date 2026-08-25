@@ -37,7 +37,7 @@ export function DirectionRing() {
 
   const activeIndex =
     ((Math.round(-rotationRef.current / step) % COUNT) + COUNT * 10) % COUNT;
-  const active = DIRECTIONS[activeIndex];
+  const active = DIRECTIONS[activeIndex]!;
 
   const snapTo = useCallback(
     (index: number) => {
