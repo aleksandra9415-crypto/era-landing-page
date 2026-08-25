@@ -72,7 +72,7 @@ export function QuickCalc({
 
   return (
     <section
-      id="quick-calc"
+      id={id}
       className="relative w-full bg-bg-page"
       style={{
         paddingTop: "clamp(80px, 10vh, 160px)",
