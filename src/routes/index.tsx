@@ -5,6 +5,7 @@ import { DirectionWheel } from "@/components/hero/DirectionWheel";
 import { ForegroundArc } from "@/components/hero/ForegroundArc";
 import { Headline } from "@/components/hero/Headline";
 import { Grain } from "@/components/hero/Grain";
+import { QuickCalc } from "@/components/quick-calc/QuickCalc";
 
 export const Route = createFileRoute("/")({
   head: () => ({
