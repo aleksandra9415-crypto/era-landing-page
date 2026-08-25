@@ -172,7 +172,11 @@ export function DirectionsGrid() {
     returnTimer.current = setTimeout(() => setWillChange(false), 1000);
   };
 
-  useEffect(() => () => returnTimer.current && clearTimeout(returnTimer.current), []);
+  useEffect(() => {
+    return () => {
+      if (returnTimer.current) clearTimeout(returnTimer.current);
+    };
+  }, []);
 
   return (
     <section
