@@ -76,7 +76,7 @@ const COLUMNS = [
   {
     n: "03",
     title: "ИИ читает, а не сочиняет",
-    text: "Искусственный интеллект не придумывает твой разбор.\u00a0\nОн объясняет словами\u00a0\nготовый расчёт",
+    text: "Искусственный интеллект не придумывает твой разбор. Он объясняет словами готовый расчёт",
     artifact: <ColumnThreeArtifact />,
     caption: "Число из расчёта — объяснение словами",
   },
@@ -87,23 +87,36 @@ export function NotFortuneTelling() {
     <Section title="Расчёт, а не выдумка">
       <div className="mx-auto mt-12 w-full max-w-[1240px]">
         <div className="nft-grid">
-          {COLUMNS.map((c) => (
-            <div key={c.n} className="nft-col">
-              <div className="font-mono text-text-accent" style={{ fontSize: NUM_SIZE, lineHeight: 1 }}>
+          <div className="nft-line nft-line-1" aria-hidden />
+          <div className="nft-line nft-line-2" aria-hidden />
+          {COLUMNS.map((c, i) => (
+            <div key={c.n} className="nft-col" style={{ ["--col" as string]: i + 1 }}>
+              <div
+                className="nft-cell nft-num font-mono text-text-accent"
+                style={{ fontSize: NUM_SIZE, lineHeight: 1 }}
+              >
                 {c.n}
               </div>
               <h3
-                className="font-display text-text-primary"
+                className="nft-cell nft-title font-display text-text-primary"
                 style={{ fontSize: TITLE_SIZE, fontWeight: 400, letterSpacing: "0.01em", lineHeight: 1.15, marginTop: 14 }}
               >
                 {c.title}
               </h3>
-              <p className="text-text-secondary" style={{ fontSize: TEXT_SIZE, marginTop: 12, lineHeight: 1.55 }}>
+              <p
+                className="nft-cell nft-text text-text-secondary"
+                style={{ fontSize: TEXT_SIZE, marginTop: 12, lineHeight: 1.55 }}
+              >
                 {c.text}
               </p>
-              <div style={{ marginTop: 24, width: "100%", borderTop: RULE }} />
-              <div style={{ marginTop: 20 }}>{c.artifact}</div>
-              <div className="text-text-secondary" style={{ fontSize: 12, opacity: 0.7, marginTop: 12 }}>
+              <div className="nft-cell nft-rule" style={{ marginTop: 24, width: "100%", borderTop: RULE }} />
+              <div className="nft-cell nft-art" style={{ marginTop: 20 }}>
+                {c.artifact}
+              </div>
+              <div
+                className="nft-cell nft-cap text-text-secondary"
+                style={{ fontSize: 12, opacity: 0.7, marginTop: 12 }}
+              >
                 {c.caption}
               </div>
             </div>
@@ -120,26 +133,50 @@ export function NotFortuneTelling() {
       </div>
 
       <style>{`
-        .nft-grid { display: grid; grid-template-columns: 1fr; }
-        .nft-col + .nft-col {
+        .nft-grid { display: grid; grid-template-columns: 1fr; align-items: start; position: relative; row-gap: 0; }
+        .nft-col { display: contents; }
+        .nft-line { display: none; }
+        .nft-col:not(:first-of-type) .nft-num {
           margin-top: 32px;
           padding-top: 32px;
           border-top: ${RULE};
         }
         .nft-closing { text-align: left; margin-left: 0; margin-right: auto; }
         @media (min-width: 768px) {
-          .nft-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 56px; align-items: start; }
-          .nft-col + .nft-col {
+          .nft-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            grid-template-rows: auto auto auto auto auto auto;
+            column-gap: 56px;
+            row-gap: 0;
+          }
+          .nft-col:not(:first-of-type) .nft-num {
             margin-top: 0;
             padding-top: 0;
             border-top: none;
-            border-left: ${RULE};
-            padding-left: 28px;
-            margin-left: -28px;
           }
+          .nft-cell { grid-column: var(--col); }
+          .nft-num { grid-row: 1; }
+          .nft-title { grid-row: 2; }
+          .nft-text { grid-row: 3; }
+          .nft-rule { grid-row: 4; }
+          .nft-art { grid-row: 5; }
+          .nft-cap { grid-row: 6; }
+          .nft-line {
+            display: block;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 1px;
+            background: var(--border);
+            opacity: 0.35;
+            pointer-events: none;
+          }
+          .nft-line-1 { left: calc((100% - 112px) / 3 + 28px); }
+          .nft-line-2 { left: calc(2 * (100% - 112px) / 3 + 84px); }
           .nft-closing { text-align: center; margin-left: auto; margin-right: auto; }
         }
       `}</style>
+
     </Section>
   );
 }
