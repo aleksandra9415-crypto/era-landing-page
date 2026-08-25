@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { StarField } from "@/components/hero/StarField";
-import { DirectionRing } from "@/components/hero/DirectionRing";
+import { DirectionWheel } from "@/components/hero/DirectionWheel";
 import { ForegroundArc } from "@/components/hero/ForegroundArc";
 import { Headline } from "@/components/hero/Headline";
 import { Grain } from "@/components/hero/Grain";
@@ -34,11 +34,12 @@ function Index() {
       <Grain />
       <Header />
 
-      <div className="relative z-[15] mx-auto flex h-full max-w-[1440px] flex-col items-start justify-center gap-10 px-6 pt-24 md:grid md:grid-cols-2 md:items-center md:gap-0 md:px-12 md:pt-0">
-        <div className="order-2 flex justify-center md:order-1 md:justify-start">
-          <DirectionRing />
-        </div>
-        <div className="order-1 md:order-2 md:pl-8">
+      <div className="absolute inset-0 z-[12]">
+        <DirectionWheel />
+      </div>
+
+      <div className="pointer-events-none relative z-[15] mx-auto flex h-full max-w-[1440px] items-start px-6 pt-28 md:items-center md:justify-end md:px-12 md:pt-0">
+        <div className="pointer-events-auto md:max-w-[46%]">
           <Headline />
         </div>
       </div>
