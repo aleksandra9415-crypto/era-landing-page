@@ -1,7 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { StarField } from "@/components/hero/StarField";
-import { DirectionRing } from "@/components/hero/DirectionRing";
+import { DirectionWheel } from "@/components/hero/DirectionWheel";
 import { ForegroundArc } from "@/components/hero/ForegroundArc";
 import { Headline } from "@/components/hero/Headline";
 import { Grain } from "@/components/hero/Grain";
