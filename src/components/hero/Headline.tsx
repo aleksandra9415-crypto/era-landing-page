@@ -61,12 +61,12 @@ export function Headline() {
         ))}
       </h1>
 
-      <div className="relative mt-[24px] h-[7.5em] w-full md:h-[6em]">
+      <div className="relative mt-[24px] h-[4.5em] w-full">
         {PHRASES.map((p, i) => (
           <p
             key={p.l2}
             aria-hidden={i !== index}
-            className={`word-slot text-left text-text-secondary text-[clamp(14px,1.05vw,18px)] ${
+            className={`word-slot text-left text-text-secondary text-[clamp(15px,1.15vw,20px)] ${
               i === index ? "word-slot-active" : "word-slot-leaving"
             }`}
             style={{ lineHeight: 1.5 }}
