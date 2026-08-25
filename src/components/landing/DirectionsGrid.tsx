@@ -188,7 +188,6 @@ export function DirectionsGrid() {
           const f = flights?.get(i);
           const x = (f ? f.x : s.hx) - s.size / 2;
           const y = (f ? f.y : s.hy) - s.size / 2;
-          const flightDelay = f ? f.delay : 0;
           return (
             <span
               key={i}
