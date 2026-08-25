@@ -90,75 +90,23 @@ function SectionStars({ count }: { count: number }) {
   );
 }
 
-
 function DirectionCard({
   title,
   desc,
   image,
-  starsEnabled,
   liftEnabled,
   reducedMotion,
 }: {
   title: string;
   desc: string;
   image: string;
-  starsEnabled: boolean;
   liftEnabled: boolean;
   reducedMotion: boolean;
 }) {
   const [active, setActive] = useState(false);
-  const [card, setCard] = useState(0);
-  const wrapRef = useRef<HTMLDivElement>(null);
-  const stars = useMemo(buildCardStars, []);
-
-  useEffect(() => {
-    const el = wrapRef.current;
-    if (!el) return;
-    const measure = () => setCard(el.clientWidth);
-    measure();
-    const ro = new ResizeObserver(measure);
-    ro.observe(el);
-    return () => ro.disconnect();
-  }, []);
 
   return (
-    <div ref={wrapRef} className="relative isolate h-[var(--card)] w-[var(--card)]">
-      {starsEnabled && card > 0 && (
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute z-0"
-          style={{ inset: -PAD }}
-        >
-          {stars.map((s, i) => {
-            const target = perimeterPos(s, card);
-            const rest = {
-              x: s.restX * (card + PAD * 2),
-              y: s.restY * (card + PAD * 2),
-            };
-            const pos = active ? target : rest;
-            return (
-              <span
-                key={i}
-                className="absolute rounded-full"
-                style={{
-                  width: s.size,
-                  height: s.size,
-                  left: 0,
-                  top: 0,
-                  backgroundColor: "var(--text-primary)",
-                  boxShadow: "0 0 10px 2px rgba(230, 240, 239, 0.45)",
-                  opacity: active ? 0 : 0.9,
-                  transform: `translate3d(${pos.x - s.size / 2}px, ${pos.y - s.size / 2}px, 0)`,
-                  transition: active
-                    ? `transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${s.delay}ms, opacity 260ms ease-in ${440 + s.delay}ms`
-                    : `transform 700ms cubic-bezier(0.22, 1, 0.36, 1) ${200 - s.delay}ms, opacity 300ms ease-out 0ms`,
-                }}
-              />
-            );
-          })}
-        </div>
-      )}
-
+    <div className="relative h-[var(--card)] w-[var(--card)]">
       <button
         type="button"
         onClick={() => {}}
@@ -178,7 +126,7 @@ function DirectionCard({
           transition: reducedMotion
             ? "none"
             : active
-              ? "transform 300ms ease, border-color 500ms ease-out 340ms, box-shadow 600ms ease-out 340ms"
+              ? "transform 300ms ease, border-color 500ms ease-out 240ms, box-shadow 600ms ease-out 240ms"
               : "transform 300ms ease, border-color 400ms ease-out, box-shadow 400ms ease-out",
           outlineOffset: 4,
         }}
