@@ -197,9 +197,8 @@ export function HowItWorks() {
         <button
           type="button"
           onClick={scrollToDirections}
-          className="inline-flex items-center justify-center rounded-[12px] border border-[color-mix(in_srgb,var(--text-accent)_50%,transparent)] bg-transparent px-9 text-[--text-accent] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--text-accent)_100%,transparent)] hover:bg-[rgba(122,93,168,0.12)] focus:outline-none focus-visible:outline-[2px_solid_var(--text-accent)] focus-visible:outline-offset-[3px]"
+          className="inline-flex w-[70vw] items-center justify-center rounded-[12px] border border-[color-mix(in_srgb,var(--text-accent)_50%,transparent)] bg-transparent px-9 text-[--text-accent] transition-all duration-300 hover:border-[color-mix(in_srgb,var(--text-accent)_100%,transparent)] hover:bg-[rgba(122,93,168,0.12)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-[--text-accent] focus-visible:outline-offset-[3px] md:w-auto"
           style={{
-            width: "70vw",
             height: 52,
             fontSize: "clamp(15px, 1.1vw, 18px)",
           }}
@@ -207,6 +206,7 @@ export function HowItWorks() {
           Какие шесть систем?
         </button>
       </div>
+
     </Section>
   );
 }
