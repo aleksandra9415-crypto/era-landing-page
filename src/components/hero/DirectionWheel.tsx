@@ -11,8 +11,8 @@ function computeMetrics(): Metrics {
   const vw = typeof window === "undefined" ? 1440 : window.innerWidth;
   const vh = typeof window === "undefined" ? 900 : window.innerHeight;
   const mobile = vw < 768;
-  const r = mobile ? 1.1 * vw : 0.62 * vh;
-  const apexY = (mobile ? 0.58 : 0.44) * vh;
+  const r = mobile ? 0.85 * vw : 0.62 * vh;
+  const apexY = mobile ? 0.26 * vh : 0.44 * vh;
   return {
     r,
     centerX: (mobile ? 0.5 : 0.3) * vw,
