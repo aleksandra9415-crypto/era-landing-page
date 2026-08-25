@@ -317,10 +317,10 @@
 
 /* ── Интерактивная схема расчёта ─────────────────────────────────── */
 .scheme-node {
-  --node-size: 72px;
-  --node-center: 88px;
-  --node-font: 26px;
-  --node-font-center: 32px;
+  --node-size: 76px;
+  --node-center: 92px;
+  --node-font: 28px;
+  --node-font-center: 34px;
 }
 
 @media (max-width: 767px) {
@@ -331,6 +331,95 @@
     --node-font-center: 24px;
   }
 }
+
+@media (min-width: 768px) {
+  .scheme-layout {
+    display: grid;
+    grid-template-columns: 42% 52%;
+    column-gap: 6%;
+    align-items: center;
+    row-gap: 44px;
+  }
+  .scheme-date {
+    grid-column: 1;
+    grid-row: 1;
+    align-self: end;
+  }
+  .scheme-panel-col {
+    grid-column: 1;
+    grid-row: 2;
+    align-self: start;
+  }
+  .scheme-diagram {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+}
+
+.scheme-halo {
+  background: radial-gradient(
+    circle at 50% 50%,
+    rgba(122, 93, 168, 0.16) 0%,
+    rgba(122, 93, 168, 0) 55%
+  );
+}
+
+.scheme-pulse {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  margin: -2px 0 0 -2px;
+  border-radius: 9999px;
+  background: var(--text-accent);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.scheme-pulse-a {
+  animation: scheme-pulse-a 2.8s linear infinite;
+  animation-delay: 0s;
+}
+.scheme-pulse-b {
+  animation: scheme-pulse-b 2.8s linear infinite;
+  animation-delay: 0.7s;
+}
+.scheme-pulse-c {
+  animation: scheme-pulse-c 2.8s linear infinite;
+  animation-delay: 1.4s;
+}
+.scheme-pulse-d {
+  animation: scheme-pulse-d 2.8s linear infinite;
+  animation-delay: 2.1s;
+}
+
+@keyframes scheme-pulse-a {
+  0% { left: 6%; top: 50%; opacity: 0.7; }
+  89% { opacity: 0.7; }
+  100% { left: 50%; top: 50%; opacity: 0; }
+}
+@keyframes scheme-pulse-b {
+  0% { left: 50%; top: 6%; opacity: 0.7; }
+  89% { opacity: 0.7; }
+  100% { left: 50%; top: 50%; opacity: 0; }
+}
+@keyframes scheme-pulse-c {
+  0% { left: 94%; top: 50%; opacity: 0.7; }
+  89% { opacity: 0.7; }
+  100% { left: 50%; top: 50%; opacity: 0; }
+}
+@keyframes scheme-pulse-d {
+  0% { left: 50%; top: 94%; opacity: 0.7; }
+  89% { opacity: 0.7; }
+  100% { left: 50%; top: 50%; opacity: 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scheme-pulse {
+    display: none;
+  }
+}
+
 
 .scheme-node:focus-visible {
   outline: 2px solid var(--text-accent);
