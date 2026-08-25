@@ -221,11 +221,12 @@ export function QuickCalc({
       />
 
       <div
-        className="relative z-[4] mx-auto flex w-full max-w-[1400px] flex-col items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-0"
+        className="relative z-[4] mx-auto flex w-full max-w-[1600px] flex-col items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
         style={{ paddingLeft: "clamp(24px, 6vw, 120px)", paddingRight: "clamp(24px, 6vw, 120px)" }}
       >
         {/* left column */}
-        <div className="w-full text-left md:w-[46%]">
+        <div className="w-full text-left md:w-[44%]">
+
           <h2
             className="font-display text-text-primary"
             style={{
