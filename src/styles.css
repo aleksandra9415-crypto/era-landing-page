@@ -182,14 +182,22 @@
   to { transform: rotate(360deg); }
 }
 
+/* Quick-calc plate: geometric wedge top and overlap */
+.qc-plate {
+  --wedge-h: clamp(120px, 12vw, 300px);
+  margin-top: calc(-1 * var(--wedge-h));
+}
+
+.qc-wedge {
+  height: var(--wedge-h);
+}
+
 @media (max-width: 767px) {
   .qc-plate {
-    border-top-left-radius: 100% 80px;
-    border-top-right-radius: 100% 80px;
-    margin-top: -80px;
-    padding-top: 140px;
+    --wedge-h: clamp(70px, 16vw, 130px);
   }
 }
+
 
 /* Quick-calc numeral / question mark */
 .qc-numeral {
