@@ -122,6 +122,49 @@ export function DirectionWheel() {
       onPointerUp={endDrag}
       onPointerCancel={endDrag}
     >
+      {/* visible orbit line, clipped by the screen edges */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute rounded-full border"
+        style={{
+          width: r * 2,
+          height: r * 2,
+          left: centerX,
+          top: centerY,
+          transform: "translate(-50%, -50%)",
+          borderColor: "var(--border)",
+          borderWidth: 1,
+          opacity: 0.35,
+        }}
+      />
+
+      {/* orbit dots, under the cards */}
+      {directions.map((d, i) => {
+        const angle = offset + i * STEP;
+        const rad = (angle * Math.PI) / 180;
+        const x = centerX + r * Math.sin(rad);
+        const y = centerY - r * Math.cos(rad);
+        const isActive = i === activeIndex;
+        const size = isActive ? 10 : 8;
+        return (
+          <div
+            key={`dot-${d.id}`}
+            aria-hidden="true"
+            className="pointer-events-none absolute rounded-full"
+            style={{
+              width: size,
+              height: size,
+              left: x,
+              top: y,
+              transform: "translate(-50%, -50%)",
+              backgroundColor: isActive ? "var(--text-accent)" : "var(--surface-2)",
+              opacity: isActive ? 1 : 0.6,
+              transition: `left ${duration}ms ease-out, top ${duration}ms ease-out, width 400ms ease-out, height 400ms ease-out, background-color 400ms ease-out, opacity 400ms ease-out`,
+            }}
+          />
+        );
+      })}
+
       {directions.map((d, i) => {
         const angle = offset + i * STEP;
         const rad = (angle * Math.PI) / 180;
