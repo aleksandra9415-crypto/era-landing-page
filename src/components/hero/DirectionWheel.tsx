@@ -1,0 +1,177 @@
+import { useCallback, useEffect, useRef, useState } from "react";
+import { directions } from "@/lib/directions";
+import { Glyph } from "./Glyph";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
+
+const STEP = 60;
+const COUNT = directions.length;
+
+type Metrics = { centerX: number; centerY: number; r: number; mobile: boolean };
+
+function computeMetrics(): Metrics {
+  const vw = typeof window === "undefined" ? 1440 : window.innerWidth;
+  const vh = typeof window === "undefined" ? 900 : window.innerHeight;
+  const mobile = vw < 768;
+  const r = (mobile ? 1.3 : 0.58) * vw;
+  return {
+    r,
+    centerX: (mobile ? 0.5 : 0.42) * vw,
+    centerY: (mobile ? 0.62 : 0.56) * vh + r,
+    mobile,
+  };
+}
+
+/** wrap into (-180, 180] */
+const wrapDeg = (v: number) => {
+  let a = ((v % 360) + 360) % 360;
+  if (a > 180) a -= 360;
+  return a;
+};
+
+export function DirectionWheel() {
+  const reduced = useReducedMotion();
+  const [metrics, setMetrics] = useState<Metrics>(() => computeMetrics());
+  const [offset, setOffset] = useState(0);
+  const [duration, setDuration] = useState(800);
+  const [interacting, setInteracting] = useState(false);
+  const drag = useRef<{ active: boolean; lastX: number; moved: boolean }>({
+    active: false,
+    lastX: 0,
+    moved: false,
+  });
+  const offsetRef = useRef(0);
+  offsetRef.current = offset;
+
+  useEffect(() => {
+    const onResize = () => setMetrics(computeMetrics());
+    window.addEventListener("resize", onResize);
+    onResize();
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  // stepped auto-rotation: 4000ms pause, then one 60° step over 800ms
+  useEffect(() => {
+    if (reduced || interacting) return;
+    const id = setInterval(() => {
+      setDuration(800);
+      setOffset((o) => o - STEP);
+    }, 4800);
+    return () => clearInterval(id);
+  }, [reduced, interacting]);
+
+  const resume = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const pause = useCallback(() => {
+    if (resume.current) clearTimeout(resume.current);
+    setInteracting(true);
+  }, []);
+  const scheduleResume = useCallback(() => {
+    if (resume.current) clearTimeout(resume.current);
+    resume.current = setTimeout(() => setInteracting(false), 2000);
+  }, []);
+
+  const snap = useCallback(() => {
+    setDuration(400);
+    setOffset((o) => Math.round(o / STEP) * STEP);
+  }, []);
+
+  const onPointerDown = (e: React.PointerEvent) => {
+    drag.current = { active: true, lastX: e.clientX, moved: false };
+    pause();
+  };
+  const onPointerMove = (e: React.PointerEvent) => {
+    if (!drag.current.active) return;
+    const dx = e.clientX - drag.current.lastX;
+    if (Math.abs(dx) > 1) drag.current.moved = true;
+    drag.current.lastX = e.clientX;
+    setDuration(0);
+    setOffset((o) => o + dx * 0.25);
+  };
+  const endDrag = () => {
+    if (!drag.current.active) return;
+    drag.current.active = false;
+    snap();
+    scheduleResume();
+  };
+
+  const activeIndex = (() => {
+    let best = 0;
+    let bestAbs = Infinity;
+    for (let i = 0; i < COUNT; i++) {
+      const a = Math.abs(wrapDeg(offsetRef.current + i * STEP));
+      if (a < bestAbs) {
+        bestAbs = a;
+        best = i;
+      }
+    }
+    return best;
+  })();
+
+  const { centerX, centerY, r, mobile } = metrics;
+
+  return (
+    <div
+      className="absolute inset-0 h-screen w-screen touch-none select-none overflow-hidden"
+      onPointerEnter={pause}
+      onPointerLeave={() => {
+        endDrag();
+        scheduleResume();
+      }}
+      onPointerDown={onPointerDown}
+      onPointerMove={onPointerMove}
+      onPointerUp={endDrag}
+      onPointerCancel={endDrag}
+    >
+      {directions.map((d, i) => {
+        const angle = offset + i * STEP;
+        const rad = (angle * Math.PI) / 180;
+        const x = centerX + r * Math.sin(rad);
+        const y = centerY - r * Math.cos(rad);
+        const isActive = i === activeIndex;
+        return (
+          <div
+            key={d.id}
+            aria-current={isActive}
+            className="absolute"
+            style={{
+              left: x,
+              top: y,
+              transform: `translate(-50%, -50%)${isActive ? "" : " scale(0.75)"}`,
+              opacity: isActive ? 1 : 0.35,
+              filter: isActive ? "none" : "blur(2px)",
+              transition: `left ${duration}ms ease-out, top ${duration}ms ease-out, transform 400ms ease-out, opacity 400ms ease-out, filter 400ms ease-out`,
+              width: mobile ? "70vw" : "clamp(300px, 22vw, 400px)",
+            }}
+          >
+            <div
+              className="bg-surface-1 flex flex-col items-start gap-4 border"
+              style={{
+                borderColor: "var(--border)",
+                borderRadius: 16,
+                padding: 32,
+              }}
+            >
+              <Glyph name={d.id} size={64} />
+              <h2
+                className="font-display text-text-primary leading-tight"
+                style={{ fontSize: 24 }}
+              >
+                {d.title}
+              </h2>
+              {isActive && (
+                <>
+                  <p className="text-text-secondary text-[15px] leading-snug">{d.desc}</p>
+                  <button
+                    type="button"
+                    className="text-text-accent bg-transparent text-[15px] hover:underline"
+                  >
+                    Открыть
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
