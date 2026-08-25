@@ -165,7 +165,7 @@ export function QuickCalc({
   return (
     <section
       id={id}
-      className="relative z-[2] w-full overflow-hidden"
+      className="qc-plate relative z-[2] w-full overflow-hidden"
       style={{
         background: "#000000",
         borderTop: "1px solid var(--border)",

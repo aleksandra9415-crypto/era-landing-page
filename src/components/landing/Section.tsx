@@ -23,7 +23,7 @@ export function Section({
       <div className="mx-auto w-full max-w-[1200px] px-[4vw] md:px-6">
         <h2
           className="text-center font-display text-text-primary"
-          style={{ fontSize: "clamp(32px, 3.4vw, 64px)", letterSpacing: "0.01em" }}
+          style={{ fontSize: "clamp(32px, 3.4vw, 64px)", letterSpacing: "0.01em", lineHeight: 1.08 }}
         >
           {title}
         </h2>
