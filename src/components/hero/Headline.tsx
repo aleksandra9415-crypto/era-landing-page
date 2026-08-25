@@ -21,10 +21,12 @@ export function Headline() {
   }, [reduced]);
 
   return (
-    <div className="flex flex-col items-start">
+    <div className="flex h-full flex-col items-start justify-center">
       {/* All words stay in the DOM for SEO; visibility is CSS-driven. */}
+      {/* The invisible longest word fixes the container width so the left */}
+      {/* alignment line does not shift when the active word changes. */}
       <h1
-        className="relative w-full max-w-[9ch] font-display font-bold uppercase text-text-primary leading-[1.05] text-[48px] md:w-[9ch] md:text-[88px]"
+        className="relative whitespace-nowrap max-w-full font-display font-bold uppercase text-text-primary leading-[1.05] text-[clamp(32px,9vw,64px)] md:text-[clamp(40px,6.2vw,170px)]"
         style={{ minHeight: "1.05em" }}
       >
         {WORDS.map((w, i) => (
@@ -38,12 +40,12 @@ export function Headline() {
         <span className="invisible">СХОДИТСЯ</span>
       </h1>
 
-      <div className="relative mt-6 h-[48px] w-full max-w-[420px] md:h-[56px] md:w-[32vw] md:max-w-none">
+      <div className="relative mt-5 h-[2.75em] w-full">
         {WORDS.map((w, i) => (
           <p
             key={w.word}
             aria-hidden={i !== index}
-            className={`word-slot text-text-secondary text-[15px] leading-snug md:text-[18px] ${
+            className={`word-slot text-text-secondary text-[clamp(15px,1.2vw,22px)] leading-snug ${
               i === index ? "word-slot-active" : "word-slot-leaving"
             }`}
           >
@@ -54,7 +56,7 @@ export function Headline() {
 
       <button
         type="button"
-        className="bg-accent mt-2 rounded-lg text-[16px] text-white transition-opacity hover:opacity-90"
+        className="bg-accent mt-8 rounded-lg text-[16px] text-white transition-opacity hover:opacity-90"
         style={{ padding: "16px 32px" }}
       >
         Рассчитать бесплатно

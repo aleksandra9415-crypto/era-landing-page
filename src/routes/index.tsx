@@ -39,7 +39,7 @@ function Index() {
       </div>
 
       <div className="pointer-events-none absolute inset-0 z-[15] w-full">
-        <div className="pointer-events-auto absolute left-[4vw] right-[4vw] top-[8vh] md:left-[62vw] md:right-[6vw] md:top-[22vh] md:bottom-[42vh]">
+        <div className="pointer-events-auto absolute left-[4vw] right-[4vw] top-[8vh] box-border max-w-full overflow-hidden md:left-auto md:right-[6vw] md:top-[26vh] md:bottom-[38vh] md:w-[40vw]">
           <Headline />
         </div>
       </div>
