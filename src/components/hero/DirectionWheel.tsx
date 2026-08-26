@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useNavigate } from "@tanstack/react-router";
 import { directions } from "@/lib/directions";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 
@@ -113,7 +114,8 @@ export function DirectionWheel() {
   };
 
   const openDirection = () => {
-    // Placeholder: direction pages are not built yet.
+    const d = directions[activeIndex];
+    if (d) navigate({ to: d.path });
   };
 
   const activate = (i: number, isActive: boolean) => {
