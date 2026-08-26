@@ -10,14 +10,15 @@ export type Direction = {
   title: string;
   desc: string;
   image: string;
+  path: string;
 };
 
 /** Single source of truth for the wheel. */
 export const directions: Direction[] = [
-  { id: "matrix", title: "Матрица судьбы", desc: "Твой рисунок в 22 арканах", image: matrixImg.url },
-  { id: "natal", title: "Натальная карта", desc: "Небо в минуту твоего рождения", image: natalImg.url },
-  { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле", image: humandesignImg.url },
-  { id: "numerology", title: "Нумерология", desc: "Числа, из которых ты собран", image: numerologyImg.url },
-  { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя", image: tarotImg.url },
-  { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система", image: synastryImg.url },
+  { id: "matrix", title: "Матрица судьбы", desc: "Твой рисунок в 22 арканах", image: matrixImg.url, path: "/matrica-sudby" },
+  { id: "natal", title: "Натальная карта", desc: "Небо в минуту твоего рождения", image: natalImg.url, path: "/natalnaya-karta" },
+  { id: "humandesign", title: "Дизайн человека", desc: "Как ты устроен на самом деле", image: humandesignImg.url, path: "/dizayn-cheloveka" },
+  { id: "numerology", title: "Нумерология", desc: "Числа, из которых ты собран", image: numerologyImg.url, path: "/numerologiya" },
+  { id: "tarot", title: "Таро", desc: "Вопрос, заданный вовремя", image: tarotImg.url, path: "/taro" },
+  { id: "synastry", title: "Совместимость", desc: "Вы двое как одна система", image: synastryImg.url, path: "/sovmestimost" },
 ];
