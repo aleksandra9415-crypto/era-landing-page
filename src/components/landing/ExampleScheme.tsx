@@ -396,22 +396,25 @@ export function ExampleScheme({
             В полном разборе так раскрывается каждое из 22 чисел матрицы
           </p>
 
-          <button
-            type="button"
-            onClick={() => {}}
-            className="w-full text-white transition-opacity hover:opacity-90 md:w-auto"
-            style={{
-              marginTop: 20,
-              background: "var(--accent)",
-              borderRadius: 12,
-              height: 54,
-              paddingLeft: 40,
-              paddingRight: 40,
-              fontSize: 16,
-            }}
-          >
-            Узнать свои числа
-          </button>
+          {showButton && (
+            <button
+              type="button"
+              onClick={() => {}}
+              className="w-full text-white transition-opacity hover:opacity-90 md:w-auto"
+              style={{
+                marginTop: 20,
+                background: "var(--accent)",
+                borderRadius: 12,
+                height: 54,
+                paddingLeft: 40,
+                paddingRight: 40,
+                fontSize: 16,
+              }}
+            >
+              Узнать свои числа
+            </button>
+          )}
+
         </div>
       </div>
     </Section>
