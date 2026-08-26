@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
+import { MatrixLines } from "@/components/matrix/MatrixLines";
+import { ExampleScheme } from "@/components/landing/ExampleScheme";
 import { CursorStarField } from "@/components/common/CursorStarField";
 import { Grain } from "@/components/hero/Grain";
 import { OrbitStage } from "@/components/quick-calc/Orbits";
@@ -126,6 +128,15 @@ function MatricaSudbyPage() {
   };
 
   const card = numbers ? arcana.find((x) => x.n === numbers.e) : null;
+
+  const schemeDate = useMemo(
+    () =>
+      stage === "result" && numbers
+        ? { day: Number(day), month: Number(month), year: Number(year) }
+        : undefined,
+    [stage, numbers, day, month, year],
+  );
+
 
 
   return (
@@ -451,7 +462,21 @@ function MatricaSudbyPage() {
         </div>
       </section>
 
+      <MatrixLines />
+
+      <ExampleScheme
+        date={schemeDate}
+        showButton={false}
+        title={schemeDate ? "Откуда взялось твоё число" : "Каждое число можно проверить"}
+        subtitle={
+          schemeDate
+            ? "Твоя дата, разложенная по шагам. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
+            : "Матрица — это арифметика. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
+        }
+      />
+
       <Footer />
+
 
     </main>
   );
