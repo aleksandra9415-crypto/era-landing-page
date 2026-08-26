@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, ReactNode } from "react";
 
 export function Section({
   id,
@@ -6,12 +6,14 @@ export function Section({
   subtitle,
   children,
   className,
+  style,
 }: {
   id?: string;
   title: string;
   subtitle?: string;
   children?: ReactNode;
   className?: string;
+  style?: CSSProperties;
 }) {
   return (
     <section
@@ -20,6 +22,7 @@ export function Section({
       style={{
         paddingTop: "clamp(80px, 10vh, 160px)",
         paddingBottom: "clamp(80px, 10vh, 160px)",
+        ...style,
       }}
     >
       <div className="mx-auto w-full max-w-[1200px] px-[4vw] md:px-6">

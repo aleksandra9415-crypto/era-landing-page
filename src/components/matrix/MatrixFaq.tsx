@@ -25,7 +25,14 @@ const ITEMS = [
 
 export function MatrixFaq() {
   return (
-    <Section id="matrix-faq" title="Вопросы о матрице">
+    <Section
+      id="matrix-faq"
+      title="Вопросы о матрице"
+      style={{
+        paddingBottom:
+          "calc(clamp(80px, 10vh, 160px) + clamp(140px, 11vw, 280px) + 24px)",
+      }}
+    >
       <div className="mx-auto mt-12 w-full max-w-[860px]">
         {ITEMS.map((item) => (
           <details key={item.q} className="group border-b border-border/35">
