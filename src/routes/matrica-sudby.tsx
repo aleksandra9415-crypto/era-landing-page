@@ -144,8 +144,6 @@ function MatricaSudbyPage() {
               style={{ fontSize: "clamp(34px, 3.8vw, 68px)", lineHeight: 1.1 }}
             >
               РАССЧИТАТЬ <span className="whitespace-nowrap">МАТРИЦУ СУДЬБЫ</span>{
-              <>
-                <p
                   className="text-text-secondary"
                   style={{ marginTop: 18, fontSize: "clamp(15px, 1.2vw, 20px)" }}
                 >
