@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { directions } from "@/lib/directions";
+import { Link } from "@tanstack/react-router";
+import { directions, type Direction } from "@/lib/directions";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { CursorStarField } from "@/components/common/CursorStarField";
 
@@ -59,12 +60,14 @@ function DirectionCard({
   title,
   desc,
   image,
+  path,
   liftEnabled,
   reducedMotion,
 }: {
   title: string;
   desc: string;
   image: string;
+  path: Direction["path"];
   liftEnabled: boolean;
   reducedMotion: boolean;
 }) {
