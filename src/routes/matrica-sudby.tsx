@@ -477,6 +477,10 @@ function MatricaSudbyPage() {
         }
       />
 
+      <MatrixSample />
+
+      <MatrixFaq />
+
       <Footer />
 
 
