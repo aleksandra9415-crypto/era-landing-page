@@ -360,7 +360,7 @@ function MatricaSudbyPage() {
                     className="pointer-events-none absolute inset-x-0 bottom-0"
                     style={{
                       height: 120,
-                      background: "linear-gradient(to bottom, rgba(3,25,30,0), var(--bg-page))",
+                      background: "linear-gradient(to bottom, rgba(0,0,0,0), #000000)",
                     }}
                   />
                 </div>
