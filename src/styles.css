@@ -773,7 +773,8 @@
   margin: 0 auto;
   padding-inline: 8vw;
   align-items: flex-end;
-  padding-bottom: 12vh;
+  /* глубина дуги перехода + 60px, чтобы кнопка не уходила под чёрную кромку */
+  padding-bottom: calc(clamp(140px, 11vw, 280px) + 60px);
 }
 .ms-hero-text {
   width: 100%;

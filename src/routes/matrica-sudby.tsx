@@ -111,27 +111,15 @@ function MatricaSudbyPage() {
         if (slowTimer.current) clearTimeout(slowTimer.current);
         slowTimer.current = setTimeout(() => setFast(false), 100);
         if (scrollTimer.current) clearTimeout(scrollTimer.current);
-        scrollTimer.current = setTimeout(
-          () => {
-            aboutRef.current?.scrollIntoView({
-              behavior: reduced ? "auto" : "smooth",
-              block: "start",
-            });
-          },
-          reduced ? 0 : 900,
-        );
+        aboutRef.current?.scrollIntoView({
+          behavior: reduced ? "auto" : "smooth",
+          block: "start",
+        });
       },
-      reduced ? 200 : 1200,
+      reduced ? 200 : 700,
     );
   };
 
-  const reset = () => {
-    if (timer.current) clearTimeout(timer.current);
-    if (scrollTimer.current) clearTimeout(scrollTimer.current);
-    setNumbers(null);
-    setFast(false);
-    setStage("form");
-  };
 
   const card = numbers ? arcana.find((x) => x.n === numbers.e) : null;
 
@@ -187,159 +175,97 @@ function MatricaSudbyPage() {
               <span className="whitespace-nowrap">по дате рождения</span>
             </h1>
 
-            {stage !== "result" ? (
-              <>
-                <p
-                  className="text-text-secondary"
-                  style={{ marginTop: 18, fontSize: "clamp(15px, 1.2vw, 20px)" }}
+            <p
+              className="text-text-secondary"
+              style={{ marginTop: 18, fontSize: "clamp(15px, 1.2vw, 20px)" }}
+            >
+              Бесплатно и без регистрации. Покажем центральный аркан и четыре числа, из которых
+              он собирается
+            </p>
+
+            <div className="flex flex-col gap-3 md:flex-row" style={{ marginTop: 32 }}>
+              <div className="relative flex-1">
+                <label className="sr-only" htmlFor="ms-day">
+                  День
+                </label>
+                <select
+                  id="ms-day"
+                  className={selectClass}
+                  value={day}
+                  onChange={(e) => setDay(e.target.value)}
                 >
-                  Бесплатно и без регистрации. Покажем центральный аркан и четыре числа, из которых
-                  он собирается
-                </p>
-
-                <div className="flex flex-col gap-3 md:flex-row" style={{ marginTop: 32 }}>
-                  <div className="relative flex-1">
-                    <label className="sr-only" htmlFor="ms-day">
-                      День
-                    </label>
-                    <select
-                      id="ms-day"
-                      className={selectClass}
-                      value={day}
-                      onChange={(e) => setDay(e.target.value)}
-                    >
-                      <option value="">День</option>
-                      {DAYS.map((d) => (
-                        <option key={d} value={d}>
-                          {d}
-                        </option>
-                      ))}
-                    </select>
-                    <Chevron />
-                  </div>
-
-                  <div className="relative flex-1">
-                    <label className="sr-only" htmlFor="ms-month">
-                      Месяц
-                    </label>
-                    <select
-                      id="ms-month"
-                      className={selectClass}
-                      value={month}
-                      onChange={(e) => setMonth(e.target.value)}
-                    >
-                      <option value="">Месяц</option>
-                      {MONTHS.map((m, i) => (
-                        <option key={m} value={i + 1}>
-                          {m}
-                        </option>
-                      ))}
-                    </select>
-                    <Chevron />
-                  </div>
-
-                  <div className="relative flex-1">
-                    <label className="sr-only" htmlFor="ms-year">
-                      Год
-                    </label>
-                    <select
-                      id="ms-year"
-                      className={selectClass}
-                      value={year}
-                      onChange={(e) => setYear(e.target.value)}
-                    >
-                      <option value="">Год</option>
-                      {years.map((y) => (
-                        <option key={y} value={y}>
-                          {y}
-                        </option>
-                      ))}
-                    </select>
-                    <Chevron />
-                  </div>
-                </div>
-
-                {dateInvalid && (
-                  <p className="mt-3 text-[15px] text-text-danger">
-                    Такой даты не существует — проверь день и месяц
-                  </p>
-                )}
-
-                <button
-                  type="button"
-                  onClick={handleSubmit}
-                  disabled={!complete || dateInvalid || stage === "loading"}
-                  className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
-                  style={{
-                    marginTop: 20,
-                    height: 54,
-                    paddingInline: 40,
-                    opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1,
-                  }}
-                >
-                  {stage === "loading" ? "Считаем" : "Рассчитать"}
-                </button>
-              </>
-            ) : (
-              <div style={{ animation: reduced ? "none" : "qc-result-in 800ms ease-out both" }}>
-                <div
-                  className="ms-arcana-number font-mono text-text-accent"
-                  style={{ marginTop: 24, lineHeight: 1 }}
-                >
-                  {numbers?.e}
-                </div>
-                <div
-                  className="font-display text-text-primary"
-                  style={{ marginTop: 4, fontSize: "clamp(28px, 2.6vw, 48px)", lineHeight: 1.1 }}
-                >
-                  {card?.name}
-                </div>
-                <p
-                  className="text-text-secondary"
-                  style={{ marginTop: 14, maxWidth: 460, fontSize: "clamp(15px, 1.2vw, 19px)" }}
-                >
-                  {card?.line}
-                </p>
-
-                <div className="flex flex-wrap" style={{ marginTop: 28, gap: 28 }}>
-                  {[
-                    { v: numbers?.a, label: "день" },
-                    { v: numbers?.b, label: "месяц" },
-                    { v: numbers?.c, label: "год" },
-                    { v: numbers?.d, label: "сумма" },
-                  ].map((item) => (
-                    <div key={item.label}>
-                      <div
-                        className="font-mono text-text-primary"
-                        style={{ fontSize: "clamp(22px, 1.8vw, 32px)", lineHeight: 1.1 }}
-                      >
-                        {item.v}
-                      </div>
-                      <div className="text-[12px] text-text-secondary">{item.label}</div>
-                    </div>
+                  <option value="">День</option>
+                  {DAYS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
                   ))}
-                </div>
-
-                <button
-                  type="button"
-                  className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-                  style={{ marginTop: 32, height: 54, paddingInline: 40 }}
-                >
-                  Открыть полный разбор
-                </button>
-                <p className="text-[13px] text-text-secondary" style={{ marginTop: 12 }}>
-                  В полном разборе раскрываются все 22 позиции матрицы
-                </p>
-                <button
-                  type="button"
-                  onClick={reset}
-                  className="bg-transparent text-[15px] text-text-accent underline-offset-4 hover:underline"
-                  style={{ marginTop: 14 }}
-                >
-                  Другая дата
-                </button>
+                </select>
+                <Chevron />
               </div>
+
+              <div className="relative flex-1">
+                <label className="sr-only" htmlFor="ms-month">
+                  Месяц
+                </label>
+                <select
+                  id="ms-month"
+                  className={selectClass}
+                  value={month}
+                  onChange={(e) => setMonth(e.target.value)}
+                >
+                  <option value="">Месяц</option>
+                  {MONTHS.map((m, i) => (
+                    <option key={m} value={i + 1}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                <Chevron />
+              </div>
+
+              <div className="relative flex-1">
+                <label className="sr-only" htmlFor="ms-year">
+                  Год
+                </label>
+                <select
+                  id="ms-year"
+                  className={selectClass}
+                  value={year}
+                  onChange={(e) => setYear(e.target.value)}
+                >
+                  <option value="">Год</option>
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+                <Chevron />
+              </div>
+            </div>
+
+            {dateInvalid && (
+              <p className="mt-3 text-[15px] text-text-danger">
+                Такой даты не существует — проверь день и месяц
+              </p>
             )}
+
+            <button
+              type="button"
+              onClick={handleSubmit}
+              disabled={!complete || dateInvalid || stage === "loading"}
+              className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
+              style={{
+                marginTop: 20,
+                height: 54,
+                paddingInline: 40,
+                opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1,
+              }}
+            >
+              {stage === "loading" ? "Считаем" : stage === "result" ? "Пересчитать" : "Рассчитать"}
+            </button>
+
           </div>
         </div>
       </section>
@@ -434,7 +360,7 @@ function MatricaSudbyPage() {
                     className="pointer-events-none absolute inset-x-0 bottom-0"
                     style={{
                       height: 120,
-                      background: "linear-gradient(to bottom, rgba(3,25,30,0), var(--bg-page))",
+                      background: "linear-gradient(to bottom, rgba(0,0,0,0), #000000)",
                     }}
                   />
                 </div>
