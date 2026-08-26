@@ -31,6 +31,7 @@ const wrapDeg = (v: number) => {
 
 export function DirectionWheel() {
   const reduced = useReducedMotion();
+  const navigate = useNavigate();
   // SSR-safe initial state: always render desktop metrics on the first pass
   // to avoid hydration mismatch. Client-side resize effect updates it after mount.
   const [metrics, setMetrics] = useState<Metrics>({
