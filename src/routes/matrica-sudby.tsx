@@ -23,7 +23,7 @@ export const Route = createFileRoute("/matrica-sudby")({
     ],
     links: [{ rel: "canonical", href: "https://destiny-canvas-arc.lovable.app/matrica-sudby" }],
   }),
-  component: MatricaSudbyPage;
+  component: MatricaSudbyPage,
 });
 
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
@@ -122,7 +122,7 @@ function MatricaSudbyPage() {
         <SectionStars count={70} />
 
         <div
-          className="relative z-[1] mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-12 px-[clamp(24px,5vw,48px)] md:flex-row md:justify-between md:gap-[6%]"
+          className="relative z-[1] mx-auto flex w-full max-w-[1320px] flex-col items-center gap-12 px-[clamp(24px,5vw,48px)] md:flex-row md:justify-between md:gap-[6%]"
           style={{ minHeight: "70vh" }}
         >
           {/* left column */}
