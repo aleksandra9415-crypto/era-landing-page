@@ -111,25 +111,39 @@ function MatricaSudbyPage() {
         <Header />
       </div>
 
-      <section
-        className="relative w-full overflow-hidden"
-        style={{
-          minHeight: "88vh",
-          paddingTop: "clamp(40px, 6vh, 90px)",
-          paddingBottom: "clamp(60px, 8vh, 110px)",
-        }}
-      >
-        <SectionStars count={70} />
+      <section className="ms-hero -mt-[110px] w-full">
+        {/* 1 — photo */}
+        <img
+          src={matrixAsset.url}
+          alt="Матрица судьбы — расчёт по дате рождения"
+          aria-hidden="true"
+          className="absolute inset-0 z-0 h-full w-full object-cover object-center"
+        />
 
+        {/* 2/4 — shade (responsive) */}
+        <div aria-hidden="true" className="ms-hero-shade z-[1]" />
+
+        {/* 3 — bottom fade */}
         <div
-          className="relative z-[1] mx-auto flex w-full max-w-[1320px] flex-col items-center gap-12 px-[clamp(24px,5vw,48px)] md:flex-row md:justify-between md:gap-[6%]"
-          style={{ minHeight: "70vh" }}
-        >
-          {/* left column */}
-          <div className="w-full md:w-[52%]">
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[260px]"
+          style={{ background: "linear-gradient(to bottom, rgba(3,25,30,0), var(--bg-page))" }}
+        />
+
+        {/* 4 — stars */}
+        <div aria-hidden="true" className="absolute inset-0 z-[3]" style={{ opacity: 0.6 }}>
+          <SectionStars count={50} />
+        </div>
+
+        {/* 5 — grain */}
+        <Grain />
+
+        {/* 6 — content */}
+        <div className="ms-hero-content">
+          <div className="ms-hero-text">
             <h1
               className="font-display text-text-primary"
-              style={{ fontSize: "clamp(32px, 3.4vw, 60px)", lineHeight: 1.1 }}
+              style={{ fontSize: "clamp(34px, 3.8vw, 68px)", lineHeight: 1.1 }}
             >
               Рассчитать матрицу судьбы по дате рождения
             </h1>
@@ -138,11 +152,7 @@ function MatricaSudbyPage() {
               <>
                 <p
                   className="text-text-secondary"
-                  style={{
-                    marginTop: 18,
-                    maxWidth: 520,
-                    fontSize: "clamp(15px, 1.2vw, 20px)",
-                  }}
+                  style={{ marginTop: 18, fontSize: "clamp(15px, 1.2vw, 20px)" }}
                 >
                   Бесплатно и без регистрации. Покажем центральный аркан и четыре числа, из которых
                   он собирается
@@ -234,14 +244,14 @@ function MatricaSudbyPage() {
             ) : (
               <div style={{ animation: reduced ? "none" : "qc-result-in 800ms ease-out both" }}>
                 <div
-                  className="font-mono text-text-accent"
-                  style={{ marginTop: 24, fontSize: "clamp(64px, 6vw, 120px)", lineHeight: 1 }}
+                  className="ms-arcana-number font-mono text-text-accent"
+                  style={{ marginTop: 24, lineHeight: 1 }}
                 >
                   {numbers?.e}
                 </div>
                 <div
                   className="font-display text-text-primary"
-                  style={{ marginTop: 6, fontSize: "clamp(26px, 2.4vw, 44px)", lineHeight: 1.1 }}
+                  style={{ marginTop: 4, fontSize: "clamp(28px, 2.6vw, 48px)", lineHeight: 1.1 }}
                 >
                   {card?.name}
                 </div>
@@ -292,32 +302,6 @@ function MatricaSudbyPage() {
               </div>
             )}
           </div>
-
-          {/* right column */}
-          <div className="flex w-full justify-center md:w-[42%]">
-            <div
-              className="relative overflow-hidden"
-              style={{
-                width: "min(38vw, 52vh)",
-                height: "min(38vw, 52vh)",
-                minWidth: 260,
-                minHeight: 260,
-                borderRadius: 20,
-                border: "1px solid var(--border)",
-              }}
-            >
-              <img
-                src={matrixAsset.url}
-                alt="Матрица судьбы — расчёт по дате рождения"
-                className="h-full w-full object-cover"
-              />
-              <div
-                aria-hidden="true"
-                className="pointer-events-none absolute inset-0"
-                style={{ background: CARD_GRADIENT }}
-              />
-            </div>
-          </div>
         </div>
       </section>
 
@@ -325,3 +309,4 @@ function MatricaSudbyPage() {
     </main>
   );
 }
+
