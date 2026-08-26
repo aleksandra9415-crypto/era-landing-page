@@ -329,9 +329,20 @@ function MatricaSudbyPage() {
 
       <section
         ref={aboutRef}
-        className="relative w-full bg-bg-page"
-        style={{ minHeight: "90vh", paddingBlock: "clamp(64px, 8vh, 120px)" }}
+        className="relative z-[30] w-full overflow-hidden"
+        style={{
+          ...arcTransitionStyle,
+          minHeight: "90vh",
+          paddingTop: `calc(${ARC_H} + 40px + clamp(64px, 8vh, 120px))`,
+          paddingBottom: "clamp(64px, 8vh, 120px)",
+        }}
       >
+        {/* растворение чёрного в фон страницы */}
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[200px]"
+          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-page))" }}
+        />
         <div
           className="mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
           style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
