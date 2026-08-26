@@ -60,9 +60,9 @@ export function Footer() {
             <div className={colTitle}>НАПРАВЛЕНИЯ</div>
             <div className="mt-[18px] flex flex-col gap-3">
               {directions.map((d) => (
-                <a key={d.id} href="/#directions" className={linkCls}>
+                <Link key={d.id} to={d.path} className={linkCls}>
                   {d.title}
-                </a>
+                </Link>
               ))}
             </div>
           </nav>

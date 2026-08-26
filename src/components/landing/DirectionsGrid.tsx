@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
-import { directions } from "@/lib/directions";
+import { Link } from "@tanstack/react-router";
+import { directions, type Direction } from "@/lib/directions";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { CursorStarField } from "@/components/common/CursorStarField";
 
@@ -59,12 +60,14 @@ function DirectionCard({
   title,
   desc,
   image,
+  path,
   liftEnabled,
   reducedMotion,
 }: {
   title: string;
   desc: string;
   image: string;
+  path: Direction["path"];
   liftEnabled: boolean;
   reducedMotion: boolean;
 }) {
@@ -98,9 +101,8 @@ function DirectionCard({
           })}
         </div>
       )}
-      <button
-        type="button"
-        onClick={() => {}}
+      <Link
+        to={path}
         onMouseEnter={() => setActive(true)}
         onMouseLeave={() => setActive(false)}
         onFocus={() => setActive(true)}
@@ -142,7 +144,7 @@ function DirectionCard({
         >
           →
         </span>
-      </button>
+      </Link>
     </div>
   );
 }
@@ -183,6 +185,7 @@ export function DirectionsGrid() {
               title={d.title}
               desc={d.desc}
               image={d.image}
+              path={d.path}
               liftEnabled={!reduced}
               reducedMotion={reduced}
             />
