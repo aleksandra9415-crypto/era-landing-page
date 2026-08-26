@@ -2,6 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
+import { MatrixLines } from "@/components/matrix/MatrixLines";
+import { ExampleScheme } from "@/components/landing/ExampleScheme";
 import { CursorStarField } from "@/components/common/CursorStarField";
 import { Grain } from "@/components/hero/Grain";
 import { OrbitStage } from "@/components/quick-calc/Orbits";
