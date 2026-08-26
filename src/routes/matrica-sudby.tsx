@@ -143,7 +143,8 @@ function MatricaSudbyPage() {
               className="font-display text-text-primary"
               style={{ fontSize: "clamp(34px, 3.8vw, 68px)", lineHeight: 1.1 }}
             >
-              РАССЧИТАТЬ <span className="whitespace-nowrap">МАТРИЦУ СУДЬБЫ</span> по дате рождения
+              РАССЧИТАТЬ <span className="whitespace-nowrap">МАТРИЦУ СУДЬБЫ</span>{" "}
+              <span className="whitespace-nowrap">по дате рождения</span>
             </h1>
 
             {stage !== "result" ? (
