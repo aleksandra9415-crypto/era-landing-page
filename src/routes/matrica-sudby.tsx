@@ -111,27 +111,15 @@ function MatricaSudbyPage() {
         if (slowTimer.current) clearTimeout(slowTimer.current);
         slowTimer.current = setTimeout(() => setFast(false), 100);
         if (scrollTimer.current) clearTimeout(scrollTimer.current);
-        scrollTimer.current = setTimeout(
-          () => {
-            aboutRef.current?.scrollIntoView({
-              behavior: reduced ? "auto" : "smooth",
-              block: "start",
-            });
-          },
-          reduced ? 0 : 900,
-        );
+        aboutRef.current?.scrollIntoView({
+          behavior: reduced ? "auto" : "smooth",
+          block: "start",
+        });
       },
-      reduced ? 200 : 1200,
+      reduced ? 200 : 700,
     );
   };
 
-  const reset = () => {
-    if (timer.current) clearTimeout(timer.current);
-    if (scrollTimer.current) clearTimeout(scrollTimer.current);
-    setNumbers(null);
-    setFast(false);
-    setStage("form");
-  };
 
   const card = numbers ? arcana.find((x) => x.n === numbers.e) : null;
 
