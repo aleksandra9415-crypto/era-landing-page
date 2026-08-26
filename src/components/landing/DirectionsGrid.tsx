@@ -101,9 +101,8 @@ function DirectionCard({
           })}
         </div>
       )}
-      <button
-        type="button"
-        onClick={() => {}}
+      <Link
+        to={path}
         onMouseEnter={() => setActive(true)}
         onMouseLeave={() => setActive(false)}
         onFocus={() => setActive(true)}
@@ -145,7 +144,7 @@ function DirectionCard({
         >
           →
         </span>
-      </button>
+      </Link>
     </div>
   );
 }
