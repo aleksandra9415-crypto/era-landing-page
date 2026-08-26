@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { arcana, MONTHS, centralArcanum, isValidDate } from "@/lib/arcana";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { Orbits } from "./Orbits";
+import { ARC_H, arcTransitionStyle } from "@/components/common/ArcTransition";
 
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
