@@ -1,15 +1,26 @@
 import { useEffect, useRef, useState } from "react";
 import { Section } from "./Section";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
-import { centralArcanum, digitSum, reduceTo22 } from "@/lib/arcana";
+import { arcana, digitSum, reduceTo22 } from "@/lib/arcana";
 
-const demoDate = { day: 26, month: 7, year: 1990 };
+export type SchemeDate = { day: number; month: number; year: number };
 
-const A = reduceTo22(demoDate.day);
-const B = demoDate.month;
-const C = reduceTo22(digitSum(demoDate.year));
-const D = reduceTo22(A + B + C);
-const E = centralArcanum(demoDate.day, demoDate.month, demoDate.year);
+const demoDate: SchemeDate = { day: 26, month: 7, year: 1990 };
+
+const MONTH_NOM = [
+  "январь",
+  "февраль",
+  "март",
+  "апрель",
+  "май",
+  "июнь",
+  "июль",
+  "август",
+  "сентябрь",
+  "октябрь",
+  "ноябрь",
+  "декабрь",
+];
 
 type NodeId = "A" | "B" | "C" | "D" | "E";
 type SourceId = NodeId | "date-day" | "date-month" | "date-year";
@@ -26,63 +37,82 @@ type SchemeNode = {
   y: number;
 };
 
-const nodes: SchemeNode[] = [
-  {
-    id: "A",
-    value: A,
-    label: "день",
-    sum: "день = 26",
-    reduce: "26 → 2 + 6 = 8",
-    text: "Если число дня не больше 22, оно берётся как есть. Если больше — цифры складываются между собой",
-    sources: ["date-day"],
-    x: 6,
-    y: 50,
-  },
-  {
-    id: "B",
-    value: B,
-    label: "месяц",
-    sum: "июль = 7",
-    reduce: "",
-    text: "Номер месяца всегда от 1 до 12, свёртка не нужна",
-    sources: ["date-month"],
-    x: 50,
-    y: 6,
-  },
-  {
-    id: "C",
-    value: C,
-    label: "год",
-    sum: "1 + 9 + 9 + 0 = 19",
-    reduce: "",
-    text: "Цифры года складываются между собой. Девятнадцать не больше 22, поэтому свёртка на этом заканчивается",
-    sources: ["date-year"],
-    x: 94,
-    y: 50,
-  },
-  {
-    id: "D",
-    value: D,
-    label: "сумма",
-    sum: "8 + 7 + 19 = 34",
-    reduce: "34 → 3 + 4 = 7",
-    text: "Сумма первых трёх. Всё, что больше 22, сворачивается сложением цифр",
-    sources: ["A", "B", "C"],
-    x: 50,
-    y: 94,
-  },
-  {
-    id: "E",
-    value: E,
-    label: "центр",
-    sum: "8 + 7 + 19 + 7 = 41",
-    reduce: "41 → 4 + 1 = 5",
-    text: "Сумма всех четырёх. Это центральный аркан — Иерофант",
-    sources: ["A", "B", "C", "D"],
-    x: 50,
-    y: 50,
-  },
-];
+const digits = (n: number) => String(n).split("").map(Number);
+const reduceLine = (n: number) => {
+  if (n <= 22) return "";
+  const d = digits(n);
+  return `${n} → ${d.join(" + ")} = ${reduceTo22(n)}`;
+};
+
+function buildNodes(date: SchemeDate): SchemeNode[] {
+  const a = reduceTo22(date.day);
+  const b = date.month;
+  const yearSum = digitSum(date.year);
+  const c = reduceTo22(yearSum);
+  const dRaw = a + b + c;
+  const d = reduceTo22(dRaw);
+  const eRaw = a + b + c + d;
+  const e = reduceTo22(eRaw);
+  const name = arcana.find((x) => x.n === e)?.title ?? "";
+
+  return [
+    {
+      id: "A",
+      value: a,
+      label: "день",
+      sum: `день = ${date.day}`,
+      reduce: reduceLine(date.day),
+      text: "Если число дня не больше 22, оно берётся как есть. Если больше — цифры складываются между собой",
+      sources: ["date-day"],
+      x: 6,
+      y: 50,
+    },
+    {
+      id: "B",
+      value: b,
+      label: "месяц",
+      sum: `${MONTH_NOM[date.month - 1]} = ${b}`,
+      reduce: "",
+      text: "Номер месяца всегда от 1 до 12, свёртка не нужна",
+      sources: ["date-month"],
+      x: 50,
+      y: 6,
+    },
+    {
+      id: "C",
+      value: c,
+      label: "год",
+      sum: `${digits(date.year).join(" + ")} = ${yearSum}`,
+      reduce: reduceLine(yearSum),
+      text: "Цифры года складываются между собой. Если результат больше 22, он сворачивается ещё раз",
+      sources: ["date-year"],
+      x: 94,
+      y: 50,
+    },
+    {
+      id: "D",
+      value: d,
+      label: "сумма",
+      sum: `${a} + ${b} + ${c} = ${dRaw}`,
+      reduce: reduceLine(dRaw),
+      text: "Сумма первых трёх. Всё, что больше 22, сворачивается сложением цифр",
+      sources: ["A", "B", "C"],
+      x: 50,
+      y: 94,
+    },
+    {
+      id: "E",
+      value: e,
+      label: "центр",
+      sum: `${a} + ${b} + ${c} + ${d} = ${eRaw}`,
+      reduce: reduceLine(eRaw),
+      text: `Сумма всех четырёх. Это центральный аркан — ${name}`,
+      sources: ["A", "B", "C", "D"],
+      x: 50,
+      y: 50,
+    },
+  ];
+}
 
 const edges: [NodeId, NodeId][] = [
   ["A", "B"],
@@ -98,7 +128,8 @@ const edges: [NodeId, NodeId][] = [
 const spokes: NodeId[] = ["A", "B", "C", "D"];
 const cycle: NodeId[] = ["E", "A", "B", "C", "D"];
 
-const byId = (id: NodeId) => nodes.find((n) => n.id === id)!;
+const pad = (n: number) => String(n).padStart(2, "0");
+
 
 export function ExampleScheme() {
   const reduced = useReducedMotion();
