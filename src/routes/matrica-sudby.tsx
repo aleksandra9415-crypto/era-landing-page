@@ -65,11 +65,17 @@ function MatricaSudbyPage() {
   const [year, setYear] = useState("");
   const [stage, setStage] = useState<"form" | "loading" | "result">("form");
   const [numbers, setNumbers] = useState<MatrixNumbers | null>(null);
+  const [fast, setFast] = useState(false);
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const slowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const aboutRef = useRef<HTMLElement | null>(null);
 
   useEffect(
     () => () => {
       if (timer.current) clearTimeout(timer.current);
+      if (scrollTimer.current) clearTimeout(scrollTimer.current);
+      if (slowTimer.current) clearTimeout(slowTimer.current);
     },
     [],
   );
@@ -85,11 +91,24 @@ function MatricaSudbyPage() {
     const d = reduceTo22(a + b + c);
     const e = reduceTo22(a + b + c + d);
     setStage("loading");
+    if (!reduced) setFast(true);
     if (timer.current) clearTimeout(timer.current);
     timer.current = setTimeout(
       () => {
         setNumbers({ a, b, c, d, e });
         setStage("result");
+        if (slowTimer.current) clearTimeout(slowTimer.current);
+        slowTimer.current = setTimeout(() => setFast(false), 100);
+        if (scrollTimer.current) clearTimeout(scrollTimer.current);
+        scrollTimer.current = setTimeout(
+          () => {
+            aboutRef.current?.scrollIntoView({
+              behavior: reduced ? "auto" : "smooth",
+              block: "start",
+            });
+          },
+          reduced ? 0 : 900,
+        );
       },
       reduced ? 200 : 1200,
     );
@@ -97,11 +116,14 @@ function MatricaSudbyPage() {
 
   const reset = () => {
     if (timer.current) clearTimeout(timer.current);
+    if (scrollTimer.current) clearTimeout(scrollTimer.current);
     setNumbers(null);
+    setFast(false);
     setStage("form");
   };
 
   const card = numbers ? arcana.find((x) => x.n === numbers.e) : null;
+
 
   return (
     <main className="relative w-full bg-bg-page">
