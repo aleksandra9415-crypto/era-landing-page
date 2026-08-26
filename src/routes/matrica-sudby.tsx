@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
-import { SectionStars } from "@/components/common/SectionStars";
+import { CursorStarField } from "@/components/common/CursorStarField";
 import { Grain } from "@/components/hero/Grain";
 import { OrbitStage } from "@/components/quick-calc/Orbits";
 import { ARC_H, arcTransitionStyle } from "@/components/common/ArcTransition";
@@ -152,10 +152,9 @@ function MatricaSudbyPage() {
           className="hero-glow pointer-events-none absolute bottom-0 left-0 right-0 z-[2]"
         />
 
-        {/* 4 — stars */}
-        <div aria-hidden="true" className="absolute inset-0 z-[3]" style={{ opacity: 0.6 }}>
-          <SectionStars count={50} />
-        </div>
+        {/* 4 — stars (следят за курсором) */}
+        <CursorStarField count={70} opacity={0.6} className="z-[3]" />
+
 
         {/* 5 — grain */}
         <Grain />
