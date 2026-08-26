@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { arcana, MONTHS, centralArcanum, isValidDate } from "@/lib/arcana";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { Orbits } from "./Orbits";
+import { ARC_H, arcTransitionStyle } from "@/components/common/ArcTransition";
 
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
 
@@ -9,7 +10,7 @@ const selectClass =
   "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
 
 
-const ARC_H = "clamp(140px, 11vw, 280px)";
+/* глубина/форма перехода — общий компонент */
 
 function Chevron() {
   return (
@@ -94,11 +95,7 @@ export function QuickCalc({
       id={id}
       className={`qc-plate relative w-full overflow-hidden ${isHeroOverlap ? "z-[30]" : "z-[2]"}`}
       style={{
-        background: "#000000",
-        borderTop: "2px solid rgba(159, 186, 185, 0.5)",
-        borderTopLeftRadius: `100% ${ARC_H}`,
-        borderTopRightRadius: `100% ${ARC_H}`,
-        marginTop: `calc(-1 * ${ARC_H})`,
+        ...arcTransitionStyle,
         paddingTop: `calc(${ARC_H} + 60px)`,
         paddingBottom: "clamp(120px, 14vh, 220px)",
       }}

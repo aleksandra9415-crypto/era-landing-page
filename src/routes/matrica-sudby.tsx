@@ -5,6 +5,7 @@ import { Footer } from "@/components/landing/Footer";
 import { SectionStars } from "@/components/common/SectionStars";
 import { Grain } from "@/components/hero/Grain";
 import { OrbitStage } from "@/components/quick-calc/Orbits";
+import { ARC_H, arcTransitionStyle } from "@/components/common/ArcTransition";
 
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { arcana, MONTHS, digitSum, reduceTo22, isValidDate } from "@/lib/arcana";
@@ -145,11 +146,10 @@ function MatricaSudbyPage() {
         {/* 2/4 — shade (responsive) */}
         <div aria-hidden="true" className="ms-hero-shade z-[1]" />
 
-        {/* 3 — bottom fade */}
+        {/* 3 — подсветка у горизонта (её режет чёрная кромка перехода) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[260px]"
-          style={{ background: "linear-gradient(to bottom, rgba(3,25,30,0), var(--bg-page))" }}
+          className="hero-glow pointer-events-none absolute bottom-0 left-0 right-0 z-[2]"
         />
 
         {/* 4 — stars */}
@@ -330,11 +330,22 @@ function MatricaSudbyPage() {
 
       <section
         ref={aboutRef}
-        className="relative w-full bg-bg-page"
-        style={{ minHeight: "90vh", paddingBlock: "clamp(64px, 8vh, 120px)" }}
+        className="relative z-[30] w-full overflow-hidden"
+        style={{
+          ...arcTransitionStyle,
+          minHeight: "90vh",
+          paddingTop: `calc(${ARC_H} + 40px + clamp(64px, 8vh, 120px))`,
+          paddingBottom: "clamp(64px, 8vh, 120px)",
+        }}
       >
+        {/* растворение чёрного в фон страницы */}
         <div
-          className="mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[200px]"
+          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-page))" }}
+        />
+        <div
+          className="relative z-[2] mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
           style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
         >
           {/* left column */}
