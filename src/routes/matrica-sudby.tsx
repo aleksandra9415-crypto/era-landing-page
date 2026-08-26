@@ -345,7 +345,7 @@ function MatricaSudbyPage() {
           style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-page))" }}
         />
         <div
-          className="mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
+          className="relative z-[2] mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
           style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
         >
           {/* left column */}
