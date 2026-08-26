@@ -3,6 +3,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
 import { SectionStars } from "@/components/common/SectionStars";
+import { Grain } from "@/components/hero/Grain";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { arcana, MONTHS, digitSum, reduceTo22, isValidDate } from "@/lib/arcana";
 import matrixAsset from "@/assets/matrix.png.asset.json";
@@ -27,9 +28,6 @@ export const Route = createFileRoute("/matrica-sudby")({
 });
 
 const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
-
-const CARD_GRADIENT =
-  "linear-gradient(to bottom, rgba(3,25,30,0) 40%, rgba(3,25,30,0.6) 62%, rgba(3,25,30,0.9) 82%, rgba(3,25,30,0.97) 100%)";
 
 const selectClass =
   "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
