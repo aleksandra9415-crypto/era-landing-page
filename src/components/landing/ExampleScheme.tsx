@@ -131,9 +131,25 @@ const cycle: NodeId[] = ["E", "A", "B", "C", "D"];
 const pad = (n: number) => String(n).padStart(2, "0");
 
 
-export function ExampleScheme() {
+export function ExampleScheme({
+  id,
+  date,
+  title,
+  subtitle,
+  showButton = true,
+}: {
+  id?: string;
+  date?: SchemeDate;
+  title?: string;
+  subtitle?: string;
+  showButton?: boolean;
+} = {}) {
   const reduced = useReducedMotion();
-  
+  const activeDate = date ?? demoDate;
+  const own = Boolean(date);
+  const nodes = useMemo(() => buildNodes(activeDate), [activeDate]);
+  const byId = (nid: NodeId) => nodes.find((n) => n.id === nid)!;
+
   const [pinned, setPinned] = useState<NodeId>("E");
   const [hovered, setHovered] = useState<NodeId | null>(null);
   const [autoIndex, setAutoIndex] = useState(0);
@@ -163,15 +179,14 @@ export function ExampleScheme() {
   const activeId: NodeId = autoOn && !reduced ? cycle[autoIndex]! : (hovered ?? pinned);
   const active = byId(activeId);
 
-  const isSource = (id: SourceId) => active.sources.includes(id);
+  const isSource = (sid: SourceId) => active.sources.includes(sid);
   const edgeActive = (a: NodeId, b: NodeId) =>
     (a === activeId && isSource(b)) || (b === activeId && isSource(a));
 
-  const datePart = (id: "date-day" | "date-month" | "date-year", text: string) => (
+  const datePart = (pid: "date-day" | "date-month" | "date-year", text: string) => (
     <span
-      id={id}
       className="scheme-transition"
-      style={{ color: isSource(id) ? "var(--text-accent)" : "var(--text-primary)" }}
+      style={{ color: isSource(pid) ? "var(--text-accent)" : "var(--text-primary)" }}
     >
       {text}
     </span>
@@ -179,8 +194,12 @@ export function ExampleScheme() {
 
   return (
     <Section
-      title="Каждое число можно проверить"
-      subtitle="Матрица — это арифметика. Мы показываем, откуда взялось каждое число в твоём разборе"
+      id={id}
+      title={title ?? "Каждое число можно проверить"}
+      subtitle={
+        subtitle ??
+        "Матрица — это арифметика. Мы показываем, откуда взялось каждое число в твоём разборе"
+      }
     >
       <div className="scheme-layout mx-auto mt-12 flex max-w-[1240px] flex-col gap-10 md:mt-16">
         {/* 1 — date */}
@@ -189,7 +208,7 @@ export function ExampleScheme() {
             className="text-text-secondary"
             style={{ fontSize: 13, letterSpacing: "0.08em", textTransform: "uppercase" }}
           >
-            Пример даты рождения
+            {own ? "Твоя дата рождения" : "Пример даты рождения"}
           </p>
           <div
             className="flex items-baseline gap-2"
@@ -200,13 +219,14 @@ export function ExampleScheme() {
               color: "var(--text-primary)",
             }}
           >
-            {datePart("date-day", "26")}
+            {datePart("date-day", pad(activeDate.day))}
             <span>.</span>
-            {datePart("date-month", "07")}
+            {datePart("date-month", pad(activeDate.month))}
             <span>.</span>
-            {datePart("date-year", "1990")}
+            {datePart("date-year", String(activeDate.year))}
           </div>
         </div>
+
 
         {/* 2 — diamond */}
         <div className="scheme-diagram flex flex-col items-center">
