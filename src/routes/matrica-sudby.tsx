@@ -127,6 +127,15 @@ function MatricaSudbyPage() {
 
   const card = numbers ? arcana.find((x) => x.n === numbers.e) : null;
 
+  const schemeDate = useMemo(
+    () =>
+      stage === "result" && numbers
+        ? { day: Number(day), month: Number(month), year: Number(year) }
+        : undefined,
+    [stage, numbers, day, month, year],
+  );
+
+
 
   return (
     <main className="relative w-full bg-bg-page">
