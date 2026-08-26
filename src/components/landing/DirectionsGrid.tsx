@@ -185,6 +185,7 @@ export function DirectionsGrid() {
               title={d.title}
               desc={d.desc}
               image={d.image}
+              path={d.path}
               liftEnabled={!reduced}
               reducedMotion={reduced}
             />
