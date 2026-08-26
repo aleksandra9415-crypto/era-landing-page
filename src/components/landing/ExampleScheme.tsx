@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Section } from "./Section";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { arcana, digitSum, reduceTo22 } from "@/lib/arcana";
