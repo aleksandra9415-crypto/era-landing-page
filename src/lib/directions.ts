@@ -10,7 +10,13 @@ export type Direction = {
   title: string;
   desc: string;
   image: string;
-  path: string;
+  path:
+    | "/matrica-sudby"
+    | "/natalnaya-karta"
+    | "/dizayn-cheloveka"
+    | "/numerologiya"
+    | "/taro"
+    | "/sovmestimost";
 };
 
 /** Single source of truth for the wheel. */
