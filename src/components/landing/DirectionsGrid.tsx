@@ -160,7 +160,7 @@ export function DirectionsGrid() {
         paddingBottom: "clamp(40px, 5vh, 80px)",
       }}
     >
-      <SectionStars count={isMobile ? 45 : 90} />
+      <CursorStarField count={90} />
 
       <div className="relative z-10 mx-auto w-full max-w-[1240px] px-[4vw] md:px-6">
         <h2
