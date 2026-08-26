@@ -145,11 +145,10 @@ function MatricaSudbyPage() {
         {/* 2/4 — shade (responsive) */}
         <div aria-hidden="true" className="ms-hero-shade z-[1]" />
 
-        {/* 3 — bottom fade */}
+        {/* 3 — подсветка у горизонта (её режет чёрная кромка перехода) */}
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[2] h-[260px]"
-          style={{ background: "linear-gradient(to bottom, rgba(3,25,30,0), var(--bg-page))" }}
+          className="hero-glow pointer-events-none absolute bottom-0 left-0 right-0 z-[2]"
         />
 
         {/* 4 — stars */}
