@@ -451,7 +451,21 @@ function MatricaSudbyPage() {
         </div>
       </section>
 
+      <MatrixLines />
+
+      <ExampleScheme
+        date={schemeDate}
+        showButton={false}
+        title={schemeDate ? "Откуда взялось твоё число" : "Каждое число можно проверить"}
+        subtitle={
+          schemeDate
+            ? "Твоя дата, разложенная по шагам. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
+            : "Матрица — это арифметика. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
+        }
+      />
+
       <Footer />
+
 
     </main>
   );
