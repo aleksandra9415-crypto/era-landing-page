@@ -409,13 +409,13 @@ function MatricaSudbyPage() {
 
       <MatrixSample />
 
-      <MatrixFaq />
+      <OtherDirections currentId="matrix" />
 
       <Reviews directionId="matrix" />
 
       <Pricing />
 
-      <OtherDirections currentId="matrix" />
+      <MatrixFaq />
 
       <QuickCalc
         id="start"
