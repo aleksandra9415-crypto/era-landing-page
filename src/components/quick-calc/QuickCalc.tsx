@@ -95,11 +95,7 @@ export function QuickCalc({
       id={id}
       className={`qc-plate relative w-full overflow-hidden ${isHeroOverlap ? "z-[30]" : "z-[2]"}`}
       style={{
-        background: "#000000",
-        borderTop: "2px solid rgba(159, 186, 185, 0.5)",
-        borderTopLeftRadius: `100% ${ARC_H}`,
-        borderTopRightRadius: `100% ${ARC_H}`,
-        marginTop: `calc(-1 * ${ARC_H})`,
+        ...arcTransitionStyle,
         paddingTop: `calc(${ARC_H} + 60px)`,
         paddingBottom: "clamp(120px, 14vh, 220px)",
       }}
