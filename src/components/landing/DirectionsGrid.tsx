@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import { directions } from "@/lib/directions";
-import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
+import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { CursorStarField } from "@/components/common/CursorStarField";
 
 const CARD_GRADIENT =
