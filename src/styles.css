@@ -807,3 +807,16 @@
     font-size: clamp(90px, 9vw, 200px);
   }
 }
+
+.other-dirs-track {
+  scroll-snap-type: x mandatory;
+  scrollbar-width: none;
+}
+.other-dirs-track::-webkit-scrollbar {
+  display: none;
+}
+@media (min-width: 768px) {
+  .other-dirs-track {
+    scroll-snap-type: none;
+  }
+}

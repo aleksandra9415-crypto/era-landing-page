@@ -5,6 +5,10 @@ import { Footer } from "@/components/landing/Footer";
 import { MatrixLines } from "@/components/matrix/MatrixLines";
 import { MatrixSample } from "@/components/matrix/MatrixSample";
 import { MatrixFaq } from "@/components/matrix/MatrixFaq";
+import { Reviews } from "@/components/landing/Reviews";
+import { Pricing } from "@/components/landing/Pricing";
+import { OtherDirections } from "@/components/landing/OtherDirections";
+import { QuickCalc } from "@/components/quick-calc/QuickCalc";
 import { ExampleScheme } from "@/components/landing/ExampleScheme";
 import { CursorStarField } from "@/components/common/CursorStarField";
 import { Grain } from "@/components/hero/Grain";
@@ -480,6 +484,18 @@ function MatricaSudbyPage() {
       <MatrixSample />
 
       <MatrixFaq />
+
+      <Reviews directionId="matrix" />
+
+      <Pricing />
+
+      <OtherDirections currentId="matrix" />
+
+      <QuickCalc
+        id="start"
+        title="Посчитай свою матрицу"
+        subtitle="Центральный аркан бесплатно, прямо сейчас"
+      />
 
       <Footer />
 
