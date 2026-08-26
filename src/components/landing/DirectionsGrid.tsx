@@ -149,7 +149,7 @@ function DirectionCard({
 
 export function DirectionsGrid() {
   const reduced = useReducedMotion();
-  const isMobile = useIsMobile();
+  
 
   return (
     <section
