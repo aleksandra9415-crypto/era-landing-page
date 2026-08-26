@@ -3,6 +3,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
 import { MatrixLines } from "@/components/matrix/MatrixLines";
+import { MatrixSample } from "@/components/matrix/MatrixSample";
+import { MatrixFaq } from "@/components/matrix/MatrixFaq";
 import { ExampleScheme } from "@/components/landing/ExampleScheme";
 import { CursorStarField } from "@/components/common/CursorStarField";
 import { Grain } from "@/components/hero/Grain";
@@ -474,6 +476,10 @@ function MatricaSudbyPage() {
             : "Матрица — это арифметика. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
         }
       />
+
+      <MatrixSample />
+
+      <MatrixFaq />
 
       <Footer />
 
