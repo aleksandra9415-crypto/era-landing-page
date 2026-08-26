@@ -4,6 +4,8 @@ import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
 import { SectionStars } from "@/components/common/SectionStars";
 import { Grain } from "@/components/hero/Grain";
+import { OrbitStage } from "@/components/quick-calc/Orbits";
+
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { arcana, MONTHS, digitSum, reduceTo22, isValidDate } from "@/lib/arcana";
 import matrixAsset from "@/assets/matrix.png.asset.json";
