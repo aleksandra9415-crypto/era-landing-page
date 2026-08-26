@@ -143,7 +143,7 @@ function MatricaSudbyPage() {
               className="font-display text-text-primary"
               style={{ fontSize: "clamp(34px, 3.8vw, 68px)", lineHeight: 1.1 }}
             >
-              Рассчитать матрицу судьбы по дате рождения
+              РАССЧИТАТЬ МАТРИЦУ СУДЬБЫ по дате рождения
             </h1>
 
             {stage !== "result" ? (
