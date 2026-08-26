@@ -326,7 +326,121 @@ function MatricaSudbyPage() {
         </div>
       </section>
 
+      <section
+        ref={aboutRef}
+        className="relative w-full bg-bg-page"
+        style={{ minHeight: "90vh", paddingBlock: "clamp(64px, 8vh, 120px)" }}
+      >
+        <div
+          className="mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
+          style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
+        >
+          {/* left column */}
+          <div className="w-full md:w-[50%]">
+            {stage !== "result" ? (
+              <div>
+                <h2
+                  className="font-display text-text-primary"
+                  style={{ fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
+                >
+                  Что показывает матрица судьбы
+                </h2>
+                <div
+                  className="flex flex-col text-text-secondary"
+                  style={{
+                    marginTop: 24,
+                    gap: 16,
+                    fontSize: "clamp(15px, 1.15vw, 19px)",
+                    lineHeight: 1.65,
+                  }}
+                >
+                  <p>
+                    Матрица судьбы раскладывает дату рождения на 22 позиции — по числу старших
+                    арканов. Каждая позиция отвечает за свою область: характер, отношения, деньги,
+                    здоровье, связь с родом.
+                  </p>
+                  <p>
+                    Центральный аркан стоит в середине этой схемы. Через него проходят все остальные
+                    линии, поэтому с него и начинают: он описывает, к чему человек возвращается снова
+                    и снова, что даётся ему легче всего и что становится главным уроком.
+                  </p>
+                  <p>
+                    Матрица не говорит, что случится. Она описывает устройство: какие качества
+                    заложены сильнее, какие слабее, где твоя опора, а где место, которое стоит
+                    замечать.
+                  </p>
+                  <p>
+                    Расчёт целиком арифметический. Одна и та же дата всегда даёт одну и ту же матрицу
+                    — это не интерпретация, а сложение.
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div style={{ animation: reduced ? "none" : "ms-detail-in 600ms ease-out both" }}>
+                <div
+                  className="uppercase text-text-secondary"
+                  style={{ fontSize: 13, letterSpacing: "0.08em" }}
+                >
+                  Твой центральный аркан
+                </div>
+                <h2
+                  className="font-display text-text-primary"
+                  style={{ marginTop: 8, fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
+                >
+                  {card?.n} · {card?.name}
+                </h2>
+
+                <div
+                  className="relative overflow-hidden"
+                  style={{ marginTop: 20, height: 240 }}
+                >
+                  <p
+                    className="text-text-primary"
+                    style={{ fontSize: "clamp(16px, 1.25vw, 21px)", lineHeight: 1.7 }}
+                  >
+                    {card?.detail}
+                  </p>
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute inset-x-0 bottom-0"
+                    style={{
+                      height: 120,
+                      background: "linear-gradient(to bottom, rgba(3,25,30,0), var(--bg-page))",
+                    }}
+                  />
+                </div>
+
+                <p
+                  className="text-text-secondary"
+                  style={{ marginTop: 4, fontSize: "clamp(15px, 1.15vw, 18px)" }}
+                >
+                  Дальше — в полном разборе
+                </p>
+
+                <button
+                  type="button"
+                  className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
+                  style={{ marginTop: 20, height: 54, paddingInline: 40 }}
+                >
+                  Открыть полный разбор
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* right column — orbits */}
+          <div className="w-full md:w-[44%]">
+            <OrbitStage
+              value={stage === "result" ? (numbers?.e ?? null) : null}
+              speedFactor={fast ? 4 : 1}
+              still={reduced}
+            />
+          </div>
+        </div>
+      </section>
+
       <Footer />
+
     </main>
   );
 }
