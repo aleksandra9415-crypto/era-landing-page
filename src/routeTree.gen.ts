@@ -14,6 +14,7 @@ import { Route as AboutRouteImport } from './routes/about'
 import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as MatricaSudbyRouteImport } from './routes/matrica-sudby'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
@@ -43,6 +44,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const MatricaSudbyRoute = MatricaSudbyRouteImport.update({
+  id: '/matrica-sudby',
+  path: '/matrica-sudby',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const OfferRoute = OfferRouteImport.update({
   id: '/offer',
   path: '/offer',
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
+  '/matrica-sudby': typeof MatricaSudbyRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
+  '/matrica-sudby': typeof MatricaSudbyRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/login': typeof LoginRoute
+  '/matrica-sudby': typeof MatricaSudbyRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/cabinet'
     | '/consent'
     | '/login'
+    | '/matrica-sudby'
     | '/offer'
     | '/privacy'
     | '/subscription-terms'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/cabinet'
     | '/consent'
     | '/login'
+    | '/matrica-sudby'
     | '/offer'
     | '/privacy'
     | '/subscription-terms'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/cabinet'
     | '/consent'
     | '/login'
+    | '/matrica-sudby'
     | '/offer'
     | '/privacy'
     | '/subscription-terms'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   CabinetRoute: typeof CabinetRoute
   ConsentRoute: typeof ConsentRoute
   LoginRoute: typeof LoginRoute
+  MatricaSudbyRoute: typeof MatricaSudbyRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
   SubscriptionTermsRoute: typeof SubscriptionTermsRoute
@@ -171,6 +184,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/matrica-sudby': {
+      id: '/matrica-sudby'
+      path: '/matrica-sudby'
+      fullPath: '/matrica-sudby'
+      preLoaderRoute: typeof MatricaSudbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/offer': {
       id: '/offer'
       path: '/offer'
@@ -201,6 +221,7 @@ const rootRouteChildren: RootRouteChildren = {
   CabinetRoute: CabinetRoute,
   ConsentRoute: ConsentRoute,
   LoginRoute: LoginRoute,
+  MatricaSudbyRoute: MatricaSudbyRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
   SubscriptionTermsRoute: SubscriptionTermsRoute,
