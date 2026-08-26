@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { directions, type Direction } from "@/lib/directions";
 import { Section } from "./Section";
 import avatar1 from "@/assets/avatar-1.jpg";
 import avatar2 from "@/assets/avatar-2.jpg";
@@ -46,7 +47,18 @@ const REVIEWS = [
   },
 ];
 
-export function Reviews() {
+type ReviewsProps = { directionId?: Direction["id"] };
+
+export function Reviews({ directionId }: ReviewsProps = {}) {
+  const ordered = useMemo(() => {
+    if (!directionId) return REVIEWS;
+    const topic = directions.find((d) => d.id === directionId)?.title;
+    if (!topic) return REVIEWS;
+    const first = REVIEWS.filter((r) => r.topic === topic);
+    const rest = REVIEWS.filter((r) => r.topic !== topic);
+    return [...first, ...rest];
+  }, [directionId]);
+
   const trackRef = useRef<HTMLDivElement>(null);
   const [page, setPage] = useState(0);
   const [pages, setPages] = useState(2);
@@ -99,7 +111,7 @@ export function Reviews() {
         tabIndex={0}
         className="reviews-track mx-auto mt-12 w-full max-w-[1240px]"
       >
-        {REVIEWS.map((r) => (
+        {ordered.map((r) => (
           <figure
             key={r.name}
             className="group relative aspect-square rounded-[20px] border border-border bg-surface-1 transition duration-300 hover:border-text-accent/50 hover:-translate-y-1 motion-reduce:hover:translate-y-0"

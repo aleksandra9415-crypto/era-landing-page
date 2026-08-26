@@ -13,11 +13,16 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as ConsentRouteImport } from './routes/consent'
+import { Route as DizaynChelovekaRouteImport } from './routes/dizayn-cheloveka'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as MatricaSudbyRouteImport } from './routes/matrica-sudby'
+import { Route as NatalnayaKartaRouteImport } from './routes/natalnaya-karta'
+import { Route as NumerologiyaRouteImport } from './routes/numerologiya'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as SovmestimostRouteImport } from './routes/sovmestimost'
 import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
+import { Route as TaroRouteImport } from './routes/taro'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -39,6 +44,11 @@ const ConsentRoute = ConsentRouteImport.update({
   path: '/consent',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DizaynChelovekaRoute = DizaynChelovekaRouteImport.update({
+  id: '/dizayn-cheloveka',
+  path: '/dizayn-cheloveka',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
@@ -47,6 +57,16 @@ const LoginRoute = LoginRouteImport.update({
 const MatricaSudbyRoute = MatricaSudbyRouteImport.update({
   id: '/matrica-sudby',
   path: '/matrica-sudby',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NatalnayaKartaRoute = NatalnayaKartaRouteImport.update({
+  id: '/natalnaya-karta',
+  path: '/natalnaya-karta',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NumerologiyaRoute = NumerologiyaRouteImport.update({
+  id: '/numerologiya',
+  path: '/numerologiya',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OfferRoute = OfferRouteImport.update({
@@ -59,9 +79,19 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const SovmestimostRoute = SovmestimostRouteImport.update({
+  id: '/sovmestimost',
+  path: '/sovmestimost',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SubscriptionTermsRoute = SubscriptionTermsRouteImport.update({
   id: '/subscription-terms',
   path: '/subscription-terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TaroRoute = TaroRouteImport.update({
+  id: '/taro',
+  path: '/taro',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -70,22 +100,32 @@ export interface FileRoutesByFullPath {
   '/about': typeof AboutRoute
   '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
+  '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
   '/matrica-sudby': typeof MatricaSudbyRoute
+  '/natalnaya-karta': typeof NatalnayaKartaRoute
+  '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
+  '/taro': typeof TaroRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
+  '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
   '/matrica-sudby': typeof MatricaSudbyRoute
+  '/natalnaya-karta': typeof NatalnayaKartaRoute
+  '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
+  '/taro': typeof TaroRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -93,11 +133,16 @@ export interface FileRoutesById {
   '/about': typeof AboutRoute
   '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
+  '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
   '/matrica-sudby': typeof MatricaSudbyRoute
+  '/natalnaya-karta': typeof NatalnayaKartaRoute
+  '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
+  '/taro': typeof TaroRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -106,33 +151,48 @@ export interface FileRouteTypes {
     | '/about'
     | '/cabinet'
     | '/consent'
+    | '/dizayn-cheloveka'
     | '/login'
     | '/matrica-sudby'
+    | '/natalnaya-karta'
+    | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/sovmestimost'
     | '/subscription-terms'
+    | '/taro'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
     | '/cabinet'
     | '/consent'
+    | '/dizayn-cheloveka'
     | '/login'
     | '/matrica-sudby'
+    | '/natalnaya-karta'
+    | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/sovmestimost'
     | '/subscription-terms'
+    | '/taro'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/cabinet'
     | '/consent'
+    | '/dizayn-cheloveka'
     | '/login'
     | '/matrica-sudby'
+    | '/natalnaya-karta'
+    | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/sovmestimost'
     | '/subscription-terms'
+    | '/taro'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -140,11 +200,16 @@ export interface RootRouteChildren {
   AboutRoute: typeof AboutRoute
   CabinetRoute: typeof CabinetRoute
   ConsentRoute: typeof ConsentRoute
+  DizaynChelovekaRoute: typeof DizaynChelovekaRoute
   LoginRoute: typeof LoginRoute
   MatricaSudbyRoute: typeof MatricaSudbyRoute
+  NatalnayaKartaRoute: typeof NatalnayaKartaRoute
+  NumerologiyaRoute: typeof NumerologiyaRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
+  SovmestimostRoute: typeof SovmestimostRoute
   SubscriptionTermsRoute: typeof SubscriptionTermsRoute
+  TaroRoute: typeof TaroRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -177,6 +242,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ConsentRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/dizayn-cheloveka': {
+      id: '/dizayn-cheloveka'
+      path: '/dizayn-cheloveka'
+      fullPath: '/dizayn-cheloveka'
+      preLoaderRoute: typeof DizaynChelovekaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/login': {
       id: '/login'
       path: '/login'
@@ -189,6 +261,20 @@ declare module '@tanstack/react-router' {
       path: '/matrica-sudby'
       fullPath: '/matrica-sudby'
       preLoaderRoute: typeof MatricaSudbyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/natalnaya-karta': {
+      id: '/natalnaya-karta'
+      path: '/natalnaya-karta'
+      fullPath: '/natalnaya-karta'
+      preLoaderRoute: typeof NatalnayaKartaRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/numerologiya': {
+      id: '/numerologiya'
+      path: '/numerologiya'
+      fullPath: '/numerologiya'
+      preLoaderRoute: typeof NumerologiyaRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/offer': {
@@ -205,11 +291,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/sovmestimost': {
+      id: '/sovmestimost'
+      path: '/sovmestimost'
+      fullPath: '/sovmestimost'
+      preLoaderRoute: typeof SovmestimostRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/subscription-terms': {
       id: '/subscription-terms'
       path: '/subscription-terms'
       fullPath: '/subscription-terms'
       preLoaderRoute: typeof SubscriptionTermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/taro': {
+      id: '/taro'
+      path: '/taro'
+      fullPath: '/taro'
+      preLoaderRoute: typeof TaroRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -220,11 +320,16 @@ const rootRouteChildren: RootRouteChildren = {
   AboutRoute: AboutRoute,
   CabinetRoute: CabinetRoute,
   ConsentRoute: ConsentRoute,
+  DizaynChelovekaRoute: DizaynChelovekaRoute,
   LoginRoute: LoginRoute,
   MatricaSudbyRoute: MatricaSudbyRoute,
+  NatalnayaKartaRoute: NatalnayaKartaRoute,
+  NumerologiyaRoute: NumerologiyaRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
+  SovmestimostRoute: SovmestimostRoute,
   SubscriptionTermsRoute: SubscriptionTermsRoute,
+  TaroRoute: TaroRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
