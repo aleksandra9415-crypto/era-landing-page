@@ -53,7 +53,7 @@ function buildNodes(date: SchemeDate): SchemeNode[] {
   const d = reduceTo22(dRaw);
   const eRaw = a + b + c + d;
   const e = reduceTo22(eRaw);
-  const name = arcana.find((x) => x.n === e)?.title ?? "";
+  const name = arcana.find((x) => x.n === e)?.name ?? "";
 
   return [
     {
@@ -138,11 +138,11 @@ export function ExampleScheme({
   subtitle,
   showButton = true,
 }: {
-  id?: string;
-  date?: SchemeDate;
-  title?: string;
-  subtitle?: string;
-  showButton?: boolean;
+  id?: string | undefined;
+  date?: SchemeDate | undefined;
+  title?: string | undefined;
+  subtitle?: string | undefined;
+  showButton?: boolean | undefined;
 } = {}) {
   const reduced = useReducedMotion();
   const activeDate = date ?? demoDate;
@@ -194,7 +194,7 @@ export function ExampleScheme({
 
   return (
     <Section
-      id={id}
+      {...(id ? { id } : {})}
       title={title ?? "Каждое число можно проверить"}
       subtitle={
         subtitle ??
