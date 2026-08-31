@@ -137,6 +137,8 @@
 :root {
   --hero-card: min(30vw, 48vh);
   --hero-headline-size: clamp(30px, calc(84vw / 6.2), 78px);
+  /* глубина чёрной дуги-перехода, наезжающей на предыдущую секцию */
+  --transition-depth: clamp(140px, 11vw, 280px);
 }
 
 @media (min-width: 768px) {
@@ -158,10 +160,11 @@
 @media (max-width: 767px) {
   .hero-text-block {
     top: auto;
-    bottom: 20vh;
+    bottom: calc(var(--transition-depth) + 24px);
     transform: none;
   }
 }
+
 
 @media (min-width: 768px) {
   .hero-text-block {
@@ -749,8 +752,10 @@
 .ms-hero {
   position: relative;
   overflow: hidden;
-  height: 100vh;
-  min-height: 640px;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  height: auto;
 }
 .ms-hero-shade {
   position: absolute;
@@ -767,14 +772,15 @@
   position: relative;
   z-index: 30;
   display: flex;
-  height: 100%;
+  flex: 1 1 auto;
   width: 100%;
   max-width: 1320px;
   margin: 0 auto;
   padding-inline: 8vw;
   align-items: flex-end;
-  /* глубина дуги перехода + 60px, чтобы кнопка не уходила под чёрную кромку */
-  padding-bottom: calc(clamp(140px, 11vw, 280px) + 60px);
+  /* хедер + 40px сверху; глубина дуги перехода + 60px снизу */
+  padding-top: 150px;
+  padding-bottom: calc(var(--transition-depth) + 60px);
 }
 .ms-hero-text {
   width: 100%;
@@ -784,7 +790,8 @@
 }
 @media (min-width: 768px) {
   .ms-hero {
-    height: 92vh;
+    min-height: 100vh;
+    height: auto;
   }
   .ms-hero-shade {
     background: linear-gradient(
@@ -798,8 +805,6 @@
   }
   .ms-hero-content {
     align-items: center;
-    padding-bottom: 0;
-    padding-top: 110px;
   }
   .ms-hero-text {
     width: min(46%, 620px);

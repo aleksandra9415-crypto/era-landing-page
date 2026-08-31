@@ -30,7 +30,7 @@ export function MatrixFaq() {
       title="Вопросы о матрице"
       style={{
         paddingBottom:
-          "calc(clamp(80px, 10vh, 160px) + clamp(140px, 11vw, 280px) + 24px)",
+          "calc(clamp(80px, 10vh, 160px) + var(--transition-depth) + 24px)",
       }}
     >
       <div className="mx-auto mt-12 w-full max-w-[860px]">
