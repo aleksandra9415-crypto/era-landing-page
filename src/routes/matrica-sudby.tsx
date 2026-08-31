@@ -1,21 +1,13 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Header } from "@/components/hero/Header";
-import { Footer } from "@/components/landing/Footer";
-import { MatrixLines } from "@/components/matrix/MatrixLines";
-import { MatrixSample } from "@/components/matrix/MatrixSample";
-import { MatrixFaq } from "@/components/matrix/MatrixFaq";
-import { Reviews } from "@/components/landing/Reviews";
-import { Pricing } from "@/components/landing/Pricing";
-import { OtherDirections } from "@/components/landing/OtherDirections";
-import { QuickCalc } from "@/components/quick-calc/QuickCalc";
 import { ExampleScheme } from "@/components/landing/ExampleScheme";
-import { CursorStarField } from "@/components/common/CursorStarField";
-import { Grain } from "@/components/hero/Grain";
 import { OrbitStage } from "@/components/quick-calc/Orbits";
-import { ARC_H, arcTransitionStyle } from "@/components/common/ArcTransition";
-
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
+import {
+  DirectionPage,
+  directionHead,
+  type CalculatorApi,
+  type ResultCtx,
+} from "@/components/direction/DirectionPage";
 import { arcana, MONTHS, digitSum, reduceTo22, isValidDate } from "@/lib/arcana";
 import matrixAsset from "@/assets/matrix.png.asset.json";
 
@@ -24,16 +16,10 @@ const DESCRIPTION =
   "Бесплатный расчёт матрицы судьбы онлайн. Центральный аркан и базовые числа по дате рождения, с объяснением, откуда взялось каждое число.";
 
 export const Route = createFileRoute("/matrica-sudby")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://destiny-canvas-arc.lovable.app/matrica-sudby" }],
+  head: directionHead({
+    title: TITLE,
+    description: DESCRIPTION,
+    canonical: "https://destiny-canvas-arc.lovable.app/matrica-sudby",
   }),
   component: MatricaSudbyPage,
 });
@@ -63,8 +49,81 @@ export type MatrixNumbers = {
   e: number;
 };
 
-function MatricaSudbyPage() {
-  const reduced = useReducedMotion();
+type MatrixResult = {
+  numbers: MatrixNumbers;
+  date: { day: number; month: number; year: number };
+};
+
+const LINES = [
+  {
+    n: "01",
+    title: "Характер",
+    text: "Центральный аркан и линия личности: сильные стороны, слепые зоны и то, к чему возвращаешься снова и снова",
+  },
+  {
+    n: "02",
+    title: "Отношения",
+    text: "Что ищешь в паре, что готов давать и какие сценарии повторяются от партнёра к партнёру",
+  },
+  {
+    n: "03",
+    title: "Деньги",
+    text: "Через что приходят ресурсы, какая работа даётся легче и что чаще всего мешает доводить до денег",
+  },
+  {
+    n: "04",
+    title: "Реализация",
+    text: "Линия таланта и социального проявления: в чём ты сильнее среднего и где это применимо",
+  },
+  {
+    n: "05",
+    title: "Род",
+    text: "Что пришло по материнской и отцовской линии — качества, которые достались до того, как ты начал выбирать",
+  },
+  {
+    n: "06",
+    title: "Повторения",
+    text: "Сценарии, которые возвращаются, пока их не заметишь. Не приговор — описание петли и того, где у неё вход",
+  },
+];
+
+const ABOUT_PARAGRAPHS = [
+  "Матрица судьбы раскладывает дату рождения на 22 позиции — по числу старших арканов. Каждая позиция отвечает за свою область: характер, отношения, деньги, здоровье, связь с родом.",
+  "Центральный аркан стоит в середине этой схемы. Через него проходят все остальные линии, поэтому с него и начинают: он описывает, к чему человек возвращается снова и снова, что даётся ему легче всего и что становится главным уроком.",
+  "Матрица не говорит, что случится. Она описывает устройство: какие качества заложены сильнее, какие слабее, где твоя опора, а где место, которое стоит замечать.",
+  "Расчёт целиком арифметический. Одна и та же дата всегда даёт одну и ту же матрицу — это не интерпретация, а сложение.",
+];
+
+const SAMPLE_PARAGRAPHS = [
+  "Центральный аркан 5 ставит тебя в положение человека, которому нужна не подсказка, а устройство. Ты плохо переносишь ответы без объяснения: даже верный совет, поданный как готовый вывод, вызывает сопротивление. Зато любая система, в которой видно, как одно следует из другого, схватывается быстро и надолго.",
+  "В отношениях это проявляется мягче, чем можно ожидать. Тебе важно не согласие, а понятность: почему человек поступает так, откуда у него это взялось, по каким правилам он живёт. Партнёр, который не может объяснить себя, утомляет сильнее, чем партнёр, который открыто не согласен.",
+  "В работе пятый аркан почти всегда выводит к роли объясняющего. Это не обязательно преподавание — чаще это позиция человека, к которому приходят разобраться. Со временем возникает побочный эффект, о котором редко предупреждают: чем лучше ты объясняешь чужие системы, тем",
+];
+
+const FAQ = [
+  {
+    q: "Что такое матрица судьбы и откуда она взялась",
+    a: "Метод появился в конце XX века и соединяет два старых языка: 22 старших аркана Таро и числовую свёртку из нумерологии. Дата рождения раскладывается по схеме из восьмиконечной звезды, и каждая позиция получает своё число от 1 до 22.",
+  },
+  {
+    q: "Чем матрица отличается от натальной карты",
+    a: "Матрица считается только из даты и описывает устройство характера и повторяющиеся сценарии. Натальная карта считается из даты, времени и места, использует реальные положения планет и говорит больше о ритме и обстоятельствах. Они не спорят между собой, а смотрят с разных сторон.",
+  },
+  {
+    q: "Нужно ли время рождения",
+    a: "Нет. Для матрицы достаточно даты. Время и место понадобятся, если захочешь посмотреть натальную карту или Дизайн человека.",
+  },
+  {
+    q: "Почему у меня и у знакомого одинаковый центральный аркан",
+    a: "Центральный аркан — одно число из двадцати двух, поэтому совпадения встречаются часто. Различает людей не он один, а вся схема целиком: шесть линий и связи между ними у двух человек с одинаковым центром будут разными.",
+  },
+  {
+    q: "Матрица предсказывает события",
+    a: "Нет. Она описывает качества, склонности и повторяющиеся сценарии. Что с этим делать — остаётся за тобой, и именно поэтому в сервисе есть дневник наблюдений.",
+  },
+];
+
+function MatrixCalculator({ stage, submit }: CalculatorApi<MatrixResult>) {
   const currentYear = new Date().getFullYear();
   const years = useMemo(
     () => Array.from({ length: currentYear - 1930 + 1 }, (_, i) => currentYear - i),
@@ -74,22 +133,6 @@ function MatricaSudbyPage() {
   const [day, setDay] = useState("");
   const [month, setMonth] = useState("");
   const [year, setYear] = useState("");
-  const [stage, setStage] = useState<"form" | "loading" | "result">("form");
-  const [numbers, setNumbers] = useState<MatrixNumbers | null>(null);
-  const [fast, setFast] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scrollTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const slowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const aboutRef = useRef<HTMLElement | null>(null);
-
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
-      if (scrollTimer.current) clearTimeout(scrollTimer.current);
-      if (slowTimer.current) clearTimeout(slowTimer.current);
-    },
-    [],
-  );
 
   const complete = day !== "" && month !== "" && year !== "";
   const dateInvalid = complete && !isValidDate(Number(day), Number(month), Number(year));
@@ -101,332 +144,190 @@ function MatricaSudbyPage() {
     const c = reduceTo22(digitSum(Number(year)));
     const d = reduceTo22(a + b + c);
     const e = reduceTo22(a + b + c + d);
-    setStage("loading");
-    if (!reduced) setFast(true);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(
-      () => {
-        setNumbers({ a, b, c, d, e });
-        setStage("result");
-        if (slowTimer.current) clearTimeout(slowTimer.current);
-        slowTimer.current = setTimeout(() => setFast(false), 100);
-        if (scrollTimer.current) clearTimeout(scrollTimer.current);
-        aboutRef.current?.scrollIntoView({
-          behavior: reduced ? "auto" : "smooth",
-          block: "start",
-        });
-      },
-      reduced ? 200 : 700,
-    );
+    submit({
+      numbers: { a, b, c, d, e },
+      date: { day: Number(day), month: Number(month), year: Number(year) },
+    });
   };
 
-
-  const card = numbers ? arcana.find((x) => x.n === numbers.e) : null;
-
-  const schemeDate = useMemo(
-    () =>
-      stage === "result" && numbers
-        ? { day: Number(day), month: Number(month), year: Number(year) }
-        : undefined,
-    [stage, numbers, day, month, year],
-  );
-
-
-
   return (
-    <main className="relative w-full bg-bg-page">
-      <div className="relative h-[110px] w-full">
-        <Header />
+    <>
+      <div className="flex flex-col gap-3 md:flex-row" style={{ marginTop: 32 }}>
+        <div className="relative flex-1">
+          <label className="sr-only" htmlFor="ms-day">
+            День
+          </label>
+          <select
+            id="ms-day"
+            className={selectClass}
+            value={day}
+            onChange={(e) => setDay(e.target.value)}
+          >
+            <option value="">День</option>
+            {DAYS.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </select>
+          <Chevron />
+        </div>
+
+        <div className="relative flex-1">
+          <label className="sr-only" htmlFor="ms-month">
+            Месяц
+          </label>
+          <select
+            id="ms-month"
+            className={selectClass}
+            value={month}
+            onChange={(e) => setMonth(e.target.value)}
+          >
+            <option value="">Месяц</option>
+            {MONTHS.map((m, i) => (
+              <option key={m} value={i + 1}>
+                {m}
+              </option>
+            ))}
+          </select>
+          <Chevron />
+        </div>
+
+        <div className="relative flex-1">
+          <label className="sr-only" htmlFor="ms-year">
+            Год
+          </label>
+          <select
+            id="ms-year"
+            className={selectClass}
+            value={year}
+            onChange={(e) => setYear(e.target.value)}
+          >
+            <option value="">Год</option>
+            {years.map((y) => (
+              <option key={y} value={y}>
+                {y}
+              </option>
+            ))}
+          </select>
+          <Chevron />
+        </div>
       </div>
 
-      <section className="ms-hero -mt-[110px] w-full">
-        {/* 1 — photo */}
-        <img
-          src={matrixAsset.url}
-          alt="Матрица судьбы — расчёт по дате рождения"
-          aria-hidden="true"
-          className="absolute inset-0 z-0 h-full w-full object-cover object-center"
-        />
+      {dateInvalid && (
+        <p className="mt-3 text-[15px] text-text-danger">
+          Такой даты не существует — проверь день и месяц
+        </p>
+      )}
 
-        {/* 2/4 — shade (responsive) */}
-        <div aria-hidden="true" className="ms-hero-shade z-[1]" />
-
-        {/* 3 — подсветка у горизонта (её режет чёрная кромка перехода) */}
-        <div
-          aria-hidden="true"
-          className="hero-glow pointer-events-none absolute bottom-0 left-0 right-0 z-[2]"
-        />
-
-        {/* 4 — stars (следят за курсором) */}
-        <CursorStarField count={70} opacity={0.6} className="z-[3]" />
-
-
-        {/* 5 — grain */}
-        <Grain />
-
-        {/* 6 — content */}
-        <div className="ms-hero-content">
-          <div className="ms-hero-text">
-            <h1
-              className="font-display text-text-primary"
-              style={{ fontSize: "clamp(34px, 3.8vw, 68px)", lineHeight: 1.1 }}
-            >
-              РАССЧИТАТЬ <span className="whitespace-nowrap">МАТРИЦУ СУДЬБЫ</span>{" "}
-              <span className="whitespace-nowrap">по дате рождения</span>
-            </h1>
-
-            <p
-              className="text-text-secondary"
-              style={{ marginTop: 18, fontSize: "clamp(15px, 1.2vw, 20px)" }}
-            >
-              Бесплатно и без регистрации. Покажем центральный аркан и четыре числа, из которых
-              он собирается
-            </p>
-
-            <div className="flex flex-col gap-3 md:flex-row" style={{ marginTop: 32 }}>
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="ms-day">
-                  День
-                </label>
-                <select
-                  id="ms-day"
-                  className={selectClass}
-                  value={day}
-                  onChange={(e) => setDay(e.target.value)}
-                >
-                  <option value="">День</option>
-                  {DAYS.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="ms-month">
-                  Месяц
-                </label>
-                <select
-                  id="ms-month"
-                  className={selectClass}
-                  value={month}
-                  onChange={(e) => setMonth(e.target.value)}
-                >
-                  <option value="">Месяц</option>
-                  {MONTHS.map((m, i) => (
-                    <option key={m} value={i + 1}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="ms-year">
-                  Год
-                </label>
-                <select
-                  id="ms-year"
-                  className={selectClass}
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                >
-                  <option value="">Год</option>
-                  {years.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-            </div>
-
-            {dateInvalid && (
-              <p className="mt-3 text-[15px] text-text-danger">
-                Такой даты не существует — проверь день и месяц
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!complete || dateInvalid || stage === "loading"}
-              className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
-              style={{
-                marginTop: 20,
-                height: 54,
-                paddingInline: 40,
-                opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1,
-              }}
-            >
-              {stage === "loading" ? "Считаем" : stage === "result" ? "Пересчитать" : "Рассчитать"}
-            </button>
-
-          </div>
-        </div>
-      </section>
-
-      <section
-        ref={aboutRef}
-        className="relative z-[30] w-full overflow-hidden"
+      <button
+        type="button"
+        onClick={handleSubmit}
+        disabled={!complete || dateInvalid || stage === "loading"}
+        className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
         style={{
-          ...arcTransitionStyle,
-          minHeight: "90vh",
-          paddingTop: `calc(${ARC_H} + 40px + clamp(64px, 8vh, 120px))`,
-          paddingBottom: "clamp(64px, 8vh, 120px)",
+          marginTop: 20,
+          height: 54,
+          paddingInline: 40,
+          opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1,
         }}
       >
-        {/* растворение чёрного в фон страницы */}
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[200px]"
-          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-page))" }}
-        />
-        <div
-          className="relative z-[2] mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
-          style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
-        >
-          {/* left column */}
-          <div className="w-full md:w-[50%]">
-            {stage !== "result" ? (
-              <div>
-                <h2
-                  className="font-display text-text-primary"
-                  style={{ fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
-                >
-                  Что показывает матрица судьбы
-                </h2>
-                <div
-                  className="flex flex-col text-text-secondary"
-                  style={{
-                    marginTop: 24,
-                    gap: 16,
-                    fontSize: "clamp(15px, 1.15vw, 19px)",
-                    lineHeight: 1.65,
-                  }}
-                >
-                  <p>
-                    Матрица судьбы раскладывает дату рождения на 22 позиции — по числу старших
-                    арканов. Каждая позиция отвечает за свою область: характер, отношения, деньги,
-                    здоровье, связь с родом.
-                  </p>
-                  <p>
-                    Центральный аркан стоит в середине этой схемы. Через него проходят все остальные
-                    линии, поэтому с него и начинают: он описывает, к чему человек возвращается снова
-                    и снова, что даётся ему легче всего и что становится главным уроком.
-                  </p>
-                  <p>
-                    Матрица не говорит, что случится. Она описывает устройство: какие качества
-                    заложены сильнее, какие слабее, где твоя опора, а где место, которое стоит
-                    замечать.
-                  </p>
-                  <p>
-                    Расчёт целиком арифметический. Одна и та же дата всегда даёт одну и ту же матрицу
-                    — это не интерпретация, а сложение.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div style={{ animation: reduced ? "none" : "ms-detail-in 600ms ease-out both" }}>
-                <div
-                  className="uppercase text-text-secondary"
-                  style={{ fontSize: 13, letterSpacing: "0.08em" }}
-                >
-                  Твой центральный аркан
-                </div>
-                <h2
-                  className="font-display text-text-primary"
-                  style={{ marginTop: 8, fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
-                >
-                  {card?.n} · {card?.name}
-                </h2>
-
-                <div
-                  className="relative overflow-hidden"
-                  style={{ marginTop: 20, height: 240 }}
-                >
-                  <p
-                    className="text-text-primary"
-                    style={{ fontSize: "clamp(16px, 1.25vw, 21px)", lineHeight: 1.7 }}
-                  >
-                    {card?.detail}
-                  </p>
-                  <div
-                    aria-hidden="true"
-                    className="pointer-events-none absolute inset-x-0 bottom-0"
-                    style={{
-                      height: 120,
-                      background: "linear-gradient(to bottom, rgba(0,0,0,0), #000000)",
-                    }}
-                  />
-                </div>
-
-                <p
-                  className="text-text-secondary"
-                  style={{ marginTop: 4, fontSize: "clamp(15px, 1.15vw, 18px)" }}
-                >
-                  Дальше — в полном разборе
-                </p>
-
-                <button
-                  type="button"
-                  className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-                  style={{ marginTop: 20, height: 54, paddingInline: 40 }}
-                >
-                  Открыть полный разбор
-                </button>
-              </div>
-            )}
-          </div>
-
-          {/* right column — orbits */}
-          <div className="w-full md:w-[44%]">
-            <OrbitStage
-              value={stage === "result" ? (numbers?.e ?? null) : null}
-              speedFactor={fast ? 4 : 1}
-              still={reduced}
-            />
-          </div>
-        </div>
-      </section>
-
-      <MatrixLines />
-
-      <ExampleScheme
-        date={schemeDate}
-        showButton={false}
-        title={schemeDate ? "Откуда взялось твоё число" : "Каждое число можно проверить"}
-        subtitle={
-          schemeDate
-            ? "Твоя дата, разложенная по шагам. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
-            : "Матрица — это арифметика. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
-        }
-      />
-
-      <MatrixSample />
-
-      <OtherDirections currentId="matrix" />
-
-      <Reviews directionId="matrix" />
-
-      <Pricing />
-
-      <MatrixFaq />
-
-      <QuickCalc
-        id="start"
-        title="Посчитай свою матрицу"
-        subtitle="Центральный аркан бесплатно, прямо сейчас"
-      />
-
-      <Footer />
-
-
-    </main>
+        {stage === "loading" ? "Считаем" : stage === "result" ? "Пересчитать" : "Рассчитать"}
+      </button>
+    </>
   );
 }
 
+function MatrixResultContent({ result }: ResultCtx<MatrixResult>) {
+  const card = arcana.find((x) => x.n === result.numbers.e);
+  return (
+    <>
+      <h2
+        className="font-display text-text-primary"
+        style={{ marginTop: 8, fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
+      >
+        {card?.n} · {card?.name}
+      </h2>
+
+      <div className="relative overflow-hidden" style={{ marginTop: 20, height: 240 }}>
+        <p
+          className="text-text-primary"
+          style={{ fontSize: "clamp(16px, 1.25vw, 21px)", lineHeight: 1.7 }}
+        >
+          {card?.detail}
+        </p>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0"
+          style={{
+            height: 120,
+            background: "linear-gradient(to bottom, rgba(0,0,0,0), #000000)",
+          }}
+        />
+      </div>
+
+      <p
+        className="text-text-secondary"
+        style={{ marginTop: 4, fontSize: "clamp(15px, 1.15vw, 18px)" }}
+      >
+        Дальше — в полном разборе
+      </p>
+
+      <button
+        type="button"
+        className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
+        style={{ marginTop: 20, height: 54, paddingInline: 40 }}
+      >
+        Открыть полный разбор
+      </button>
+    </>
+  );
+}
+
+function MatricaSudbyPage() {
+  return (
+    <DirectionPage<MatrixResult>
+      id="matrix"
+      h1={
+        <>
+          РАССЧИТАТЬ <span className="whitespace-nowrap">МАТРИЦУ СУДЬБЫ</span>{" "}
+          <span className="whitespace-nowrap">по дате рождения</span>
+        </>
+      }
+      heroDescription="Бесплатно и без регистрации. Покажем центральный аркан и четыре числа, из которых он собирается"
+      heroImage={matrixAsset.url}
+      heroImageAlt="Матрица судьбы — расчёт по дате рождения"
+      aboutTitle="Что показывает матрица судьбы"
+      aboutParagraphs={ABOUT_PARAGRAPHS}
+      resultLabel="Твой центральный аркан"
+      linesTitle="Что входит в разбор"
+      linesSubtitle="22 позиции матрицы разложены по шести линиям"
+      lines={LINES}
+      exampleTitle="Как выглядит разбор"
+      exampleSubtitle="Фрагмент настоящего текста. Дата 26 июля 1990, центральный аркан 5"
+      exampleParagraphs={SAMPLE_PARAGRAPHS}
+      exampleFooter="Полный разбор — около 20 страниц по шести линиям"
+      faqTitle="Вопросы о матрице"
+      faq={FAQ}
+      finalTitle="Посчитай свою матрицу"
+      finalSubtitle="Центральный аркан бесплатно, прямо сейчас"
+      calculator={(api) => <MatrixCalculator {...api} />}
+      resultVisual={({ result, fast, reduced }) => (
+        <OrbitStage value={result.numbers.e} speedFactor={fast ? 4 : 1} still={reduced} />
+      )}
+      resultContent={(ctx) => <MatrixResultContent {...ctx} />}
+      explainBlock={(ctx) => (
+        <ExampleScheme
+          date={ctx?.result.date}
+          showButton={false}
+          title={ctx ? "Откуда взялось твоё число" : "Каждое число можно проверить"}
+          subtitle={
+            ctx
+              ? "Твоя дата, разложенная по шагам. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
+              : "Матрица — это арифметика. Наведи на любое число, чтобы увидеть, из чего оно посчитано"
+          }
+        />
+      )}
+    />
+  );
+}
