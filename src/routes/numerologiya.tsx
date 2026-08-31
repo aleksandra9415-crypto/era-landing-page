@@ -1,378 +1,316 @@
-import { useEffect, useMemo, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
-import { Header } from "@/components/hero/Header";
-import { Footer } from "@/components/landing/Footer";
-import { CursorStarField } from "@/components/common/CursorStarField";
-import { Grain } from "@/components/hero/Grain";
 import { OrbitStage } from "@/components/quick-calc/Orbits";
-import { ARC_H, arcTransitionStyle } from "@/components/common/ArcTransition";
-import { useReducedMotion } from "@/hooks/use-reduced-motion";
-import { MONTHS, isValidDate } from "@/lib/arcana";
-import { lifePath, lifePathNumber, pythagoras, squareLabels } from "@/lib/numerology";
+import {
+  DirectionPage,
+  directionHead,
+  type CalculatorApi,
+  type ResultCtx,
+} from "@/components/direction/DirectionPage";
+import { DateCalculator } from "@/components/direction/DateCalculator";
+import {
+  lifePath,
+  lifePathNumber,
+  pythagoras,
+  squareLabels,
+  type PythagorasResult,
+} from "@/lib/numerology";
+import { MONTHS } from "@/lib/arcana";
 import numerologyAsset from "@/assets/numerology.png.asset.json";
 
-const TITLE = "Нумерология по дате рождения: расчёт числа судьбы — Моя Эра";
+const TITLE =
+  "Нумерология по дате рождения: число судьбы и квадрат Пифагора — Моя Эра";
 const DESCRIPTION =
-  "Бесплатный расчёт числа жизненного пути и квадрата Пифагора по дате рождения. С объяснением, как считается каждая цифра.";
+  "Бесплатный расчёт числа жизненного пути и квадрата Пифагора по дате рождения, с объяснением каждого шага.";
 
 export const Route = createFileRoute("/numerologiya")({
-  head: () => ({
-    meta: [
-      { title: TITLE },
-      { name: "description", content: DESCRIPTION },
-      { property: "og:title", content: TITLE },
-      { property: "og:description", content: DESCRIPTION },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-    ],
-    links: [{ rel: "canonical", href: "https://destiny-canvas-arc.lovable.app/numerologiya" }],
+  head: directionHead({
+    title: TITLE,
+    description: DESCRIPTION,
+    canonical: "https://destiny-canvas-arc.lovable.app/numerologiya",
   }),
-  component: NumerologiyaPage,
+  component: NumerologyPage,
 });
 
-const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
+type NumerologyResult = {
+  path: number;
+  square: PythagorasResult;
+  date: { day: number; month: number; year: number };
+};
 
-const selectClass =
-  "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
+const ABOUT_PARAGRAPHS = [
+  "Нумерология работает с датой рождения как с числовой записью. Цифры складываются по одним и тем же правилам, и из них получаются два разных инструмента.",
+  "Число жизненного пути — одна цифра, которая описывает основной способ действовать: с чего человек начинает, к чему возвращается, что даётся легче остального.",
+  "Квадрат Пифагора устроен иначе. В нём считается, сколько раз каждая цифра от 1 до 9 встречается в дате и производных числах. Пустая ячейка и ячейка с четырьмя повторами говорят о разном.",
+  "Никакой интерпретации на этом шаге нет — только сложение. Одна и та же дата всегда даёт один и тот же результат.",
+];
 
-function Chevron() {
+const LINES = [
+  {
+    n: "01",
+    title: "Число пути",
+    text: "Из полной даты. Основной способ действовать и то, к чему возвращаешься в любой ситуации",
+  },
+  {
+    n: "02",
+    title: "Число дня",
+    text: "Из числа рождения. Что даётся от природы, без усилия и обучения",
+  },
+  {
+    n: "03",
+    title: "Квадрат Пифагора",
+    text: "Девять ячеек и плотность каждой цифры. Пустые ячейки говорят не меньше, чем заполненные",
+  },
+  {
+    n: "04",
+    title: "Линии квадрата",
+    text: "Устойчивые сочетания по строкам и столбцам: целеустремлённость, семья, темперамент, быт",
+  },
+  {
+    n: "05",
+    title: "Личный год",
+    text: "В какой фазе девятилетнего цикла ты сейчас и чем эта фаза отличается от соседних",
+  },
+  {
+    n: "06",
+    title: "Связь с матрицей",
+    text: "Где числа и арканы говорят одно и то же, а где расходятся. Расхождения обычно интереснее совпадений",
+  },
+];
+
+const SAMPLE_PARAGRAPHS = [
+  "Седьмое число пути ставит человека в положение наблюдателя раньше, чем участника. Ты сначала разбираешься, как устроено, и только потом входишь — и это не осторожность, а способ, которым ты вообще способен действовать. Попытки заставить себя «просто начать» обычно заканчиваются откатом.",
+  "В квадрате при этом важна не сама семёрка, а её плотность. Две семёрки в твоей дате означают, что интерес к устройству вещей достаточно силён, чтобы быть профессией, но не настолько, чтобы вытеснять всё остальное.",
+  "Отдельного внимания заслуживает пустая ячейка на пятёрке. Отсутствующая цифра не означает нехватки — она означает, что это качество не встроено по умолчанию и набирается опытом. В твоём случае это касается того,",
+];
+
+const FAQ = [
+  {
+    q: "Чем число пути отличается от числа судьбы",
+    a: "Число пути считается из полной даты рождения и описывает способ действовать. Числом судьбы в разных школах называют разное — чаще всего расчёт по имени, а не по дате. Мы работаем только с датой, поэтому используем однозначные названия.",
+  },
+  {
+    q: "Почему 11 и 22 не сворачиваются",
+    a: "Это мастер-числа. В классической нумерологии считается, что они несут собственное значение, которое теряется при свёртке до 2 и 4. Мы следуем этому правилу.",
+  },
+  {
+    q: "Что означает пустая ячейка в квадрате",
+    a: "Не недостаток, а отсутствие врождённой опоры: качество не даётся по умолчанию и набирается опытом. Пустых ячеек у всех несколько — квадрат без пробелов не встречается.",
+  },
+  {
+    q: "Влияет ли смена имени или фамилии",
+    a: "На расчёт по дате — нет. Дата рождения не меняется, поэтому и число пути, и квадрат остаются прежними всю жизнь.",
+  },
+  {
+    q: "Нумерология предсказывает события",
+    a: "Нет. Она описывает способ действовать и плотность качеств. Личный год говорит о фазе цикла, а не о том, что в этой фазе произойдёт.",
+  },
+];
+
+const DEMO_DATE = { day: 26, month: 7, year: 1990 };
+
+/** Порядок ячеек по столбцам: 1-4-7, 2-5-8, 3-6-9. */
+const CELL_ORDER = [1, 4, 7, 2, 5, 8, 3, 6, 9];
+
+function formatDate(d: { day: number; month: number; year: number }) {
+  return `${d.day} ${MONTHS[d.month - 1]?.toLowerCase() ?? ""} ${d.year}`;
+}
+
+function NumerologyCalculator({ stage, submit }: CalculatorApi<NumerologyResult>) {
   return (
-    <svg
-      viewBox="0 0 12 8"
-      aria-hidden="true"
-      className="pointer-events-none absolute right-4 top-1/2 h-2 w-3 -translate-y-1/2 text-text-secondary"
-    >
-      <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
+    <DateCalculator
+      idPrefix="num"
+      stage={stage}
+      onSubmit={(date) =>
+        submit({
+          path: lifePathNumber(date.day, date.month, date.year),
+          square: pythagoras(date.day, date.month, date.year),
+          date,
+        })
+      }
+    />
   );
 }
 
-function NumerologiyaPage() {
-  const reduced = useReducedMotion();
-  const currentYear = new Date().getFullYear();
-  const years = useMemo(
-    () => Array.from({ length: currentYear - 1930 + 1 }, (_, i) => currentYear - i),
-    [currentYear],
+function NumerologyResultContent({ result }: ResultCtx<NumerologyResult>) {
+  const card = lifePath.find((x) => x.n === result.path);
+  return (
+    <>
+      <h2
+        className="font-display text-text-primary"
+        style={{ marginTop: 8, fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
+      >
+        {card?.n} · {card?.title}
+      </h2>
+
+      <p
+        className="text-text-secondary"
+        style={{ marginTop: 12, fontSize: "clamp(15px, 1.15vw, 19px)", lineHeight: 1.65 }}
+      >
+        {card?.line}
+      </p>
+
+      {card?.detail ? (
+        <div className="relative overflow-hidden" style={{ marginTop: 20, height: 240 }}>
+          <p
+            className="text-text-primary"
+            style={{ fontSize: "clamp(16px, 1.25vw, 21px)", lineHeight: 1.7 }}
+          >
+            {card.detail}
+          </p>
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-x-0 bottom-0"
+            style={{
+              height: 120,
+              background: "linear-gradient(to bottom, rgba(0,0,0,0), #000000)",
+            }}
+          />
+        </div>
+      ) : null}
+
+      <p
+        className="text-text-secondary"
+        style={{ marginTop: 4, fontSize: "clamp(15px, 1.15vw, 18px)" }}
+      >
+        Дальше — в полном разборе
+      </p>
+
+      <button
+        type="button"
+        className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
+        style={{ marginTop: 20, height: 54, paddingInline: 40 }}
+      >
+        Открыть полный разбор
+      </button>
+    </>
   );
+}
 
-  const [day, setDay] = useState("");
-  const [month, setMonth] = useState("");
-  const [year, setYear] = useState("");
-  const [stage, setStage] = useState<"form" | "loading" | "result">("form");
-  const [result, setResult] = useState<{
-    path: number;
-    counts: Record<number, number>;
-  } | null>(null);
-  const [fast, setFast] = useState(false);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const slowTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const aboutRef = useRef<HTMLElement | null>(null);
+function SquareBlock({ ctx }: { ctx: ResultCtx<NumerologyResult> | null }) {
+  const date = ctx?.result.date ?? DEMO_DATE;
+  const square = ctx?.result.square ?? pythagoras(DEMO_DATE.day, DEMO_DATE.month, DEMO_DATE.year);
 
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
-      if (slowTimer.current) clearTimeout(slowTimer.current);
-    },
-    [],
-  );
-
-  const complete = day !== "" && month !== "" && year !== "";
-  const dateInvalid = complete && !isValidDate(Number(day), Number(month), Number(year));
-
-  const handleSubmit = () => {
-    if (!complete || dateInvalid) return;
-    const d = Number(day);
-    const m = Number(month);
-    const y = Number(year);
-    const path = lifePathNumber(d, m, y);
-    const { counts } = pythagoras(d, m, y);
-    setStage("loading");
-    if (!reduced) setFast(true);
-    if (timer.current) clearTimeout(timer.current);
-    timer.current = setTimeout(
-      () => {
-        setResult({ path, counts });
-        setStage("result");
-        if (slowTimer.current) clearTimeout(slowTimer.current);
-        slowTimer.current = setTimeout(() => setFast(false), 100);
-        aboutRef.current?.scrollIntoView({
-          behavior: reduced ? "auto" : "smooth",
-          block: "start",
-        });
-      },
-      reduced ? 200 : 700,
-    );
-  };
-
-  const card = result ? lifePath.find((x) => x.n === result.path) : null;
+  const working: { label: string; value: number }[] = [
+    { label: "первое", value: square.first },
+    { label: "второе", value: square.second },
+    { label: "третье", value: square.third },
+    { label: "четвёртое", value: square.fourth },
+  ];
 
   return (
-    <main className="relative w-full bg-bg-page">
-      <div className="relative h-[110px] w-full">
-        <Header />
-      </div>
-
-      <section className="ms-hero -mt-[110px] w-full">
-        <img
-          src={numerologyAsset.url}
-          alt="Нумерология — расчёт по дате рождения"
-          aria-hidden="true"
-          className="absolute inset-0 z-0 h-full w-full object-cover object-center"
-        />
-
-        <div aria-hidden="true" className="ms-hero-shade z-[1]" />
-
-        <div
-          aria-hidden="true"
-          className="hero-glow pointer-events-none absolute bottom-0 left-0 right-0 z-[2]"
-        />
-
-        <CursorStarField count={70} opacity={0.6} className="z-[3]" />
-
-        <Grain />
-
-        <div className="ms-hero-content">
-          <div className="ms-hero-text">
-            <h1
-              className="font-display text-text-primary"
-              style={{ fontSize: "clamp(34px, 3.8vw, 68px)", lineHeight: 1.1 }}
-            >
-              Нумерология <span className="whitespace-nowrap">по дате рождения</span>
-            </h1>
-
-            <p
-              className="text-text-secondary"
-              style={{ marginTop: 18, fontSize: "clamp(15px, 1.2vw, 20px)" }}
-            >
-              Бесплатно и без регистрации. Число жизненного пути и квадрат Пифагора — за один клик
-            </p>
-
-            <div className="flex flex-col gap-3 md:flex-row" style={{ marginTop: 32 }}>
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="nm-day">
-                  День
-                </label>
-                <select
-                  id="nm-day"
-                  className={selectClass}
-                  value={day}
-                  onChange={(e) => setDay(e.target.value)}
-                >
-                  <option value="">День</option>
-                  {DAYS.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="nm-month">
-                  Месяц
-                </label>
-                <select
-                  id="nm-month"
-                  className={selectClass}
-                  value={month}
-                  onChange={(e) => setMonth(e.target.value)}
-                >
-                  <option value="">Месяц</option>
-                  {MONTHS.map((m, i) => (
-                    <option key={m} value={i + 1}>
-                      {m}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-
-              <div className="relative flex-1">
-                <label className="sr-only" htmlFor="nm-year">
-                  Год
-                </label>
-                <select
-                  id="nm-year"
-                  className={selectClass}
-                  value={year}
-                  onChange={(e) => setYear(e.target.value)}
-                >
-                  <option value="">Год</option>
-                  {years.map((y) => (
-                    <option key={y} value={y}>
-                      {y}
-                    </option>
-                  ))}
-                </select>
-                <Chevron />
-              </div>
-            </div>
-
-            {dateInvalid && (
-              <p className="mt-3 text-[15px] text-text-danger">
-                Такой даты не существует — проверь день и месяц
-              </p>
-            )}
-
-            <button
-              type="button"
-              onClick={handleSubmit}
-              disabled={!complete || dateInvalid || stage === "loading"}
-              className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity disabled:cursor-not-allowed"
-              style={{
-                marginTop: 20,
-                height: 54,
-                paddingInline: 40,
-                opacity: !complete || dateInvalid || stage === "loading" ? 0.4 : 1,
-              }}
-            >
-              {stage === "loading" ? "Считаем" : result ? "Пересчитать" : "Рассчитать"}
-            </button>
-          </div>
-        </div>
-      </section>
-
-      <section
-        ref={aboutRef}
-        className="relative z-[30] w-full overflow-hidden"
-        style={{
-          ...arcTransitionStyle,
-          minHeight: "90vh",
-          paddingTop: `calc(${ARC_H} + 40px + clamp(64px, 8vh, 120px))`,
-          paddingBottom: "clamp(64px, 8vh, 120px)",
-        }}
-      >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] h-[200px]"
-          style={{ background: "linear-gradient(to bottom, rgba(0,0,0,0), var(--bg-page))" }}
-        />
-
-        <div
-          className="relative z-[2] mx-auto flex w-full max-w-[1320px] flex-col-reverse items-center gap-10 md:flex-row md:items-center md:justify-between md:gap-[6%]"
-          style={{ paddingLeft: "clamp(24px, 5vw, 80px)", paddingRight: "clamp(24px, 5vw, 80px)" }}
+    <section
+      className="relative w-full"
+      style={{
+        paddingTop: "clamp(64px, 8vh, 120px)",
+        paddingBottom: "clamp(64px, 8vh, 120px)",
+        paddingLeft: "clamp(24px, 5vw, 80px)",
+        paddingRight: "clamp(24px, 5vw, 80px)",
+      }}
+    >
+      <div className="mx-auto w-full max-w-[1320px]">
+        <h2
+          className="font-display text-text-primary"
+          style={{ fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
         >
-          <div className="w-full md:w-[50%]">
-            {stage !== "result" || !result ? (
-              <div>
-                <h2
-                  className="font-display text-text-primary"
-                  style={{ fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
-                >
-                  Что показывает нумерология
-                </h2>
-                <div
-                  className="flex flex-col text-text-secondary"
-                  style={{
-                    marginTop: 24,
-                    gap: 16,
-                    fontSize: "clamp(15px, 1.15vw, 19px)",
-                    lineHeight: 1.65,
-                  }}
-                >
-                  <p>
-                    Нумерология работает с датой рождения как с числовой записью. Цифры складываются
-                    по одним и тем же правилам, и из них получаются два разных инструмента.
-                  </p>
-                  <p>
-                    Число жизненного пути — одна цифра, которая описывает основной способ
-                    действовать: с чего человек начинает, к чему возвращается, что даётся легче
-                    всего.
-                  </p>
-                  <p>
-                    Квадрат Пифагора устроен иначе. В нём считается, сколько раз каждая цифра от 1 до
-                    9 встречается в дате и производных числах. Пустая ячейка и ячейка с четырьмя
-                    повторами говорят о разном, и именно из этих плотностей складывается картина.
-                  </p>
-                  <p>
-                    Никакой интерпретации на этом шаге нет — только сложение. Одна и та же дата
-                    всегда даёт один и тот же результат.
-                  </p>
-                </div>
-              </div>
-            ) : (
-              <div style={{ animation: reduced ? "none" : "ms-detail-in 600ms ease-out both" }}>
-                <div
-                  className="uppercase text-text-secondary"
-                  style={{ fontSize: 13, letterSpacing: "0.08em" }}
-                >
-                  Твоё число пути
-                </div>
-                <h2
-                  className="font-display text-text-primary"
-                  style={{ marginTop: 8, fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
-                >
-                  {card?.n} · {card?.title}
-                </h2>
-                <p
-                  className="text-text-secondary"
-                  style={{ marginTop: 12, fontSize: "clamp(15px, 1.15vw, 19px)", lineHeight: 1.65 }}
-                >
-                  {card?.line}
-                </p>
+          {ctx ? "Твой квадрат Пифагора" : "Квадрат Пифагора"}
+        </h2>
+        <p
+          className="text-text-secondary"
+          style={{ marginTop: 14, fontSize: "clamp(15px, 1.15vw, 19px)", lineHeight: 1.6 }}
+        >
+          Девять ячеек и плотность каждой цифры. Пустая ячейка говорит не меньше, чем заполненная
+        </p>
 
-                <div
-                  className="grid grid-cols-3"
-                  style={{ marginTop: 28, gap: "clamp(10px, 1vw, 16px)", width: "fit-content" }}
-                >
-                  {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => {
-                    const count = result.counts[n] ?? 0;
-                    return (
-                      <div key={n} className="flex flex-col items-center">
-                        <div
-                          className="flex items-center justify-center rounded-[12px] border border-border bg-surface-1"
-                          style={{
-                            width: "clamp(64px, 6vw, 96px)",
-                            height: "clamp(64px, 6vw, 96px)",
-                          }}
-                        >
-                          {count > 0 ? (
-                            <span
-                              className="font-mono text-text-primary"
-                              style={{ fontSize: "clamp(18px, 1.5vw, 24px)" }}
-                            >
-                              {String(n).repeat(count)}
-                            </span>
-                          ) : (
-                            <span
-                              className="font-mono text-text-secondary"
-                              style={{ fontSize: "clamp(18px, 1.5vw, 24px)", opacity: 0.4 }}
-                            >
-                              —
-                            </span>
-                          )}
-                        </div>
-                        <span className="text-text-secondary" style={{ marginTop: 6, fontSize: 11 }}>
-                          {squareLabels[n - 1]}
-                        </span>
-                      </div>
-                    );
-                  })}
+        <div
+          className="flex flex-col items-start gap-10 md:flex-row md:items-start"
+          style={{ marginTop: 40, gap: "clamp(32px, 5vw, 80px)" }}
+        >
+          <div className="grid grid-cols-3" style={{ gap: "clamp(10px, 1.2vw, 18px)" }}>
+            {CELL_ORDER.map((n) => {
+              const count = square.counts[n] ?? 0;
+              return (
+                <div key={n} className="flex flex-col items-center">
+                  <div
+                    className="flex items-center justify-center rounded-[12px] border border-border bg-surface-1"
+                    style={{
+                      width: "clamp(72px, 7vw, 110px)",
+                      height: "clamp(72px, 7vw, 110px)",
+                    }}
+                  >
+                    {count > 0 ? (
+                      <span
+                        className="font-mono text-text-primary"
+                        style={{ fontSize: "clamp(18px, 1.6vw, 26px)" }}
+                      >
+                        {String(n).repeat(count)}
+                      </span>
+                    ) : (
+                      <span
+                        className="font-mono text-text-secondary"
+                        style={{ fontSize: "clamp(18px, 1.6vw, 26px)", opacity: 0.4 }}
+                      >
+                        —
+                      </span>
+                    )}
+                  </div>
+                  <span className="text-text-secondary" style={{ marginTop: 8, fontSize: 11 }}>
+                    {squareLabels[n - 1]}
+                  </span>
                 </div>
-
-                <button
-                  type="button"
-                  className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-                  style={{ marginTop: 28, height: 54, paddingInline: 40 }}
-                >
-                  Открыть полный разбор
-                </button>
-              </div>
-            )}
+              );
+            })}
           </div>
 
-          <div className="w-full md:w-[44%]">
-            <OrbitStage
-              value={stage === "result" ? (result?.path ?? null) : null}
-              speedFactor={fast ? 4 : 1}
-              still={reduced}
-            />
+          <div className="flex flex-col" style={{ gap: 14 }}>
+            <div className="text-text-secondary" style={{ fontSize: 13, letterSpacing: "0.04em" }}>
+              {formatDate(date)}
+            </div>
+            {working.map((w) => (
+              <div
+                key={w.label}
+                className="font-mono text-text-secondary"
+                style={{ fontSize: "clamp(14px, 1.1vw, 17px)" }}
+              >
+                {w.value} <span style={{ opacity: 0.7 }}>— {w.label}</span>
+              </div>
+            ))}
           </div>
         </div>
-      </section>
+      </div>
+    </section>
+  );
+}
 
-      <Footer />
-    </main>
+function NumerologyPage() {
+  return (
+    <DirectionPage<NumerologyResult>
+      id="numerology"
+      h1="Нумерология по дате рождения"
+      heroDescription="Число жизненного пути и квадрат Пифагора. Бесплатно, без регистрации"
+      heroImage={numerologyAsset.url}
+      heroImageAlt="Нумерология — расчёт по дате рождения"
+      aboutTitle="Что показывает нумерология"
+      aboutParagraphs={ABOUT_PARAGRAPHS}
+      resultLabel="Твоё число пути"
+      linesTitle="Что входит в разбор"
+      linesSubtitle="Число пути — только начало. В полном разборе считаются шесть позиций"
+      lines={LINES}
+      exampleTitle="Как выглядит разбор"
+      exampleSubtitle="Фрагмент настоящего текста. Дата 26 июля 1990, число пути 7"
+      exampleParagraphs={SAMPLE_PARAGRAPHS}
+      exampleFooter="Полный разбор — шесть позиций и связь с остальными системами"
+      faqTitle="Вопросы о нумерологии"
+      faq={FAQ}
+      otherTitle="Эти пять считают тебя иначе"
+      otherSubtitle="Нумерология работает с цифрами даты. Остальные пять смотрят с других сторон и складываются с ней в один профиль"
+      finalTitle="Посчитай свои числа"
+      finalSubtitle="Число пути и квадрат Пифагора бесплатно"
+      calculator={(api) => <NumerologyCalculator {...api} />}
+      resultVisual={({ result, fast, reduced }) => (
+        <OrbitStage value={result.path} speedFactor={fast ? 4 : 1} still={reduced} />
+      )}
+      resultContent={(ctx) => <NumerologyResultContent {...ctx} />}
+      explainBlock={(ctx) => <SquareBlock ctx={ctx} />}
+    />
   );
 }
