@@ -772,14 +772,15 @@
   position: relative;
   z-index: 30;
   display: flex;
-  height: 100%;
+  flex: 1 1 auto;
   width: 100%;
   max-width: 1320px;
   margin: 0 auto;
   padding-inline: 8vw;
   align-items: flex-end;
-  /* глубина дуги перехода + 60px, чтобы кнопка не уходила под чёрную кромку */
-  padding-bottom: calc(clamp(140px, 11vw, 280px) + 60px);
+  /* хедер + 40px сверху; глубина дуги перехода + 60px снизу */
+  padding-top: 150px;
+  padding-bottom: calc(var(--transition-depth) + 60px);
 }
 .ms-hero-text {
   width: 100%;
