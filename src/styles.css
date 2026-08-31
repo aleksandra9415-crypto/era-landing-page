@@ -752,8 +752,8 @@
 .ms-hero {
   position: relative;
   overflow: hidden;
-  height: 100vh;
-  min-height: 640px;
+  min-height: 100vh;
+  height: auto;
 }
 .ms-hero-shade {
   position: absolute;
