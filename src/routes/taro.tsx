@@ -97,6 +97,7 @@ function TarotCalculator({ stage, submit }: CalculatorApi<TarotResult>) {
   const [question, setQuestion] = useState("");
 
   const handleSubmit = () => {
+    console.log("DRAW_CLICK");
     const n = arcana[Math.floor(Math.random() * arcana.length)]!.n;
     submit({ n, question: question.trim(), drawKey: Date.now() });
   };
