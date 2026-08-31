@@ -177,16 +177,36 @@ function NumerologyResultContent({ result }: ResultCtx<NumerologyResult>) {
   );
 }
 
+function workingFormulas(
+  date: { day: number; month: number; year: number },
+  square: PythagorasResult
+) {
+  const pad = (n: number, len: number) => String(n).padStart(len, "0");
+  const dayStr = pad(date.day, 2);
+  const monthStr = pad(date.month, 2);
+  const yearStr = pad(date.year, 4);
+  const dateDigits = [...dayStr, ...monthStr, ...yearStr].map(Number);
+
+  const firstFormula = `${dateDigits.join("+")} = ${square.first}`;
+  const secondFormula = `${String(square.first).split("").join("+")} = ${square.second}`;
+  const firstDayDigit = Number(String(date.day)[0]);
+  const thirdFormula = `${square.first} − 2×${firstDayDigit} = ${square.third}`;
+  const fourthFormula = `${String(Math.abs(square.third))
+    .split("")
+    .join("+")} = ${square.fourth}`;
+
+  return [
+    { formula: firstFormula, text: "первое — сумма всех цифр даты" },
+    { formula: secondFormula, text: "второе — сумма цифр первого" },
+    { formula: thirdFormula, text: "третье — первое минус удвоенная первая цифра дня" },
+    { formula: fourthFormula, text: "четвёртое — сумма цифр третьего" },
+  ];
+}
+
 function SquareBlock({ ctx }: { ctx: ResultCtx<NumerologyResult> | null }) {
   const date = ctx?.result.date ?? DEMO_DATE;
   const square = ctx?.result.square ?? pythagoras(DEMO_DATE.day, DEMO_DATE.month, DEMO_DATE.year);
-
-  const working: { label: string; value: number }[] = [
-    { label: "первое", value: square.first },
-    { label: "второе", value: square.second },
-    { label: "третье", value: square.third },
-    { label: "четвёртое", value: square.fourth },
-  ];
+  const formulas = workingFormulas(date, square);
 
   return (
     <section
@@ -198,7 +218,7 @@ function SquareBlock({ ctx }: { ctx: ResultCtx<NumerologyResult> | null }) {
         paddingRight: "clamp(24px, 5vw, 80px)",
       }}
     >
-      <div className="mx-auto w-full max-w-[1320px]">
+      <div className="mx-auto w-full max-w-[1240px]">
         <h2
           className="font-display text-text-primary"
           style={{ fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
@@ -213,8 +233,8 @@ function SquareBlock({ ctx }: { ctx: ResultCtx<NumerologyResult> | null }) {
         </p>
 
         <div
-          className="flex flex-col items-start gap-10 md:flex-row md:items-start"
-          style={{ marginTop: 40, gap: "clamp(32px, 5vw, 80px)" }}
+          className="grid grid-cols-1 items-start md:grid-cols-[auto_1fr]"
+          style={{ marginTop: 40, gap: "clamp(40px, 5vw, 90px)" }}
         >
           <div className="grid grid-cols-3" style={{ gap: "clamp(10px, 1.2vw, 18px)" }}>
             {CELL_ORDER.map((n) => {
@@ -252,19 +272,112 @@ function SquareBlock({ ctx }: { ctx: ResultCtx<NumerologyResult> | null }) {
             })}
           </div>
 
-          <div className="flex flex-col" style={{ gap: 14 }}>
-            <div className="text-text-secondary" style={{ fontSize: 13, letterSpacing: "0.04em" }}>
+          <div className="max-w-[560px]">
+            <div
+              className="text-text-primary"
+              style={{ marginBottom: 20, fontSize: "clamp(15px, 1.2vw, 18px)" }}
+            >
               {formatDate(date)}
             </div>
-            {working.map((w) => (
-              <div
-                key={w.label}
-                className="font-mono text-text-secondary"
-                style={{ fontSize: "clamp(14px, 1.1vw, 17px)" }}
-              >
-                {w.value} <span style={{ opacity: 0.7 }}>— {w.label}</span>
+
+            <div className="flex flex-col" style={{ gap: 28 }}>
+              <div>
+                <div
+                  className="text-text-secondary"
+                  style={{
+                    fontSize: 13,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 10,
+                  }}
+                >
+                  Рабочие числа
+                </div>
+                <div className="flex flex-col" style={{ gap: 14 }}>
+                  {formulas.map((f) => (
+                    <div
+                      key={f.text}
+                      className="flex flex-wrap items-baseline"
+                      style={{ gap: "10px 18px" }}
+                    >
+                      <span
+                        className="font-mono text-text-accent"
+                        style={{ fontSize: "clamp(13px, 1.05vw, 16px)" }}
+                      >
+                        {f.formula}
+                      </span>
+                      <span
+                        className="text-text-secondary"
+                        style={{ fontSize: "clamp(13px, 1vw, 15px)" }}
+                      >
+                        {f.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
               </div>
-            ))}
+
+              <div>
+                <div
+                  className="text-text-secondary"
+                  style={{
+                    fontSize: 13,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 10,
+                  }}
+                >
+                  Что попадает в квадрат
+                </div>
+                <p
+                  className="text-text-secondary"
+                  style={{ fontSize: "clamp(14px, 1.05vw, 16px)", lineHeight: 1.6 }}
+                >
+                  В ячейки складываются все цифры даты и все цифры четырёх рабочих чисел. Нули не
+                  учитываются — нулевой ячейки в квадрате нет.
+                </p>
+              </div>
+
+              <div>
+                <div
+                  className="text-text-secondary"
+                  style={{
+                    fontSize: 13,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.08em",
+                    marginBottom: 10,
+                  }}
+                >
+                  Как читать
+                </div>
+                <div className="flex flex-col" style={{ gap: 12 }}>
+                  {[
+                    { mark: "1", text: "качество есть и работает" },
+                    { mark: "333", text: "выражено сильно, иногда с избытком" },
+                    { mark: "—", text: "не встроено по умолчанию: набирается опытом, а не даётся от рождения" },
+                  ].map((row) => (
+                    <div
+                      key={row.text}
+                      className="grid items-start"
+                      style={{ gridTemplateColumns: "56px 1fr", gap: 12 }}
+                    >
+                      <span
+                        className="font-mono text-text-accent"
+                        style={{ fontSize: "clamp(14px, 1.1vw, 17px)" }}
+                      >
+                        {row.mark}
+                      </span>
+                      <span
+                        className="text-text-secondary"
+                        style={{ fontSize: "clamp(14px, 1.05vw, 16px)", lineHeight: 1.5 }}
+                      >
+                        {row.text}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </div>
