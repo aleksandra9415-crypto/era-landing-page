@@ -96,6 +96,7 @@ export function DirectionPage<R>({
   heroDescription,
   heroImage,
   heroImageAlt,
+  heroTextWidth,
   aboutTitle,
   aboutParagraphs,
   resultLabel,
