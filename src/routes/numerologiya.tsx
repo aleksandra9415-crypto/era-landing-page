@@ -214,11 +214,9 @@ function SquareBlock({ ctx }: { ctx: ResultCtx<NumerologyResult> | null }) {
       style={{
         paddingTop: "clamp(64px, 8vh, 120px)",
         paddingBottom: "clamp(64px, 8vh, 120px)",
-        paddingLeft: "clamp(24px, 5vw, 80px)",
-        paddingRight: "clamp(24px, 5vw, 80px)",
       }}
     >
-      <div className="mx-auto w-full max-w-[1240px]">
+      <div className="mx-auto w-full max-w-[1240px] px-[4vw] md:px-6">
         <h2
           className="font-display text-text-primary"
           style={{ fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
