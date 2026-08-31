@@ -291,8 +291,8 @@ function PairChain({ ctx }: { ctx: ResultCtx<SynastryResult> | null }) {
   const reducedSum = sum !== pair;
 
   return (
-    <section className="relative w-full bg-bg-page px-[4vw] py-[clamp(60px,7vw,120px)] md:px-6">
-      <div className="mx-auto w-full max-w-[1240px]">
+    <section className="relative w-full bg-bg-page py-[clamp(60px,7vw,120px)]">
+      <div className="mx-auto w-full max-w-[1240px] px-[4vw] md:px-6">
         <h2
           className="font-display text-text-primary"
           style={{ fontSize: "clamp(28px, 3vw, 54px)", lineHeight: 1.1 }}
