@@ -18,6 +18,88 @@ function Chevron() {
   );
 }
 
+export type DateParts = { day: string; month: string; year: string };
+
+export type DateSelectsProps = {
+  idPrefix: string;
+  value: DateParts;
+  onChange: (value: DateParts) => void;
+  gap?: number;
+};
+
+/** Три выпадающих списка с датой — переиспользуемый ряд полей. */
+export function DateSelects({ idPrefix, value, onChange, gap = 12 }: DateSelectsProps) {
+  const currentYear = new Date().getFullYear();
+  const years = useMemo(
+    () => Array.from({ length: currentYear - 1930 + 1 }, (_, i) => currentYear - i),
+    [currentYear],
+  );
+
+  return (
+    <div className="flex flex-col md:flex-row" style={{ gap }}>
+      <div className="relative flex-1">
+        <label className="sr-only" htmlFor={`${idPrefix}-day`}>
+          День
+        </label>
+        <select
+          id={`${idPrefix}-day`}
+          className={selectClass}
+          value={value.day}
+          onChange={(e) => onChange({ ...value, day: e.target.value })}
+        >
+          <option value="">День</option>
+          {DAYS.map((d) => (
+            <option key={d} value={d}>
+              {d}
+            </option>
+          ))}
+        </select>
+        <Chevron />
+      </div>
+
+      <div className="relative flex-1">
+        <label className="sr-only" htmlFor={`${idPrefix}-month`}>
+          Месяц
+        </label>
+        <select
+          id={`${idPrefix}-month`}
+          className={selectClass}
+          value={value.month}
+          onChange={(e) => onChange({ ...value, month: e.target.value })}
+        >
+          <option value="">Месяц</option>
+          {MONTHS.map((m, i) => (
+            <option key={m} value={i + 1}>
+              {m}
+            </option>
+          ))}
+        </select>
+        <Chevron />
+      </div>
+
+      <div className="relative flex-1">
+        <label className="sr-only" htmlFor={`${idPrefix}-year`}>
+          Год
+        </label>
+        <select
+          id={`${idPrefix}-year`}
+          className={selectClass}
+          value={value.year}
+          onChange={(e) => onChange({ ...value, year: e.target.value })}
+        >
+          <option value="">Год</option>
+          {years.map((y) => (
+            <option key={y} value={y}>
+              {y}
+            </option>
+          ))}
+        </select>
+        <Chevron />
+      </div>
+    </div>
+  );
+}
+
 export type DateCalculatorProps = {
   idPrefix: string;
   stage: "form" | "loading" | "result";
