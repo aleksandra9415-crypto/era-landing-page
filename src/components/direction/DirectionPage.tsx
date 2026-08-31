@@ -286,7 +286,11 @@ export function DirectionPage<R>({
         footer={exampleFooter}
       />
 
-      <OtherDirections currentId={id} title={otherTitle} subtitle={otherSubtitle} />
+      <OtherDirections
+        currentId={id}
+        {...(otherTitle ? { title: otherTitle } : {})}
+        {...(otherSubtitle ? { subtitle: otherSubtitle } : {})}
+      />
 
       <Reviews directionId={id} />
 
