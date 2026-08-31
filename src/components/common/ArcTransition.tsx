@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 
-/** Глубина дуги-перехода — те же значения, что работают на главной. */
-export const ARC_H = "clamp(140px, 11vw, 280px)";
+/** Глубина дуги-перехода — общая переменная --transition-depth. */
+export const ARC_H = "var(--transition-depth)";
 
 /**
  * Стили верхней кромки чёрной секции, наезжающей на предыдущий экран.
