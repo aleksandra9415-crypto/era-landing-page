@@ -790,7 +790,8 @@
 }
 @media (min-width: 768px) {
   .ms-hero {
-    height: 92vh;
+    min-height: 100vh;
+    height: auto;
   }
   .ms-hero-shade {
     background: linear-gradient(
@@ -804,8 +805,6 @@
   }
   .ms-hero-content {
     align-items: center;
-    padding-bottom: 0;
-    padding-top: 110px;
   }
   .ms-hero-text {
     width: min(46%, 620px);
