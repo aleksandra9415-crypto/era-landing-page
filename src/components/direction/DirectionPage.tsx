@@ -190,7 +190,7 @@ export function DirectionPage<R>({
 
         {/* 6 — content */}
         <div className="ms-hero-content">
-          <div className="ms-hero-text">
+          <div className="ms-hero-text" style={heroTextWidth ? { width: heroTextWidth } : undefined}>
             <h1
               className="font-display text-text-primary"
               style={{ fontSize: "clamp(34px, 3.8vw, 68px)", lineHeight: 1.1 }}
