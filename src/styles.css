@@ -137,6 +137,8 @@
 :root {
   --hero-card: min(30vw, 48vh);
   --hero-headline-size: clamp(30px, calc(84vw / 6.2), 78px);
+  /* глубина чёрной дуги-перехода, наезжающей на предыдущую секцию */
+  --transition-depth: clamp(140px, 11vw, 280px);
 }
 
 @media (min-width: 768px) {
