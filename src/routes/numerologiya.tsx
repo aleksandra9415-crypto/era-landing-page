@@ -142,31 +142,22 @@ function NumerologyResultContent({ result }: ResultCtx<NumerologyResult>) {
         {card?.n} · {card?.title}
       </h2>
 
-      <p
-        className="text-text-secondary"
-        style={{ marginTop: 12, fontSize: "clamp(15px, 1.15vw, 19px)", lineHeight: 1.65 }}
-      >
-        {card?.line}
-      </p>
-
-      {card?.detail ? (
-        <div className="relative overflow-hidden" style={{ marginTop: 20, height: 240 }}>
-          <p
-            className="text-text-primary"
-            style={{ fontSize: "clamp(16px, 1.25vw, 21px)", lineHeight: 1.7 }}
-          >
-            {card.detail}
-          </p>
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-x-0 bottom-0"
-            style={{
-              height: 120,
-              background: "linear-gradient(to bottom, rgba(0,0,0,0), #000000)",
-            }}
-          />
-        </div>
-      ) : null}
+      <div className="relative overflow-hidden" style={{ marginTop: 20, height: 240 }}>
+        <p
+          className="text-text-primary"
+          style={{ fontSize: "clamp(16px, 1.25vw, 21px)", lineHeight: 1.7 }}
+        >
+          {card?.detail}
+        </p>
+        <div
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-x-0 bottom-0"
+          style={{
+            height: 120,
+            background: "linear-gradient(to bottom, rgba(0,0,0,0), #000000)",
+          }}
+        />
+      </div>
 
       <p
         className="text-text-secondary"
