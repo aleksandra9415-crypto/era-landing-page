@@ -59,6 +59,8 @@ export type DirectionPageProps<R> = {
   heroDescription: ReactNode;
   heroImage: string;
   heroImageAlt: string;
+  /** Ширина текстовой колонки первого экрана (например, "min(54%, 760px)"). */
+  heroTextWidth?: string;
 
   aboutTitle: string;
   aboutParagraphs: string[];
