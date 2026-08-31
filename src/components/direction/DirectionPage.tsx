@@ -85,7 +85,7 @@ export type DirectionPageProps<R> = {
   calculator: (api: CalculatorApi<R>) => ReactNode;
   resultVisual: (ctx: ResultCtx<R>) => ReactNode;
   resultContent: (ctx: ResultCtx<R>) => ReactNode;
-  explainBlock?: ReactNode;
+  explainBlock?: ReactNode | ((ctx: ResultCtx<R> | null) => ReactNode);
 };
 
 export function DirectionPage<R>({
@@ -277,7 +277,7 @@ export function DirectionPage<R>({
 
       <DirectionLines title={linesTitle} subtitle={linesSubtitle} lines={lines} />
 
-      {explainBlock}
+      {typeof explainBlock === "function" ? explainBlock(ctx) : explainBlock}
 
       <DirectionSample
         title={exampleTitle}
