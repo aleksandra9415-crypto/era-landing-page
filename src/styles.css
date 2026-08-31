@@ -826,3 +826,8 @@
     scroll-snap-type: none;
   }
 }
+
+/* Таро: пока карта не перевёрнута, надзаголовок результата скрыт */
+div:has(> [data-taro-pre]) > .uppercase {
+  display: none;
+}
