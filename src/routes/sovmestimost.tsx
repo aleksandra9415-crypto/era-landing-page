@@ -341,6 +341,7 @@ function SovmestimostPage() {
     <DirectionPage<SynastryResult>
       id="synastry"
       h1="Совместимость по дате рождения"
+      heroTextWidth="min(54%, 760px)"
       heroDescription="Два расчёта и общий аркан пары. Бесплатно, без регистрации"
       heroImage={synastryAsset.url}
       heroImageAlt="Совместимость по дате рождения — аркан пары"
