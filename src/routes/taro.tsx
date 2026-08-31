@@ -213,7 +213,7 @@ function TaroPage() {
           );
         }
 
-        const text = (card as unknown as { draw?: string } | undefined)?.draw ?? card?.line ?? "";
+        const text = card?.draw ?? "";
 
         return (
           <>
