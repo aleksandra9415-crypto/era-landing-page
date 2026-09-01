@@ -1,14 +1,145 @@
-import { useEffect, useState } from "react";
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useAuth } from "@/lib/useAuth";
 import { supabase } from "@/integrations/supabase/client";
+import { directions } from "@/lib/directions";
 import logoAsset from "@/assets/logo.svg.asset.json";
 
 const LINKS = [
-  { label: "Направления", href: "/#directions" },
   { label: "Как это работает", href: "/#how" },
   { label: "Тарифы", href: "/#pricing" },
 ];
+
+function DirectionsMenu() {
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  const itemsRef = useRef<Array<HTMLAnchorElement | null>>([]);
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    if (!open) return;
+    const onDocDown = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocDown);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocDown);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const focusItem = (i: number) => {
+    const len = directions.length;
+    const idx = (i + len) % len;
+    itemsRef.current[idx]?.focus();
+  };
+
+  return (
+    <div
+      ref={wrapRef}
+      className="relative"
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
+    >
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            setOpen(true);
+            requestAnimationFrame(() => focusItem(0));
+          }
+          if (e.key === "ArrowDown") {
+            e.preventDefault();
+            setOpen(true);
+            requestAnimationFrame(() => focusItem(0));
+          }
+        }}
+        className="text-text-secondary hover:text-text-accent text-[15px] transition-colors"
+      >
+        Направления
+      </button>
+
+      {open && (
+        <div
+          role="menu"
+          className="absolute left-0 top-full grid grid-cols-2"
+          style={{
+            marginTop: 12,
+            width: 560,
+            padding: 20,
+            gap: 8,
+            background: "rgba(3, 25, 30, 0.97)",
+            backdropFilter: "blur(12px)",
+            WebkitBackdropFilter: "blur(12px)",
+            border: "1px solid var(--border)",
+            borderRadius: 16,
+            boxShadow: "0 20px 50px rgba(0, 0, 0, 0.5)",
+            animation: "dirmenu-in 200ms ease-out",
+          }}
+        >
+          {directions.map((d, i) => {
+            const current = pathname === d.path;
+            return (
+              <Link
+                key={d.id}
+                to={d.path}
+                role="menuitem"
+                ref={(el) => {
+                  itemsRef.current[i] = el;
+                }}
+                onClick={() => setOpen(false)}
+                onKeyDown={(e) => {
+                  if (e.key === "ArrowDown") {
+                    e.preventDefault();
+                    focusItem(i + 1);
+                  }
+                  if (e.key === "ArrowUp") {
+                    e.preventDefault();
+                    focusItem(i - 1);
+                  }
+                  if (e.key === "Escape") setOpen(false);
+                }}
+                className="dir-menu-item block"
+                style={{ padding: 12, borderRadius: 10 }}
+              >
+                <span
+                  className="dir-menu-title flex items-center gap-2 font-display"
+                  style={{
+                    fontSize: "clamp(15px, 1.15vw, 18px)",
+                    color: current ? "var(--text-accent)" : "var(--text-primary)",
+                  }}
+                >
+                  {current && (
+                    <span
+                      aria-hidden="true"
+                      className="inline-block shrink-0 rounded-full"
+                      style={{ width: 6, height: 6, background: "var(--text-accent)" }}
+                    />
+                  )}
+                  {d.title}
+                </span>
+                <span
+                  className="block truncate text-text-secondary"
+                  style={{ fontSize: "clamp(12px, 0.95vw, 14px)", marginTop: 3 }}
+                >
+                  {d.desc}
+                </span>
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
