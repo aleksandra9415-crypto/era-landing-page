@@ -257,16 +257,14 @@ function NatalWheel({ signKey }: { signKey: string }) {
           <g key={label}>
             <text
               x={tx}
-              y={ty}
+              y={ty - 0.9}
               textAnchor="middle"
               dominantBaseline="middle"
               fill={fill}
               fillOpacity={opacity}
+              fontSize={active ? 3 : 2.6}
               fontFamily="'Noto Sans Symbols 2', sans-serif"
               style={{
-                fontSize: active
-                  ? "calc(clamp(13px, 1.2vw, 18px) + 2px)"
-                  : "clamp(13px, 1.2vw, 18px)",
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
               }}
             >
@@ -275,15 +273,14 @@ function NatalWheel({ signKey }: { signKey: string }) {
             <text
               className="natal-sign-name"
               x={tx}
-              y={ty}
+              y={ty + 1.6}
               textAnchor="middle"
               dominantBaseline="hanging"
               fill={fill}
               fillOpacity={opacity}
+              fontSize={1.6}
               fontFamily="Onest, sans-serif"
               style={{
-                fontSize: "clamp(8px, 0.75vw, 11px)",
-                transform: "translateY(10px)",
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
               }}
             >
