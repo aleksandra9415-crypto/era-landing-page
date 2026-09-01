@@ -83,6 +83,8 @@ export type DirectionPageProps<R> = {
 
   finalTitle: string;
   finalSubtitle: string;
+  /** Если задан, заменяет стандартный финальный блок QuickCalc. */
+  finalBlock?: ReactNode;
 
   calculator: (api: CalculatorApi<R>) => ReactNode;
   resultVisual: (ctx: ResultCtx<R>) => ReactNode;
