@@ -1,3 +1,4 @@
+import { FullReadingButton } from "@/components/direction/FullReadingButton";
 import { useEffect, useRef, useState } from "react";
 import { Section } from "@/components/landing/Section";
 
@@ -86,13 +87,7 @@ export function DirectionSample({
         </p>
 
         <div className="mt-5 flex justify-center">
-          <button
-            type="button"
-            className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-            style={{ height: 54, paddingInline: 40 }}
-          >
-            Открыть полный разбор
-          </button>
+          <FullReadingButton style={{ height: 54, paddingInline: 40 }} />
         </div>
       </div>
     </Section>

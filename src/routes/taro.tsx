@@ -6,6 +6,7 @@ import {
   type CalculatorApi,
 } from "@/components/direction/DirectionPage";
 import { TarotFlipCard } from "@/components/tarot/TarotFlipCard";
+import { FullReadingButton } from "@/components/direction/FullReadingButton";
 import { arcana } from "@/lib/arcana";
 import tarotAsset from "@/assets/tarot.png.asset.json";
 
@@ -254,13 +255,7 @@ function TaroPage() {
               Дальше — в полном разборе
             </p>
 
-            <button
-              type="button"
-              className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-              style={{ marginTop: 20, height: 54, paddingInline: 40 }}
-            >
-              Открыть полный разбор
-            </button>
+            <FullReadingButton />
           </>
         );
       }}

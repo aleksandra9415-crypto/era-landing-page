@@ -8,6 +8,8 @@ import {
   type CalculatorApi,
   type ResultCtx,
 } from "@/components/direction/DirectionPage";
+import { FullReadingButton } from "@/components/direction/FullReadingButton";
+import { toIsoDate } from "@/lib/pendingBirth";
 import { arcana, MONTHS, digitSum, reduceTo22, isValidDate } from "@/lib/arcana";
 import matrixAsset from "@/assets/matrix.png.asset.json";
 
@@ -273,13 +275,12 @@ function MatrixResultContent({ result }: ResultCtx<MatrixResult>) {
         Дальше — в полном разборе
       </p>
 
-      <button
-        type="button"
-        className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-        style={{ marginTop: 20, height: 54, paddingInline: 40 }}
-      >
-        Открыть полный разбор
-      </button>
+      <FullReadingButton
+        pending={{
+          date: toIsoDate(result.date.day, result.date.month, result.date.year),
+          direction: "matrix",
+        }}
+      />
     </>
   );
 }

@@ -488,7 +488,7 @@ function HdHeroCta() {
   return (
     <div style={{ marginTop: 32 }}>
       <Link
-        to="/login"
+        to="/register"
         className="qc-focus inline-flex items-center justify-center rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
         style={{ height: 54, paddingInline: 40 }}
       >
@@ -651,7 +651,7 @@ function HumanDesignPage() {
               Тип, стратегия и авторитет входят в пробный доступ на три дня
             </p>
             <Link
-              to="/login"
+              to="/register"
               className="qc-focus mt-8 inline-flex items-center justify-center rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
               style={{ height: 54, paddingInline: 40 }}
             >

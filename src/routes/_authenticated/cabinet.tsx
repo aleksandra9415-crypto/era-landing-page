@@ -1,7 +1,9 @@
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
 import { directions } from "@/lib/directions";
+import { takeProfileSaveError } from "@/lib/pendingBirth";
 
 export const Route = createFileRoute("/_authenticated/cabinet")({
   head: () => ({
@@ -24,6 +26,12 @@ export const Route = createFileRoute("/_authenticated/cabinet")({
 });
 
 function CabinetPage() {
+  const [saveError, setSaveError] = useState(false);
+
+  useEffect(() => {
+    if (takeProfileSaveError()) setSaveError(true);
+  }, []);
+
   return (
     <main className="relative min-h-screen w-full bg-bg-page">
       <div className="relative h-[110px] w-full">
@@ -46,6 +54,20 @@ function CabinetPage() {
         <p className="mt-[10px] text-[15px] text-text-secondary">
           Здесь появятся твои расчёты, дневник и профили близких
         </p>
+
+        {saveError && (
+          <p
+            className="mt-6 text-[14px]"
+            style={{
+              background: "var(--surface-1)",
+              borderRadius: "10px",
+              padding: "14px",
+              color: "var(--text-danger)",
+            }}
+          >
+            Не удалось сохранить дату рождения. Заполни её в профиле
+          </p>
+        )}
 
         <div className="mt-12 grid gap-5 sm:grid-cols-2 md:grid-cols-3">
           {directions.map((d) => (
