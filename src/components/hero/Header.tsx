@@ -60,8 +60,18 @@ function DirectionsMenu() {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<Array<HTMLAnchorElement | null>>([]);
+  const leaveTimer = useRef<number | null>(null);
   const target = useDirectionTarget();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
+
+  useEffect(() => {
+    return () => {
+      if (leaveTimer.current) {
+        window.clearTimeout(leaveTimer.current);
+        leaveTimer.current = null;
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (!open) return;
@@ -85,12 +95,24 @@ function DirectionsMenu() {
     itemsRef.current[idx]?.focus();
   };
 
+  const handleEnter = () => {
+    if (leaveTimer.current) {
+      window.clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+    }
+    setOpen(true);
+  };
+
+  const handleLeave = () => {
+    leaveTimer.current = window.setTimeout(() => setOpen(false), 150);
+  };
+
   return (
     <div
       ref={wrapRef}
       className="relative"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
     >
       <button
         type="button"
