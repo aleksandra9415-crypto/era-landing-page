@@ -25,6 +25,7 @@ import { Route as SovmestimostRouteImport } from './routes/sovmestimost'
 import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
 import { Route as TaroRouteImport } from './routes/taro'
 import { Route as AuthenticatedCabinetRouteImport } from './routes/_authenticated/cabinet'
+import { Route as AuthenticatedCabinetIdRouteImport } from './routes/_authenticated/cabinet_.$id'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -105,6 +106,11 @@ const AuthenticatedCabinetRoute = AuthenticatedCabinetRouteImport.update({
   path: '/cabinet',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedCabinetIdRoute = AuthenticatedCabinetIdRouteImport.update({
+  id: '/cabinet_/$id',
+  path: '/cabinet/$id',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -122,6 +128,7 @@ export interface FileRoutesByFullPath {
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
   '/cabinet': typeof AuthenticatedCabinetRoute
+  '/cabinet/$id': typeof AuthenticatedCabinetIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -139,6 +146,7 @@ export interface FileRoutesByTo {
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
   '/cabinet': typeof AuthenticatedCabinetRoute
+  '/cabinet/$id': typeof AuthenticatedCabinetIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -158,6 +166,7 @@ export interface FileRoutesById {
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
   '/_authenticated/cabinet': typeof AuthenticatedCabinetRoute
+  '/_authenticated/cabinet_/$id': typeof AuthenticatedCabinetIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -177,6 +186,7 @@ export interface FileRouteTypes {
     | '/subscription-terms'
     | '/taro'
     | '/cabinet'
+    | '/cabinet/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -194,6 +204,7 @@ export interface FileRouteTypes {
     | '/subscription-terms'
     | '/taro'
     | '/cabinet'
+    | '/cabinet/$id'
   id:
     | '__root__'
     | '/'
@@ -212,6 +223,7 @@ export interface FileRouteTypes {
     | '/subscription-terms'
     | '/taro'
     | '/_authenticated/cabinet'
+    | '/_authenticated/cabinet_/$id'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -346,15 +358,24 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCabinetRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/cabinet_/$id': {
+      id: '/_authenticated/cabinet_/$id'
+      path: '/cabinet/$id'
+      fullPath: '/cabinet/$id'
+      preLoaderRoute: typeof AuthenticatedCabinetIdRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedCabinetRoute: typeof AuthenticatedCabinetRoute
+  AuthenticatedCabinetIdRoute: typeof AuthenticatedCabinetIdRoute
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedCabinetRoute: AuthenticatedCabinetRoute,
+  AuthenticatedCabinetIdRoute: AuthenticatedCabinetIdRoute,
 }
 
 const AuthenticatedRouteRouteWithChildren =
