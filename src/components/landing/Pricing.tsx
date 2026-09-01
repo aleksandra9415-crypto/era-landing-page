@@ -1,5 +1,7 @@
 import { useState } from "react";
+import { Link } from "@tanstack/react-router";
 import { Section } from "./Section";
+
 
 type Plan = {
   id: string;
