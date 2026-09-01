@@ -12,6 +12,10 @@ import { DateCalculator } from "@/components/direction/DateCalculator";
 import { Orbits } from "@/components/quick-calc/Orbits";
 import natalAsset from "@/assets/natal.png.asset.json";
 import { sunSign, type SunSignResult } from "@/lib/natal";
+import { FullReadingButton } from "@/components/direction/FullReadingButton";
+import { toIsoDate } from "@/lib/pendingBirth";
+
+type NatalResult = SunSignResult & { date: { day: number; month: number; year: number } };
 
 export const Route = createFileRoute("/natalnaya-karta")({
   head: directionHead({
@@ -80,18 +84,18 @@ const FULL_CHART_ITEMS = [
   "Аспекты между позициями",
 ];
 
-function NatalCalculator({ stage, submit }: CalculatorApi<SunSignResult>) {
+function NatalCalculator({ stage, submit }: CalculatorApi<NatalResult>) {
   return (
     <DateCalculator
       idPrefix="natal"
       stage={stage}
-      onSubmit={(date) => submit(sunSign(date.day, date.month))}
+      onSubmit={(date) => submit({ ...sunSign(date.day, date.month), date })}
     />
   );
 }
 
 /** Орбиты + название знака вместо цифры. */
-function NatalStage({ result, fast, reduced }: ResultCtx<SunSignResult>) {
+function NatalStage({ result, fast, reduced }: ResultCtx<NatalResult>) {
   return (
     <div className="relative mx-auto aspect-square w-full">
       <div
@@ -122,7 +126,7 @@ function NatalStage({ result, fast, reduced }: ResultCtx<SunSignResult>) {
   );
 }
 
-function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
+function NatalResultContent({ result }: ResultCtx<NatalResult>) {
   const text = result.sign.detail;
   return (
     <>
@@ -154,13 +158,12 @@ function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
         Это одна позиция из сорока. Для остальных понадобятся время и место рождения
       </p>
 
-      <button
-        type="button"
-        className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-        style={{ marginTop: 20, height: 54, paddingInline: 40 }}
-      >
-        Открыть полный разбор
-      </button>
+      <FullReadingButton
+        pending={{
+          date: toIsoDate(result.date.day, result.date.month, result.date.year),
+          direction: "natal",
+        }}
+      />
     </>
   );
 }
@@ -382,7 +385,7 @@ function NatalWheel({ signKey }: { signKey: string }) {
 }
 
 /** Блок «как считается»: колесо с одной позицией + список. */
-function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<SunSignResult> | null }) {
+function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<NatalResult> | null }) {
   const signKey = ctx?.result.sign.key ?? "leo";
   return (
     <section
@@ -478,7 +481,7 @@ function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<SunSignResult> | null }) {
 
 function NatalPage() {
   return (
-    <DirectionPage<SunSignResult>
+    <DirectionPage<NatalResult>
       id="natal"
       h1="Натальная карта онлайн"
       heroDescription="Знак Солнца — бесплатно по дате. Полная карта — по дате, времени и месту"

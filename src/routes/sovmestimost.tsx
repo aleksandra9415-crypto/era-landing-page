@@ -8,6 +8,8 @@ import {
   type ResultCtx,
 } from "@/components/direction/DirectionPage";
 import { DateSelects, type DateParts } from "@/components/direction/DateCalculator";
+import { FullReadingButton } from "@/components/direction/FullReadingButton";
+import { toIsoDate } from "@/lib/pendingBirth";
 import { arcana, centralArcanum, reduceTo22, isValidDate } from "@/lib/arcana";
 import synastryAsset from "@/assets/synastry2.png.asset.json";
 
@@ -25,6 +27,7 @@ export const Route = createFileRoute("/sovmestimost")({
 });
 
 type SynastryResult = {
+  yourDate: { day: number; month: number; year: number };
   you: number;
   partner: number;
   sum: number;
@@ -130,7 +133,13 @@ function SynastryCalculator({ stage, submit }: CalculatorApi<SynastryResult>) {
       Number(partner.year),
     );
     const sum = a + b;
-    submit({ you: a, partner: b, sum, pair: reduceTo22(sum) });
+    submit({
+      yourDate: { day: Number(you.day), month: Number(you.month), year: Number(you.year) },
+      you: a,
+      partner: b,
+      sum,
+      pair: reduceTo22(sum),
+    });
   };
 
   return (
@@ -221,13 +230,12 @@ function SynastryResultContent({ result }: ResultCtx<SynastryResult>) {
         Дальше — в полном разборе
       </p>
 
-      <button
-        type="button"
-        className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-        style={{ marginTop: 20, height: 54, paddingInline: 40 }}
-      >
-        Открыть полный разбор
-      </button>
+      <FullReadingButton
+        pending={{
+          date: toIsoDate(result.yourDate.day, result.yourDate.month, result.yourDate.year),
+          direction: "synastry",
+        }}
+      />
     </>
   );
 }
