@@ -366,12 +366,12 @@ function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<SunSignResult> | null }) {
         </p>
 
         <div
-          className="mt-10 grid grid-cols-1 items-center md:grid-cols-2"
-          style={{ gap: "clamp(40px, 5vw, 90px)" }}
+          className="mt-10 grid grid-cols-1 items-center md:grid-cols-[52fr_44fr]"
+          style={{ columnGap: "4%", rowGap: "clamp(40px, 5vw, 90px)" }}
         >
           <div
-            className="mx-auto aspect-square w-full"
-            style={{ width: "min(34vw, 46vh)", minWidth: 280 }}
+            className="natal-wheel-area mx-auto aspect-square w-full"
+            style={{ width: "min(42vw, 62vh)", minWidth: 340 }}
           >
             <NatalWheel signKey={signKey} />
           </div>
