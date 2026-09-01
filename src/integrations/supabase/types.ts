@@ -59,7 +59,7 @@ export type Database = {
     }
     Functions: {
       generate_referral_code: { Args: never; Returns: string }
-      referral_count: { Args: { _code: string }; Returns: number }
+      my_referral_count: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never
