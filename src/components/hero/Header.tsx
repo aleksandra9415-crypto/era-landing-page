@@ -139,9 +139,10 @@ function DirectionsMenu() {
       {open && (
         <div
           role="menu"
-          className="absolute left-0 top-full grid grid-cols-2"
+          className="absolute right-0 top-full grid grid-cols-2"
           style={{
             width: 560,
+            maxWidth: "calc(100vw - 40px)",
             paddingTop: 32,
             paddingRight: 20,
             paddingBottom: 20,
