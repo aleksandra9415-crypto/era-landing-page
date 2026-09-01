@@ -168,10 +168,11 @@ function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
 /** Короткие подписи знаков по кругу, начиная с Овна сверху, по часовой. */
 const SIGN_LABELS = ["Овен", "Телец", "Близ", "Рак", "Лев", "Дева", "Весы", "Скорп", "Стрел", "Козер", "Водол", "Рыбы"];
 const SIGN_KEYS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+const SIGN_GLYPHS = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
 
 /** Фиксированные погашенные позиции: [сектор, радиус в % от стороны области]. */
 const DIM_DOTS: [number, number][] = [
-  [1, 26], [2, 36], [3, 22], [5, 30], [6, 24], [7, 40], [8, 34], [10, 28], [11, 38],
+  [1, 30], [2, 36], [3, 28], [5, 32], [6, 29], [7, 37], [8, 34], [10, 28], [11, 36],
 ];
 
 function useReducedMotion() {
