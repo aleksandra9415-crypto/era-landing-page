@@ -252,6 +252,7 @@ function NatalWheel({ signKey }: { signKey: string }) {
       style={{
         ["--symbol-size" as string]: symbolPx,
         ["--label-size" as string]: labelPx,
+        ["--scale" as string]: String(scale),
         ["--symbol-uu" as string]: `calc(${symbolPx} / ${scale})`,
         ["--label-uu" as string]: `calc(${labelPx} / ${scale})`,
       }}
