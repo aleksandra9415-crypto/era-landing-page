@@ -10,6 +10,7 @@ import {
   setProfileSaveError,
   type PendingBirth,
 } from "@/lib/pendingBirth";
+import { savePendingRef } from "@/lib/referral";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
@@ -49,6 +50,8 @@ function RegisterPage() {
 
   useEffect(() => {
     setPending(readPendingBirth());
+    const ref = new URLSearchParams(window.location.search).get("ref");
+    if (ref) savePendingRef(ref);
   }, []);
 
   async function onSubmit(e: React.FormEvent) {
