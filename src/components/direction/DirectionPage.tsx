@@ -309,7 +309,7 @@ export function DirectionPage<R>({
 
       <DirectionFaq title={faqTitle} items={faq} />
 
-      <QuickCalc id="start" title={finalTitle} subtitle={finalSubtitle} />
+      {finalBlock ?? <QuickCalc id="start" title={finalTitle} subtitle={finalSubtitle} />}
 
       <Footer />
     </main>
