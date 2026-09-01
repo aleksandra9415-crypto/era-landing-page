@@ -213,7 +213,7 @@ function NatalWheel({ signKey }: { signKey: string }) {
 
   return (
     <svg
-      viewBox={`-6 -6 ${S + 12} ${S + 12}`}
+      viewBox={`-10 -10 ${S + 20} ${S + 20}`}
       role="img"
       aria-label="Колесо натальной карты: рассчитана одна позиция из десяти"
       className="h-auto w-full"
