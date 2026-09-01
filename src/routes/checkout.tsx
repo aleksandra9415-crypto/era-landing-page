@@ -10,12 +10,14 @@ import {
   type PlanId,
 } from "@/lib/plans";
 
-type Search = { plan: PlanId; period?: string };
+type Search = { plan: PlanId; period: string };
 
 export const Route = createFileRoute("/checkout")({
   validateSearch: (search: Record<string, unknown>): Search => {
-    const plan = search.plan === "trial" ? "trial" : "sub";
-    const period = typeof search.period === "string" ? search.period : undefined;
+    const plan: PlanId = search["plan"] === "trial" ? "trial" : "sub";
+    const raw = search["period"];
+    const period =
+      typeof raw === "string" && raw.length > 0 ? raw : CHECKOUT_PLANS[plan].periods[0]!.id;
     return { plan, period };
   },
   head: () => ({
@@ -45,7 +47,7 @@ function CheckoutPage() {
   const plan = CHECKOUT_PLANS[planId];
   const { email: authEmail } = useAuth();
 
-  const [periodId, setPeriodId] = useState(period ?? plan.periods[0].id);
+  const [periodId, setPeriodId] = useState(period);
   const [email, setEmail] = useState("");
   const [promo, setPromo] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
@@ -58,7 +60,7 @@ function CheckoutPage() {
   }, [authEmail]);
 
   const selected = useMemo(
-    () => plan.periods.find((p) => p.id === periodId) ?? plan.periods[0],
+    () => plan.periods.find((p) => p.id === periodId) ?? plan.periods[0]!,
     [plan, periodId],
   );
 
