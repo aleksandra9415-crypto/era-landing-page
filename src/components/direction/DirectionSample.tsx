@@ -24,7 +24,7 @@ export function DirectionSample({
     const update = () => {
       const spec = Math.min(Math.max(360, window.innerHeight * 0.42), 520);
       const content = el.scrollHeight;
-      setClipH(content > spec ? spec : Math.max(220, content - 110));
+      setClipH(content > spec ? spec : Math.max(220, content - 100));
     };
     const ro = new ResizeObserver(update);
     ro.observe(el);
@@ -72,7 +72,7 @@ export function DirectionSample({
             aria-hidden="true"
             className="pointer-events-none absolute inset-x-0 bottom-0 z-[1]"
             style={{
-              height: 180,
+              height: clipH ? Math.min(180, Math.round(clipH * 0.45)) : 180,
               background: "linear-gradient(to bottom, rgba(3,25,30,0), var(--bg-page))",
             }}
           />
