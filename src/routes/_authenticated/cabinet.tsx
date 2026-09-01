@@ -194,8 +194,9 @@ function CabinetPage() {
                 Бесплатный
               </div>
             </div>
-            <a
-              href="#pricing"
+            <Link
+              to="/checkout"
+              search={{ plan: "trial" as const, period: "3d" }}
               className="inline-flex h-[54px] items-center justify-center px-7 text-[16px] transition-opacity hover:opacity-90"
               style={{
                 background: "var(--accent)",
@@ -204,7 +205,7 @@ function CabinetPage() {
               }}
             >
               Открыть пробный доступ
-            </a>
+            </Link>
           </div>
 
           <div
