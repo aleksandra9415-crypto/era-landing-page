@@ -302,8 +302,8 @@ function NatalWheel({ signKey }: { signKey: string }) {
               fontFamily="'Noto Sans Symbols 2', sans-serif"
               style={{
                 fontSize: active
-                  ? "calc(clamp(18px, 1.6vw, 26px) + 4px)"
-                  : "clamp(18px, 1.6vw, 26px)",
+                  ? "calc(var(--symbol-uu) + 1.5px)"
+                  : "var(--symbol-uu)",
                 fontVariantEmoji: "text",
                 lineHeight: 1,
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
