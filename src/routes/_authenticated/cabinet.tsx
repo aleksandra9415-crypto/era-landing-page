@@ -12,6 +12,7 @@ import { sunSign } from "@/lib/natal";
 import { supabase } from "@/integrations/supabase/client";
 import { dayArcanum, todayIso } from "@/lib/dayCard";
 import { useAuth } from "@/lib/useAuth";
+import { referralLink } from "@/lib/referral";
 import { TarotFlipCard } from "@/components/tarot/TarotFlipCard";
 
 export const Route = createFileRoute("/_authenticated/cabinet")({
@@ -40,6 +41,7 @@ type Profile = {
   birth_date: string | null;
   birth_time: string | null;
   birth_place: string | null;
+  referral_code: string | null;
 };
 
 const cardStyle = {
@@ -79,7 +81,7 @@ function CabinetPage() {
     let alive = true;
     supabase
       .from("profiles")
-      .select("id, name, birth_date, birth_time, birth_place")
+      .select("id, name, birth_date, birth_time, birth_place, referral_code")
       .eq("user_id", user.id)
       .eq("is_owner", true)
       .order("created_at", { ascending: true })
@@ -662,5 +664,89 @@ function DirectionTile({
     <Link to="/cabinet/$id" params={{ id }} className={`${className} cab-tile`} style={style}>
       {body}
     </Link>
+  );
+}
+
+function InviteBlock({ code, userId }: { code: string | null; userId: string }) {
+  const [invited, setInvited] = useState(0);
+  const [copied, setCopied] = useState(false);
+  const link = code ? referralLink(code) : "";
+
+  useEffect(() => {
+    if (!userId) return;
+    let alive = true;
+    supabase.rpc("my_referral_count").then(({ data }) => {
+      if (alive && typeof data === "number") setInvited(data);
+    });
+    return () => {
+      alive = false;
+    };
+  }, [userId]);
+
+  async function copy() {
+    if (!link) return;
+    try {
+      await navigator.clipboard.writeText(link);
+    } catch {
+      /* буфер недоступен */
+    }
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  }
+
+  return (
+    <div
+      className="mt-6"
+      style={{
+        background: "var(--surface-1)",
+        border: "1px solid color-mix(in srgb, var(--text-accent) 40%, transparent)",
+        borderRadius: "20px",
+        padding: "clamp(24px, 2.4vw, 36px)",
+      }}
+    >
+      <div className="font-display text-text-primary" style={{ fontSize: "clamp(20px, 1.6vw, 27px)" }}>
+        Пригласить друга
+      </div>
+      <p
+        className="text-text-secondary"
+        style={{ fontSize: "clamp(14px, 1.1vw, 17px)", marginTop: 10, maxWidth: 620 }}
+      >
+        Друг регистрируется по твоей ссылке — вы оба получаете семь дней полного доступа.
+        Считается после того, как он заполнит дату рождения
+      </p>
+
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center" style={{ marginTop: 20 }}>
+        <input
+          readOnly
+          value={link}
+          aria-label="Ссылка-приглашение"
+          className="min-w-0 flex-1 text-text-primary"
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: "clamp(13px, 1.05vw, 15px)",
+            background: "var(--bg-page)",
+            border: "1px solid var(--border)",
+            borderRadius: "10px",
+            padding: "14px",
+          }}
+        />
+        <button
+          type="button"
+          onClick={copy}
+          className="inline-flex h-[50px] shrink-0 items-center justify-center px-6 text-[16px] text-text-accent transition-opacity hover:opacity-80"
+          style={{
+            background: "transparent",
+            border: "1px solid color-mix(in srgb, var(--text-accent) 50%, transparent)",
+            borderRadius: "12px",
+          }}
+        >
+          {copied ? "Скопировано" : "Скопировать"}
+        </button>
+      </div>
+
+      <p className="text-text-secondary" style={{ fontSize: 13, marginTop: 16 }}>
+        Приглашено: {invited}
+      </p>
+    </div>
   );
 }
