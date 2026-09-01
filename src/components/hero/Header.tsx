@@ -144,6 +144,7 @@ function DirectionsMenu() {
 export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [dirOpen, setDirOpen] = useState(false);
   const { isAuthenticated, email, loading } = useAuth();
 
   useEffect(() => {
