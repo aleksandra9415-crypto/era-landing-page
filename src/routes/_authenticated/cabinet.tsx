@@ -12,6 +12,7 @@ import { sunSign } from "@/lib/natal";
 import { supabase } from "@/integrations/supabase/client";
 import { dayArcanum, todayIso } from "@/lib/dayCard";
 import { useAuth } from "@/lib/useAuth";
+import { TarotFlipCard } from "@/components/tarot/TarotFlipCard";
 
 export const Route = createFileRoute("/_authenticated/cabinet")({
   head: () => ({
@@ -107,7 +108,7 @@ function CabinetPage() {
       </div>
 
       <div
-        className="mx-auto w-full max-w-[1240px] px-[clamp(24px,5vw,40px)]"
+        className="mx-auto w-[min(1320px,92vw)]"
         style={{
           paddingTop: "clamp(60px, 8vh, 110px)",
           paddingBottom: "clamp(60px, 8vh, 110px)",
