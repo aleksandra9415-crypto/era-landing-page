@@ -20,6 +20,7 @@ import { Route as NatalnayaKartaRouteImport } from './routes/natalnaya-karta'
 import { Route as NumerologiyaRouteImport } from './routes/numerologiya'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SovmestimostRouteImport } from './routes/sovmestimost'
 import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
 import { Route as TaroRouteImport } from './routes/taro'
@@ -79,6 +80,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SovmestimostRoute = SovmestimostRouteImport.update({
   id: '/sovmestimost',
   path: '/sovmestimost',
@@ -107,6 +113,7 @@ export interface FileRoutesByFullPath {
   '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
@@ -123,6 +130,7 @@ export interface FileRoutesByTo {
   '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
@@ -140,6 +148,7 @@ export interface FileRoutesById {
   '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
@@ -158,6 +167,7 @@ export interface FileRouteTypes {
     | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/register'
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
@@ -174,6 +184,7 @@ export interface FileRouteTypes {
     | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/register'
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
@@ -190,6 +201,7 @@ export interface FileRouteTypes {
     | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/register'
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
@@ -207,6 +219,7 @@ export interface RootRouteChildren {
   NumerologiyaRoute: typeof NumerologiyaRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
+  RegisterRoute: typeof RegisterRoute
   SovmestimostRoute: typeof SovmestimostRoute
   SubscriptionTermsRoute: typeof SubscriptionTermsRoute
   TaroRoute: typeof TaroRoute
@@ -291,6 +304,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sovmestimost': {
       id: '/sovmestimost'
       path: '/sovmestimost'
@@ -327,6 +347,7 @@ const rootRouteChildren: RootRouteChildren = {
   NumerologiyaRoute: NumerologiyaRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
+  RegisterRoute: RegisterRoute,
   SovmestimostRoute: SovmestimostRoute,
   SubscriptionTermsRoute: SubscriptionTermsRoute,
   TaroRoute: TaroRoute,
