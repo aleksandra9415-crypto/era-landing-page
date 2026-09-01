@@ -60,6 +60,15 @@ type Props = {
   subtitle?: string;
 };
 
+type CardLinkRest = {
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  className: string;
+  style: React.CSSProperties;
+};
+
 function CardLink({
   cabinetLinks,
   item,
@@ -69,7 +78,8 @@ function CardLink({
   cabinetLinks: boolean;
   item: Direction;
   children: ReactNode;
-} & Omit<ComponentPropsWithoutRef<"a">, "href">) {
+} & CardLinkRest) {
+
   if (cabinetLinks) {
     return (
       <Link to="/cabinet/$id" params={{ id: item.id }} {...rest}>
