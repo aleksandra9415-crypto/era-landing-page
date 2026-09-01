@@ -34,6 +34,7 @@ function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [recoverNote, setRecoverNote] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -125,13 +126,18 @@ function LoginPage() {
           <Link to="/register" className="text-text-accent text-[15px] hover:underline">
             Создать профиль
           </Link>
-          <Link
-            to="/login"
-            search={{ recover: true }}
+          <button
+            type="button"
+            onClick={() => setRecoverNote(true)}
             className="text-[13px] text-text-secondary hover:underline"
           >
             Забыл пароль
-          </Link>
+          </button>
+          {recoverNote && (
+            <p className="text-[13px] text-text-secondary opacity-70">
+              Восстановление пароля появится позже
+            </p>
+          )}
         </div>
 
         <Link to="/" className="mt-8 inline-block text-text-accent hover:underline">
