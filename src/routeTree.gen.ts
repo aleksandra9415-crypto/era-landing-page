@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as DizaynChelovekaRouteImport } from './routes/dizayn-cheloveka'
 import { Route as LoginRouteImport } from './routes/login'
@@ -24,6 +23,7 @@ import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SovmestimostRouteImport } from './routes/sovmestimost'
 import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
 import { Route as TaroRouteImport } from './routes/taro'
+import { Route as AuthenticatedCabinetRouteImport } from './routes/_authenticated/cabinet'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
@@ -33,11 +33,6 @@ const IndexRoute = IndexRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CabinetRoute = CabinetRouteImport.update({
-  id: '/cabinet',
-  path: '/cabinet',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConsentRoute = ConsentRouteImport.update({
@@ -100,11 +95,15 @@ const TaroRoute = TaroRouteImport.update({
   path: '/taro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCabinetRoute = AuthenticatedCabinetRouteImport.update({
+  id: '/_authenticated/cabinet',
+  path: '/cabinet',
+  getParentRoute: () => rootRouteImport,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -117,11 +116,11 @@ export interface FileRoutesByFullPath {
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
+  '/cabinet': typeof AuthenticatedCabinetRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -134,12 +133,12 @@ export interface FileRoutesByTo {
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
+  '/cabinet': typeof AuthenticatedCabinetRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -152,13 +151,13 @@ export interface FileRoutesById {
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
+  '/_authenticated/cabinet': typeof AuthenticatedCabinetRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
-    | '/cabinet'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -171,11 +170,11 @@ export interface FileRouteTypes {
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
+    | '/cabinet'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/cabinet'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -188,11 +187,11 @@ export interface FileRouteTypes {
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
+    | '/cabinet'
   id:
     | '__root__'
     | '/'
     | '/about'
-    | '/cabinet'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -205,12 +204,12 @@ export interface FileRouteTypes {
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
+    | '/_authenticated/cabinet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
-  CabinetRoute: typeof CabinetRoute
   ConsentRoute: typeof ConsentRoute
   DizaynChelovekaRoute: typeof DizaynChelovekaRoute
   LoginRoute: typeof LoginRoute
@@ -223,6 +222,7 @@ export interface RootRouteChildren {
   SovmestimostRoute: typeof SovmestimostRoute
   SubscriptionTermsRoute: typeof SubscriptionTermsRoute
   TaroRoute: typeof TaroRoute
+  AuthenticatedCabinetRoute: typeof AuthenticatedCabinetRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -239,13 +239,6 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cabinet': {
-      id: '/cabinet'
-      path: '/cabinet'
-      fullPath: '/cabinet'
-      preLoaderRoute: typeof CabinetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/consent': {
@@ -332,13 +325,19 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/cabinet': {
+      id: '/_authenticated/cabinet'
+      path: '/cabinet'
+      fullPath: '/cabinet'
+      preLoaderRoute: typeof AuthenticatedCabinetRouteImport
+      parentRoute: typeof rootRouteImport
+    }
   }
 }
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
-  CabinetRoute: CabinetRoute,
   ConsentRoute: ConsentRoute,
   DizaynChelovekaRoute: DizaynChelovekaRoute,
   LoginRoute: LoginRoute,
@@ -351,6 +350,7 @@ const rootRouteChildren: RootRouteChildren = {
   SovmestimostRoute: SovmestimostRoute,
   SubscriptionTermsRoute: SubscriptionTermsRoute,
   TaroRoute: TaroRoute,
+  AuthenticatedCabinetRoute: AuthenticatedCabinetRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
