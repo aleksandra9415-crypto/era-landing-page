@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as DizaynChelovekaRouteImport } from './routes/dizayn-cheloveka'
@@ -28,6 +29,10 @@ import { Route as AuthenticatedCabinetRouteImport } from './routes/_authenticate
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -96,9 +101,9 @@ const TaroRoute = TaroRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const AuthenticatedCabinetRoute = AuthenticatedCabinetRouteImport.update({
-  id: '/_authenticated/cabinet',
+  id: '/cabinet',
   path: '/cabinet',
-  getParentRoute: () => rootRouteImport,
+  getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -138,6 +143,7 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
@@ -191,6 +197,7 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
     | '/consent'
     | '/dizayn-cheloveka'
@@ -209,6 +216,7 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
   ConsentRoute: typeof ConsentRoute
   DizaynChelovekaRoute: typeof DizaynChelovekaRoute
@@ -222,7 +230,6 @@ export interface RootRouteChildren {
   SovmestimostRoute: typeof SovmestimostRoute
   SubscriptionTermsRoute: typeof SubscriptionTermsRoute
   TaroRoute: typeof TaroRoute
-  AuthenticatedCabinetRoute: typeof AuthenticatedCabinetRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -232,6 +239,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -330,13 +344,25 @@ declare module '@tanstack/react-router' {
       path: '/cabinet'
       fullPath: '/cabinet'
       preLoaderRoute: typeof AuthenticatedCabinetRouteImport
-      parentRoute: typeof rootRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
     }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCabinetRoute: typeof AuthenticatedCabinetRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCabinetRoute: AuthenticatedCabinetRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
   ConsentRoute: ConsentRoute,
   DizaynChelovekaRoute: DizaynChelovekaRoute,
@@ -350,7 +376,6 @@ const rootRouteChildren: RootRouteChildren = {
   SovmestimostRoute: SovmestimostRoute,
   SubscriptionTermsRoute: SubscriptionTermsRoute,
   TaroRoute: TaroRoute,
-  AuthenticatedCabinetRoute: AuthenticatedCabinetRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
