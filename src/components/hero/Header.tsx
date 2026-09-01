@@ -132,11 +132,11 @@ function DirectionsMenu() {
           }}
         >
           {directions.map((d, i) => {
-            const current = pathname === d.path;
+            const current = isCurrent(pathname, d);
             return (
               <Link
                 key={d.id}
-                to={d.path}
+                {...target(d)}
                 role="menuitem"
                 ref={(el) => {
                   itemsRef.current[i] = el;
