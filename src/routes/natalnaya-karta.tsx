@@ -323,7 +323,7 @@ function NatalWheel({ signKey }: { signKey: string }) {
               fontFamily="Onest, sans-serif"
               style={{
                 fontSize: active
-                  ? "calc(var(--label-uu) + 1.5px)"
+                  ? "calc(var(--label-uu) + calc(3px / var(--scale)))"
                   : "var(--label-uu)",
                 lineHeight: 1,
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
