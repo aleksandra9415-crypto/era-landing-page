@@ -23,6 +23,8 @@ export type Database = {
           id: string
           is_owner: boolean
           name: string
+          referral_code: string | null
+          referred_by: string | null
           user_id: string
         }
         Insert: {
@@ -33,6 +35,8 @@ export type Database = {
           id?: string
           is_owner?: boolean
           name?: string
+          referral_code?: string | null
+          referred_by?: string | null
           user_id: string
         }
         Update: {
@@ -43,6 +47,8 @@ export type Database = {
           id?: string
           is_owner?: boolean
           name?: string
+          referral_code?: string | null
+          referred_by?: string | null
           user_id?: string
         }
         Relationships: []
@@ -52,7 +58,8 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_referral_code: { Args: never; Returns: string }
+      referral_count: { Args: { _code: string }; Returns: number }
     }
     Enums: {
       [_ in never]: never
