@@ -21,7 +21,21 @@ export const sunSigns: SunSign[] = [
 ];
 
 /** Границы знаков: [день начала, месяц начала, день конца, месяц конца] */
-const RANGES: Record<string, [number, number, number, number]> = {
+type SignKey =
+  | "aries"
+  | "taurus"
+  | "gemini"
+  | "cancer"
+  | "leo"
+  | "virgo"
+  | "libra"
+  | "scorpio"
+  | "sagittarius"
+  | "capricorn"
+  | "aquarius"
+  | "pisces";
+
+const RANGES: Record<SignKey, [number, number, number, number]> = {
   aries: [21, 3, 19, 4],
   taurus: [20, 4, 20, 5],
   gemini: [21, 5, 20, 6],
