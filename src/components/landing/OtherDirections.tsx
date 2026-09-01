@@ -1,4 +1,4 @@
-import { useMemo, useState, type ComponentPropsWithoutRef, type ReactNode } from "react";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { directions, type Direction } from "@/lib/directions";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -66,7 +66,7 @@ type CardLinkRest = {
   onFocus: () => void;
   onBlur: () => void;
   className: string;
-  style: React.CSSProperties;
+  style: CSSProperties;
 };
 
 function CardLink({
