@@ -247,14 +247,29 @@ export function Pricing() {
                   )}
 
                   <div className="mt-auto pt-7">
-                    <button
-                      type="button"
-                      onClick={() => {}}
-                      className={plan.primary ? "pricing-btn-solid" : "pricing-btn-outline"}
-                    >
-                      {plan.action}
-                    </button>
+                    {plan.id === "free" ? (
+                      <Link
+                        to="/"
+                        hash="quick-calc"
+                        className={plan.primary ? "pricing-btn-solid" : "pricing-btn-outline"}
+                      >
+                        {plan.action}
+                      </Link>
+                    ) : (
+                      <Link
+                        to="/checkout"
+                        search={{
+                          plan: plan.id === "trial" ? ("trial" as const) : ("sub" as const),
+                          period:
+                            plan.id === "trial" ? "3d" : period === "year" ? "12m" : "1m",
+                        }}
+                        className={plan.primary ? "pricing-btn-solid" : "pricing-btn-outline"}
+                      >
+                        {plan.action}
+                      </Link>
+                    )}
                   </div>
+
                 </div>
               </div>
             );
