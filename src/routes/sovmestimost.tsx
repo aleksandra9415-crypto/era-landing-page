@@ -179,7 +179,7 @@ function SynastryResultContent({ result }: ResultCtx<SynastryResult>) {
   const pair = card(result.pair);
   const you = card(result.you);
   const partner = card(result.partner);
-  const text = (pair as { pair?: string } | undefined)?.pair ?? pair?.line;
+  const text = pair?.pair;
 
   return (
     <>
