@@ -189,6 +189,7 @@ export function Header() {
 
         <nav className="hidden items-center md:flex">
           <div className="flex items-center gap-8">
+            <DirectionsMenu />
             {LINKS.map((l) => (
               <a
                 key={l.label}
