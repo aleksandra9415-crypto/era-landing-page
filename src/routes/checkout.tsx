@@ -43,11 +43,22 @@ export const Route = createFileRoute("/checkout")({
 const PAY_METHODS = ["VISA", "Mastercard", "МИР", "СБП", "Google Pay", "ЮMoney"];
 
 function CheckoutPage() {
-  const { plan: planId, period } = Route.useSearch();
-  const plan = CHECKOUT_PLANS[planId];
+  const { plan: initialPlan, period } = Route.useSearch();
+  const navigate = Route.useNavigate();
   const { email: authEmail } = useAuth();
 
+  const [planId, setPlanId] = useState<PlanId>(initialPlan);
+  const plan = CHECKOUT_PLANS[planId];
+
   const [periodId, setPeriodId] = useState(period);
+
+  function choosePlan(next: PlanId) {
+    setPlanId(next);
+    const first = CHECKOUT_PLANS[next].periods[0]!.id;
+    setPeriodId(first);
+    void navigate({ search: { plan: next, period: first }, replace: true });
+  }
+
   const [email, setEmail] = useState("");
   const [promo, setPromo] = useState("");
   const [promoApplied, setPromoApplied] = useState(false);
@@ -209,6 +220,37 @@ function CheckoutPage() {
           {/* Right: payment */}
           <section className="checkout-card">
             <div className="text-text-primary" style={{ fontSize: 15, fontWeight: 500 }}>
+              Тариф
+            </div>
+            <div
+              role="radiogroup"
+              aria-label="Тариф"
+              style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12, marginTop: 14 }}
+            >
+              {(Object.keys(CHECKOUT_PLANS) as PlanId[]).map((id) => {
+                const p = CHECKOUT_PLANS[id];
+                const active = id === planId;
+                return (
+                  <button
+                    key={id}
+                    type="button"
+                    role="radio"
+                    aria-checked={active}
+                    onClick={() => choosePlan(id)}
+                    className="checkout-period"
+                    data-active={active}
+                    style={{ flexDirection: "column", alignItems: "flex-start", gap: 6 }}
+                  >
+                    <span style={{ fontSize: 15 }}>{p.title}</span>
+                    <span className="text-text-secondary" style={{ fontSize: 13 }}>
+                      {id === "trial" ? "3 дня · 249 ₽" : "от 690 ₽ в месяц"}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+
+            <div className="text-text-primary" style={{ fontSize: 15, fontWeight: 500, marginTop: 24 }}>
               Период оплаты
             </div>
 
@@ -221,10 +263,14 @@ function CheckoutPage() {
                     type="button"
                     role="radio"
                     aria-checked={active}
-                    onClick={() => setPeriodId(p.id)}
+                    onClick={() => {
+                      setPeriodId(p.id);
+                      void navigate({ search: { plan: planId, period: p.id }, replace: true });
+                    }}
                     className="checkout-period"
                     data-active={active}
                   >
+
                     <span className="checkout-radio" data-active={active} aria-hidden="true" />
                     <span style={{ flex: 1, textAlign: "left" }}>{p.label}</span>
                     {p.discount && <span className="checkout-badge">−{p.discount}%</span>}
