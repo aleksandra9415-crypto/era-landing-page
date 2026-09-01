@@ -168,10 +168,11 @@ function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
 /** Короткие подписи знаков по кругу, начиная с Овна сверху, по часовой. */
 const SIGN_LABELS = ["Овен", "Телец", "Близ", "Рак", "Лев", "Дева", "Весы", "Скорп", "Стрел", "Козер", "Водол", "Рыбы"];
 const SIGN_KEYS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+const SIGN_GLYPHS = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
 
 /** Фиксированные погашенные позиции: [сектор, радиус в % от стороны области]. */
 const DIM_DOTS: [number, number][] = [
-  [1, 26], [2, 36], [3, 22], [5, 30], [6, 24], [7, 40], [8, 34], [10, 28], [11, 38],
+  [1, 30], [2, 36], [3, 28], [5, 32], [6, 29], [7, 37], [8, 34], [10, 28], [11, 36],
 ];
 
 function useReducedMotion() {
@@ -200,49 +201,45 @@ function NatalWheel({ signKey }: { signKey: string }) {
     return [cx + r * Math.sin(a), cy - r * Math.cos(a)] as const;
   };
 
-  // Клин активного сектора от центра к внешней окружности
+  // Кольцевой сектор активного знака между радиусами 26 и 42
   const a0 = activeIdx * 30 - 15;
   const a1 = activeIdx * 30 + 15;
-  const [x0, y0] = point(a0, 46);
-  const [x1, y1] = point(a1, 46);
-  const wedge = `M ${cx} ${cy} L ${x0} ${y0} A 46 46 0 0 1 ${x1} ${y1} Z`;
+  const [ox0, oy0] = point(a0, 42);
+  const [ox1, oy1] = point(a1, 42);
+  const [ix0, iy0] = point(a0, 26);
+  const [ix1, iy1] = point(a1, 26);
+  const sectorPath = `M ${ox0} ${oy0} A 42 42 0 0 1 ${ox1} ${oy1} L ${ix1} ${iy1} A 26 26 0 0 0 ${ix0} ${iy0} Z`;
 
   const mid = activeIdx * 30;
-  const [sunX, sunY] = point(mid, 38);
-  const [lblX, lblY] = point(mid, 44); // подпись «Солнце» наружу от точки
+  const [sunX, sunY] = point(mid, 33);
+  const [lblX, lblY] = point(mid, 26.5); // подпись «Солнце» смещена к центру от точки
 
   return (
     <svg
-      viewBox={`-10 -10 ${S + 20} ${S + 20}`}
+      viewBox={`-12 -12 ${S + 24} ${S + 24}`}
       role="img"
       aria-label="Колесо натальной карты: рассчитана одна позиция из десяти"
       className="h-auto w-full"
     >
-      <defs>
-        <radialGradient id="natal-sector-glow" cx="50%" cy="50%" r="46%">
-          <stop offset="55%" stopColor="rgba(122, 93, 168, 0)" />
-          <stop offset="100%" stopColor="rgba(122, 93, 168, 0.16)" />
-        </radialGradient>
-      </defs>
+      {/* активный сектор — кольцевой, под спицами и окружностями */}
+      <path d={sectorPath} fill="rgba(122, 93, 168, 0.14)" />
 
-      {/* активный сектор */}
-      <g style={{ transition: reduced ? "none" : "opacity 600ms ease-out" }}>
-        <path d={wedge} fill="url(#natal-sector-glow)" />
-      </g>
+      {/* окружности: внутренняя, внешняя и дополнительная (двойное кольцо) */}
+      <circle cx={cx} cy={cy} r={26} fill="none" stroke="var(--border)" strokeWidth={0.25} strokeOpacity={0.5} />
+      <circle cx={cx} cy={cy} r={40} fill="none" stroke="var(--border)" strokeWidth={0.25} />
+      <circle cx={cx} cy={cy} r={42} fill="none" stroke="var(--border)" strokeWidth={0.25} strokeOpacity={0.4} />
 
-      {/* окружности и спицы */}
-      <circle cx={cx} cy={cy} r={46} fill="none" stroke="var(--border)" strokeWidth={0.25} />
-      <circle cx={cx} cy={cy} r={30} fill="none" stroke="var(--border)" strokeWidth={0.25} strokeOpacity={0.5} />
+      {/* спицы */}
       {SIGN_LABELS.map((_, i) => {
-        const [ix, iy] = point(i * 30 + 15, 30);
-        const [ox, oy] = point(i * 30 + 15, 46);
+        const [sx1, sy1] = point(i * 30 + 15, 26);
+        const [sx2, sy2] = point(i * 30 + 15, 42);
         return (
           <line
             key={i}
-            x1={ix}
-            y1={iy}
-            x2={ox}
-            y2={oy}
+            x1={sx1}
+            y1={sy1}
+            x2={sx2}
+            y2={sy2}
             stroke="var(--border)"
             strokeWidth={0.25}
             strokeOpacity={0.45}
@@ -250,25 +247,46 @@ function NatalWheel({ signKey }: { signKey: string }) {
         );
       })}
 
-      {/* подписи знаков */}
+      {/* символы и подписи знаков на радиусе 46, горизонтально */}
       {SIGN_LABELS.map((label, i) => {
-        const [tx, ty] = point(i * 30, 52);
+        const [tx, ty] = point(i * 30, 46);
         const active = i === activeIdx;
+        const fill = active ? "var(--text-accent)" : "var(--text-secondary)";
+        const opacity = active ? 1 : 0.45;
         return (
-          <text
-            key={label}
-            x={tx}
-            y={ty}
-            textAnchor="middle"
-            dominantBaseline="middle"
-            fill={active ? "var(--text-accent)" : "var(--text-secondary)"}
-            fillOpacity={active ? 1 : 0.45}
-            fontSize={2.6}
-            fontFamily="Onest, sans-serif"
-            style={{ transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out" }}
-          >
-            {label}
-          </text>
+          <g key={label}>
+            <text
+              x={tx}
+              y={ty - 0.9}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fill={fill}
+              fillOpacity={opacity}
+              fontSize={active ? 3 : 2.6}
+              fontFamily="'Noto Sans Symbols 2', sans-serif"
+              style={{
+                transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
+              }}
+            >
+              {SIGN_GLYPHS[i]}
+            </text>
+            <text
+              className="natal-sign-name"
+              x={tx}
+              y={ty + 1.6}
+              textAnchor="middle"
+              dominantBaseline="hanging"
+              fill={fill}
+              fillOpacity={opacity}
+              fontSize={1.6}
+              fontFamily="Onest, sans-serif"
+              style={{
+                transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
+              }}
+            >
+              {label}
+            </text>
+          </g>
         );
       })}
 
@@ -276,7 +294,7 @@ function NatalWheel({ signKey }: { signKey: string }) {
       {DIM_DOTS.map(([sector, r], i) => {
         const [dx, dy] = point(sector * 30, r);
         return (
-          <circle key={i} cx={dx} cy={dy} r={1.15} fill="var(--border)" fillOpacity={0.35} />
+          <circle key={i} cx={dx} cy={dy} r={0.9} fill="var(--border)" fillOpacity={0.35} />
         );
       })}
 
@@ -289,9 +307,9 @@ function NatalWheel({ signKey }: { signKey: string }) {
       >
         <g transform={`translate(${cx}, ${cy})`}>
           <circle
-            r={2}
+            r={1.8}
             fill="var(--text-accent)"
-            style={{ filter: "drop-shadow(0 0 5px rgba(122, 93, 168, 0.5))" }}
+            style={{ filter: "drop-shadow(0 0 4.4px rgba(122, 93, 168, 0.5))" }}
           />
         </g>
       </g>
@@ -308,7 +326,7 @@ function NatalWheel({ signKey }: { signKey: string }) {
           textAnchor="middle"
           dominantBaseline="middle"
           fill="var(--text-primary)"
-          fontSize={3}
+          fontSize={2.4}
           fontFamily="Onest, sans-serif"
         >
           Солнце
@@ -345,12 +363,12 @@ function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<SunSignResult> | null }) {
         </p>
 
         <div
-          className="mt-10 grid grid-cols-1 items-center md:grid-cols-2"
-          style={{ gap: "clamp(40px, 5vw, 90px)" }}
+          className="mt-10 grid grid-cols-1 items-center md:grid-cols-[52fr_44fr]"
+          style={{ columnGap: "4%", rowGap: "clamp(40px, 5vw, 90px)" }}
         >
           <div
-            className="mx-auto aspect-square w-full"
-            style={{ width: "min(34vw, 46vh)", minWidth: 280 }}
+            className="natal-wheel-area mx-auto aspect-square w-full"
+            style={{ width: "min(42vw, 62vh)", minWidth: 340 }}
           >
             <NatalWheel signKey={signKey} />
           </div>

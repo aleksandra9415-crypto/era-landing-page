@@ -831,3 +831,14 @@
 div:has(> [data-taro-pre]) > .uppercase {
   display: none;
 }
+
+/* Натальная карта: на мобильном колесо крупнее, названия знаков скрыты */
+@media (max-width: 767px) {
+  .natal-wheel-area {
+    width: 86vw !important;
+    min-width: 0 !important;
+  }
+  .natal-sign-name {
+    display: none;
+  }
+}
