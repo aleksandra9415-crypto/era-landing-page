@@ -307,7 +307,7 @@ function InteractiveBodygraph({
           />
         ))}
         {CENTERS.map((c, i) => {
-          const id = HD_CENTERS[i].id;
+          const id = HD_CENTERS[i]!.id;
           const isActive = id === active;
           return (
             <polygon
@@ -315,7 +315,7 @@ function InteractiveBodygraph({
               points={c.points}
               role="button"
               tabIndex={0}
-              aria-label={HD_CENTERS[i].title}
+              aria-label={HD_CENTERS[i]!.title}
               aria-pressed={isActive}
               onMouseEnter={() => onActivate(id)}
               onClick={() => onActivate(id)}
@@ -363,13 +363,13 @@ function HdStructureBlock() {
       }
       setActive((prev) => {
         const i = HD_CENTERS.findIndex((c) => c.id === prev);
-        return HD_CENTERS[(i + 1) % HD_CENTERS.length].id;
+        return HD_CENTERS[(i + 1) % HD_CENTERS.length]!.id;
       });
     }, 3000);
     return () => window.clearInterval(t);
   }, []);
 
-  const current = HD_CENTERS.find((c) => c.id === active) ?? HD_CENTERS[2];
+  const current = HD_CENTERS.find((c) => c.id === active) ?? HD_CENTERS[2]!;
 
   return (
     <section
