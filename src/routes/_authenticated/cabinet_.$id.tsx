@@ -51,7 +51,7 @@ function parseDate(iso: string | null) {
 }
 
 type Head =
-  | { kind: "value"; number: string; name: string }
+  | { kind: "value"; number: string | null; name: string }
   | { kind: "note"; note: string };
 
 function buildReading(
@@ -78,7 +78,7 @@ function buildReading(
   if (id === "natal") {
     const { sign } = sunSign(birth.day, birth.month);
     return {
-      head: { kind: "value", number: sign.symbol ?? "", name: sign.name },
+      head: { kind: "value", number: null, name: sign.name },
       openText: sign.detail ?? null,
     };
   }
@@ -221,16 +221,18 @@ function ReadingPage() {
 
             {reading && reading.head.kind === "value" ? (
               <div className="flex items-baseline gap-4" style={{ marginTop: 14 }}>
-                <span
-                  className="text-text-accent"
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "clamp(36px, 3.2vw, 56px)",
-                    lineHeight: 1,
-                  }}
-                >
-                  {reading.head.number}
-                </span>
+                {reading.head.number && (
+                  <span
+                    className="text-text-accent"
+                    style={{
+                      fontFamily: "var(--font-mono)",
+                      fontSize: "clamp(36px, 3.2vw, 56px)",
+                      lineHeight: 1,
+                    }}
+                  >
+                    {reading.head.number}
+                  </span>
+                )}
                 <span
                   className="font-display text-text-primary"
                   style={{ fontSize: "clamp(22px, 1.9vw, 32px)", lineHeight: 1.15 }}
