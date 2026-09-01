@@ -83,5 +83,5 @@ export function sunSign(day: number, month: number): SunSignResult {
     }
   }
   // не должно случиться для валидной даты
-  return { sign: sunSigns[11], onCusp: false };
+  return { sign: sunSigns[11]!, onCusp: false };
 }
