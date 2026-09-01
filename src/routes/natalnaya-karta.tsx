@@ -123,7 +123,7 @@ function NatalStage({ result, fast, reduced }: ResultCtx<SunSignResult>) {
 }
 
 function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
-  const text = result.sign.detail || result.sign.line;
+  const text = result.sign.detail;
   return (
     <>
       <h2
