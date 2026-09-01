@@ -83,7 +83,7 @@ export function TarotFlipCard({
         onClick={toggle}
         onKeyDown={onKeyDown}
       >
-        <div className="tarot-tilt" style={{ width: "min(30vw, 46vh)" }}>
+        <div className="tarot-tilt" style={{ width }}>
           <div className="tarot-flip">
             {/* Back */}
             <div className="tarot-side tarot-back">
@@ -166,7 +166,7 @@ export function TarotFlipCard({
         </div>
       </div>
 
-      {!flipped && (
+      {hint && !flipped && (
         <p className="text-text-secondary" style={{ marginTop: 14, fontSize: 14 }}>
           Нажми, чтобы перевернуть
         </p>
