@@ -294,8 +294,8 @@ function NatalWheel({ signKey }: { signKey: string }) {
               fill={fill}
               fillOpacity={opacity}
               fontFamily="Onest, sans-serif"
+              fontSize="12px"
               style={{
-                fontSize: "2.5px",
                 lineHeight: 1,
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
               }}
