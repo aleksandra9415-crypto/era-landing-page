@@ -862,3 +862,145 @@ div:has(> [data-taro-pre]) > .uppercase {
 .dir-menu-item:focus-visible .dir-menu-title {
   color: var(--text-accent);
 }
+
+/* ===== Checkout ===== */
+.checkout-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .checkout-grid { grid-template-columns: 1fr; }
+}
+.checkout-card {
+  background: color-mix(in srgb, var(--surface-1) 55%, transparent);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: clamp(20px, 2.2vw, 32px);
+}
+.checkout-input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: var(--text-primary);
+  font-size: 14px;
+}
+.checkout-input::placeholder { color: var(--text-secondary); opacity: 0.7; }
+.checkout-input:focus { outline: none; border-color: var(--text-accent); }
+.checkout-btn-ghost {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 18px;
+  color: var(--text-primary);
+  font-size: 14px;
+  white-space: nowrap;
+  transition: border-color 0.2s ease;
+}
+.checkout-btn-ghost:hover { border-color: var(--text-accent); }
+.checkout-period {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px 16px;
+  color: var(--text-primary);
+  font-size: 15px;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+.checkout-period:hover { border-color: color-mix(in srgb, var(--text-accent) 50%, var(--border)); }
+.checkout-period[data-active="true"] {
+  border-color: var(--text-accent);
+  background: color-mix(in srgb, var(--text-accent) 8%, transparent);
+}
+.checkout-radio {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid var(--border);
+  display: inline-block; position: relative; flex: none;
+}
+.checkout-radio[data-active="true"] { border-color: var(--text-accent); }
+.checkout-radio[data-active="true"]::after {
+  content: ""; position: absolute; inset: 4px; border-radius: 50%;
+  background: var(--text-accent);
+}
+.checkout-badge {
+  font-size: 12px;
+  color: var(--text-accent);
+  border: 1px solid color-mix(in srgb, var(--text-accent) 45%, transparent);
+  border-radius: 999px;
+  padding: 2px 8px;
+}
+.checkout-checkbox {
+  appearance: none;
+  width: 18px; height: 18px; flex: none; margin-top: 2px;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: transparent;
+  cursor: pointer;
+}
+.checkout-checkbox:checked {
+  border-color: var(--text-accent);
+  background: var(--text-accent);
+}
+.checkout-pay {
+  width: 100%;
+  margin-top: 20px;
+  border-radius: 14px;
+  padding: 16px 20px;
+  font-size: 16px;
+  color: var(--text-primary);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--text-accent) 70%, transparent),
+    color-mix(in srgb, var(--text-accent) 45%, transparent));
+  transition: filter 0.2s ease, opacity 0.2s ease;
+}
+.checkout-pay:hover { filter: brightness(1.1); }
+.checkout-pay[data-disabled="true"] { opacity: 0.55; }
+.checkout-methods {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  justify-content: center; margin-top: 16px;
+}
+.checkout-method {
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 6px 10px;
+}
+.checkout-gift {
+  display: flex; align-items: flex-start; gap: 14px;
+  margin-top: 20px; cursor: pointer;
+}
+.checkout-gift-icon {
+  width: 34px; height: 34px; flex: none;
+  display: grid; place-items: center;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--text-accent);
+}
+.checkout-switch {
+  width: 46px; height: 26px; flex: none;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--surface-1) 80%, transparent);
+  position: relative;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+.checkout-switch[data-on="true"] {
+  border-color: var(--text-accent);
+  background: color-mix(in srgb, var(--text-accent) 45%, transparent);
+}
+.checkout-switch-knob {
+  position: absolute; top: 3px; left: 3px;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--text-primary);
+  transition: transform 0.2s ease;
+}
+.checkout-switch[data-on="true"] .checkout-switch-knob { transform: translateX(20px); }
