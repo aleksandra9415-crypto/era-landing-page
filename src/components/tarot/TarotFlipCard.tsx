@@ -27,20 +27,38 @@ type Props = {
   /** сбрасывает переворот при новой карте */
   drawKey: number;
   onFlip: (flipped: boolean) => void;
+  /** ширина карты (CSS-значение) */
+  width?: string;
+  /** открытая карта не закрывается обратно */
+  oneWay?: boolean;
+  /** начальное состояние переворота */
+  initialFlipped?: boolean;
+  /** подсказка «Нажми, чтобы перевернуть» */
+  hint?: boolean;
 };
 
 /** Карта рубашкой вверх, переворачивается по клику. Лицо рисуется кодом. */
-export function TarotFlipCard({ n, name, drawKey, onFlip }: Props) {
-  const [flipped, setFlipped] = useState(false);
+export function TarotFlipCard({
+  n,
+  name,
+  drawKey,
+  onFlip,
+  width = "min(30vw, 46vh)",
+  oneWay = false,
+  initialFlipped = false,
+  hint = true,
+}: Props) {
+  const [flipped, setFlipped] = useState(initialFlipped);
 
   useEffect(() => {
-    setFlipped(false);
-    onFlip(false);
+    setFlipped(initialFlipped);
+    onFlip(initialFlipped);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [drawKey]);
 
   const toggle = () => {
     setFlipped((f) => {
+      if (oneWay && f) return f;
       onFlip(!f);
       return !f;
     });
