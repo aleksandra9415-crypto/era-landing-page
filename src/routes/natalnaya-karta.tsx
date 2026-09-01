@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   DirectionPage,
@@ -168,7 +168,11 @@ function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
 /** Короткие подписи знаков по кругу, начиная с Овна сверху, по часовой. */
 const SIGN_LABELS = ["Овен", "Телец", "Близ", "Рак", "Лев", "Дева", "Весы", "Скорп", "Стрел", "Козер", "Водол", "Рыбы"];
 const SIGN_KEYS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
-const SIGN_GLYPHS = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
+const SIGN_GLYPHS = [
+  "\u2648\uFE0E", "\u2649\uFE0E", "\u264A\uFE0E", "\u264B\uFE0E",
+  "\u264C\uFE0E", "\u264D\uFE0E", "\u264E\uFE0E", "\u264F\uFE0E",
+  "\u2650\uFE0E", "\u2651\uFE0E", "\u2652\uFE0E", "\u2653\uFE0E",
+];
 
 /** Фиксированные погашенные позиции: [сектор, радиус в % от стороны области]. */
 const DIM_DOTS: [number, number][] = [
@@ -190,6 +194,27 @@ function useReducedMotion() {
 /** Колесо натальной карты с одной горящей позицией — Солнцем. */
 function NatalWheel({ signKey }: { signKey: string }) {
   const reduced = useReducedMotion();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const update = () => {
+      const rect = svg.getBoundingClientRect();
+      const vbWidth = 124; // viewBox -12..112
+      setScale(rect.width / vbWidth);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(svg);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
   const S = 100; // viewBox 100x100, 1 единица = 1% стороны
   const cx = S / 2;
   const cy = S / 2;
@@ -214,12 +239,23 @@ function NatalWheel({ signKey }: { signKey: string }) {
   const [sunX, sunY] = point(mid, 33);
   const [lblX, lblY] = point(mid, 26.5); // подпись «Солнце» смещена к центру от точки
 
+  const symbolPx = "clamp(18px, 1.6vw, 26px)";
+  const labelPx = "clamp(11px, 1vw, 15px)";
+
   return (
     <svg
+      ref={svgRef}
       viewBox={`-12 -12 ${S + 24} ${S + 24}`}
       role="img"
       aria-label="Колесо натальной карты: рассчитана одна позиция из десяти"
-      className="h-auto w-full"
+      className="h-auto w-full overflow-visible"
+      style={{
+        ["--symbol-size" as string]: symbolPx,
+        ["--label-size" as string]: labelPx,
+        ["--scale" as string]: String(scale),
+        ["--symbol-uu" as string]: `calc(${symbolPx} / ${scale})`,
+        ["--label-uu" as string]: `calc(${labelPx} / ${scale})`,
+      }}
     >
       {/* активный сектор — кольцевой, под спицами и окружностями */}
       <path d={sectorPath} fill="rgba(122, 93, 168, 0.14)" />
@@ -247,24 +283,30 @@ function NatalWheel({ signKey }: { signKey: string }) {
         );
       })}
 
-      {/* символы и подписи знаков на радиусе 46, горизонтально */}
+      {/* символы знаков на радиусе 40, подписи — на радиусе 47, горизонтально */}
       {SIGN_LABELS.map((label, i) => {
-        const [tx, ty] = point(i * 30, 46);
+        const angle = i * 30;
+        const [sx, sy] = point(angle, 40);
+        const [lx, ly] = point(angle, 47);
         const active = i === activeIdx;
         const fill = active ? "var(--text-accent)" : "var(--text-secondary)";
-        const opacity = active ? 1 : 0.45;
+        const opacity = active ? 1 : 0.6;
         return (
           <g key={label}>
             <text
-              x={tx}
-              y={ty - 0.9}
+              x={sx}
+              y={sy}
               textAnchor="middle"
               dominantBaseline="middle"
               fill={fill}
               fillOpacity={opacity}
-              fontSize={active ? 3 : 2.6}
               fontFamily="'Noto Sans Symbols 2', sans-serif"
               style={{
+                fontSize: active
+                  ? "calc(var(--symbol-uu) + calc(4px / var(--scale)))"
+                  : "var(--symbol-uu)",
+                fontVariantEmoji: "text",
+                lineHeight: 1,
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
               }}
             >
@@ -272,15 +314,18 @@ function NatalWheel({ signKey }: { signKey: string }) {
             </text>
             <text
               className="natal-sign-name"
-              x={tx}
-              y={ty + 1.6}
+              x={lx}
+              y={ly}
               textAnchor="middle"
-              dominantBaseline="hanging"
+              dominantBaseline="middle"
               fill={fill}
               fillOpacity={opacity}
-              fontSize={1.6}
               fontFamily="Onest, sans-serif"
               style={{
+                fontSize: active
+                  ? "calc(var(--label-uu) + calc(3px / var(--scale)))"
+                  : "var(--label-uu)",
+                lineHeight: 1,
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
               }}
             >
@@ -368,7 +413,7 @@ function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<SunSignResult> | null }) {
         >
           <div
             className="natal-wheel-area mx-auto aspect-square w-full"
-            style={{ width: "min(42vw, 62vh)", minWidth: 340 }}
+            style={{ width: "min(46vw, 70vh)", minWidth: 380 }}
           >
             <NatalWheel signKey={signKey} />
           </div>
