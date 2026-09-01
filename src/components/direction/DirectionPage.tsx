@@ -86,6 +86,8 @@ export type DirectionPageProps<R> = {
 
   calculator: (api: CalculatorApi<R>) => ReactNode;
   resultVisual: (ctx: ResultCtx<R>) => ReactNode;
+  /** Что показывать в правой колонке до расчёта (по умолчанию — орбиты). */
+  placeholderVisual?: ReactNode;
   resultContent: (ctx: ResultCtx<R>) => ReactNode;
   explainBlock?: ReactNode | ((ctx: ResultCtx<R> | null) => ReactNode);
 };
@@ -115,6 +117,7 @@ export function DirectionPage<R>({
   finalSubtitle,
   calculator,
   resultVisual,
+  placeholderVisual,
   resultContent,
   explainBlock,
 }: DirectionPageProps<R>) {
@@ -272,7 +275,9 @@ export function DirectionPage<R>({
             {ctx ? (
               resultVisual(ctx)
             ) : (
-              <OrbitStage value={null} speedFactor={fast ? 4 : 1} still={reduced} />
+              (placeholderVisual ?? (
+                <OrbitStage value={null} speedFactor={fast ? 4 : 1} still={reduced} />
+              ))
             )}
           </div>
         </div>
