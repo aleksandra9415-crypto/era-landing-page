@@ -298,17 +298,17 @@ export function DirectionPage<R>({
         footer={exampleFooter}
       />
 
-      <OtherDirections
-        currentId={id}
-        {...(otherTitle ? { title: otherTitle } : {})}
-        {...(otherSubtitle ? { subtitle: otherSubtitle } : {})}
-      />
+      <DirectionFaq title={faqTitle} items={faq} />
 
       <Reviews directionId={id} />
 
       <Pricing />
 
-      <DirectionFaq title={faqTitle} items={faq} />
+      <OtherDirections
+        currentId={id}
+        {...(otherTitle ? { title: otherTitle } : {})}
+        {...(otherSubtitle ? { subtitle: otherSubtitle } : {})}
+      />
 
       {finalBlock ?? <QuickCalc id="start" title={finalTitle} subtitle={finalSubtitle} />}
 
