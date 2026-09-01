@@ -168,7 +168,11 @@ function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
 /** Короткие подписи знаков по кругу, начиная с Овна сверху, по часовой. */
 const SIGN_LABELS = ["Овен", "Телец", "Близ", "Рак", "Лев", "Дева", "Весы", "Скорп", "Стрел", "Козер", "Водол", "Рыбы"];
 const SIGN_KEYS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
-const SIGN_GLYPHS = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"];
+const SIGN_GLYPHS = [
+  "\u2648\uFE0E", "\u2649\uFE0E", "\u264A\uFE0E", "\u264B\uFE0E",
+  "\u264C\uFE0E", "\u264D\uFE0E", "\u264E\uFE0E", "\u264F\uFE0E",
+  "\u2650\uFE0E", "\u2651\uFE0E", "\u2652\uFE0E", "\u2653\uFE0E",
+];
 
 /** Фиксированные погашенные позиции: [сектор, радиус в % от стороны области]. */
 const DIM_DOTS: [number, number][] = [
@@ -219,7 +223,12 @@ function NatalWheel({ signKey }: { signKey: string }) {
       viewBox={`-12 -12 ${S + 24} ${S + 24}`}
       role="img"
       aria-label="Колесо натальной карты: рассчитана одна позиция из десяти"
-      className="h-auto w-full"
+      className="h-auto w-full overflow-visible"
+      style={{
+        ["--symbol-size" as string]: "clamp(18px, 1.6vw, 26px)",
+        ["--label-size" as string]: "clamp(11px, 1vw, 15px)",
+        fontSize: "clamp(11px, 1vw, 15px)",
+      }}
     >
       {/* активный сектор — кольцевой, под спицами и окружностями */}
       <path d={sectorPath} fill="rgba(122, 93, 168, 0.14)" />
@@ -247,24 +256,30 @@ function NatalWheel({ signKey }: { signKey: string }) {
         );
       })}
 
-      {/* символы и подписи знаков на радиусе 46, горизонтально */}
+      {/* символы знаков на радиусе 40, подписи — на радиусе 47, горизонтально */}
       {SIGN_LABELS.map((label, i) => {
-        const [tx, ty] = point(i * 30, 46);
+        const angle = i * 30;
+        const [sx, sy] = point(angle, 40);
+        const [lx, ly] = point(angle, 47);
         const active = i === activeIdx;
         const fill = active ? "var(--text-accent)" : "var(--text-secondary)";
-        const opacity = active ? 1 : 0.45;
+        const opacity = active ? 1 : 0.6;
         return (
           <g key={label}>
             <text
-              x={tx}
-              y={ty - 0.9}
+              x={sx}
+              y={sy}
               textAnchor="middle"
               dominantBaseline="middle"
               fill={fill}
               fillOpacity={opacity}
-              fontSize={active ? 3 : 2.6}
               fontFamily="'Noto Sans Symbols 2', sans-serif"
               style={{
+                fontSize: active
+                  ? "calc(clamp(18px, 1.6vw, 26px) + 4px)"
+                  : "clamp(18px, 1.6vw, 26px)",
+                fontVariantEmoji: "text",
+                lineHeight: 1,
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
               }}
             >
@@ -272,15 +287,16 @@ function NatalWheel({ signKey }: { signKey: string }) {
             </text>
             <text
               className="natal-sign-name"
-              x={tx}
-              y={ty + 1.6}
+              x={lx}
+              y={ly}
               textAnchor="middle"
-              dominantBaseline="hanging"
+              dominantBaseline="middle"
               fill={fill}
               fillOpacity={opacity}
-              fontSize={1.6}
               fontFamily="Onest, sans-serif"
               style={{
+                fontSize: "2.5px",
+                lineHeight: 1,
                 transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out",
               }}
             >
@@ -368,7 +384,7 @@ function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<SunSignResult> | null }) {
         >
           <div
             className="natal-wheel-area mx-auto aspect-square w-full"
-            style={{ width: "min(42vw, 62vh)", minWidth: 340 }}
+            style={{ width: "min(46vw, 70vh)", minWidth: 380 }}
           >
             <NatalWheel signKey={signKey} />
           </div>
