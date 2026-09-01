@@ -217,6 +217,7 @@ export function DirectionPage<R>({
       </section>
 
       <section
+        id="about"
         ref={aboutRef}
         className="relative z-[30] w-full overflow-hidden"
         style={{
