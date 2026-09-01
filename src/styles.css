@@ -842,3 +842,7 @@ div:has(> [data-taro-pre]) > .uppercase {
     display: none;
   }
 }
+
+.cab-tile:hover {
+  border-color: color-mix(in oklab, var(--text-accent) 60%, transparent);
+}

@@ -453,7 +453,7 @@ function DayCard({ userId }: { userId: string }) {
 
       <div
         className="mt-3 text-text-accent"
-        style={{ fontFamily: "'JetBrains Mono', monospace", fontSize: "clamp(44px, 4vw, 72px)", lineHeight: 1 }}
+        style={{ fontFamily: "var(--font-mono)", fontSize: "clamp(44px, 4vw, 72px)", lineHeight: 1 }}
       >
         {n}
       </div>
@@ -501,7 +501,7 @@ function tileResult(id: string, birth: Birth): { value: string; mono?: boolean }
   }
   if (id === "natal") {
     const { sign } = sunSign(birth.day, birth.month);
-    return { value: sign.title };
+    return { value: sign.name };
   }
   return { status: "Добавь профиль близкого" };
 }
@@ -531,7 +531,7 @@ function DirectionTile({
             className="text-text-accent"
             style={{
               fontSize: "clamp(20px, 1.7vw, 28px)",
-              fontFamily: res.mono ? "'JetBrains Mono', monospace" : undefined,
+              fontFamily: res.mono ? "var(--font-mono)" : undefined,
             }}
           >
             {res.value}
