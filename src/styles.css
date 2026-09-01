@@ -846,3 +846,19 @@ div:has(> [data-taro-pre]) > .uppercase {
 .cab-tile:hover {
   border-color: color-mix(in oklab, var(--text-accent) 60%, transparent);
 }
+
+@keyframes dirmenu-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.dir-menu-item:hover,
+.dir-menu-item:focus-visible {
+  background: rgba(122, 93, 168, 0.12);
+  outline: none;
+}
+
+.dir-menu-item:hover .dir-menu-title,
+.dir-menu-item:focus-visible .dir-menu-title {
+  color: var(--text-accent);
+}
