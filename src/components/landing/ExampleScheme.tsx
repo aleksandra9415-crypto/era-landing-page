@@ -397,10 +397,9 @@ export function ExampleScheme({
           </p>
 
           {showButton && (
-            <button
-              type="button"
-              onClick={() => {}}
-              className="w-full text-white transition-opacity hover:opacity-90 md:w-auto"
+            <FullReadingButton
+              label="Узнать свои числа"
+              className="qc-focus w-full text-white transition-opacity hover:opacity-90 md:w-auto"
               style={{
                 marginTop: 20,
                 background: "var(--accent)",
@@ -410,10 +409,9 @@ export function ExampleScheme({
                 paddingRight: 40,
                 fontSize: 16,
               }}
-            >
-              Узнать свои числа
-            </button>
+            />
           )}
+
 
         </div>
       </div>
