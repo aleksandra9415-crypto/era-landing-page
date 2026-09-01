@@ -1004,3 +1004,9 @@ div:has(> [data-taro-pre]) > .uppercase {
   transition: transform 0.2s ease;
 }
 .checkout-switch[data-on="true"] .checkout-switch-knob { transform: translateX(20px); }
+
+.pricing-btn-solid,
+.pricing-btn-outline {
+  display: grid;
+  place-items: center;
+}
