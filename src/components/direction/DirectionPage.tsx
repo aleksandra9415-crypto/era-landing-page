@@ -83,6 +83,8 @@ export type DirectionPageProps<R> = {
 
   finalTitle: string;
   finalSubtitle: string;
+  /** Если задан, заменяет стандартный финальный блок QuickCalc. */
+  finalBlock?: ReactNode;
 
   calculator: (api: CalculatorApi<R>) => ReactNode;
   resultVisual: (ctx: ResultCtx<R>) => ReactNode;
@@ -115,6 +117,7 @@ export function DirectionPage<R>({
   otherSubtitle,
   finalTitle,
   finalSubtitle,
+  finalBlock,
   calculator,
   resultVisual,
   placeholderVisual,
@@ -214,6 +217,7 @@ export function DirectionPage<R>({
       </section>
 
       <section
+        id="about"
         ref={aboutRef}
         className="relative z-[30] w-full overflow-hidden"
         style={{
@@ -306,7 +310,7 @@ export function DirectionPage<R>({
 
       <DirectionFaq title={faqTitle} items={faq} />
 
-      <QuickCalc id="start" title={finalTitle} subtitle={finalSubtitle} />
+      {finalBlock ?? <QuickCalc id="start" title={finalTitle} subtitle={finalSubtitle} />}
 
       <Footer />
     </main>

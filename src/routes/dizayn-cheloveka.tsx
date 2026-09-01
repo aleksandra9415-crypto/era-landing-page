@@ -1,19 +1,15 @@
-import { useMemo, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   DirectionPage,
   directionHead,
-  type CalculatorApi,
   type DirectionLine,
   type FaqItem,
 } from "@/components/direction/DirectionPage";
-import { DateSelects, type DateParts } from "@/components/direction/DateCalculator";
-import { isValidDate } from "@/lib/arcana";
 import hdAsset from "@/assets/humandesign2.png.asset.json";
 
 export const Route = createFileRoute("/dizayn-cheloveka")({
   head: directionHead({
-    title: "Дизайн человека: рассчитать бодиграф по дате рождения — Моя Эра",
+    title: "Дизайн человека: тип, стратегия и авторитет — Моя Эра",
     description:
       "Тип, стратегия и авторитет по дате, времени и месту рождения. Расчёт по реальным положениям планет.",
     canonical: "https://destiny-canvas-arc.lovable.app/dizayn-cheloveka",
@@ -21,18 +17,11 @@ export const Route = createFileRoute("/dizayn-cheloveka")({
   component: HumanDesignPage,
 });
 
-type HdInput = {
-  date: DateParts;
-  hour: string;
-  minute: string;
-  place: string;
-};
-
 const ABOUT_PARAGRAPHS = [
-  "Дизайн человека соединяет несколько старых систем — И-цзин, астрологию, каббалу и чакры — в одну схему из девяти центров. Схема называется бодиграфом и рассчитывается по положению планет.",
-  "Главное в ней — тип и стратегия. Тип описывает, как устроен твой обмен энергией с миром, а стратегия — способ принимать решения, при котором ты тратишь меньше сил и реже упираешься в сопротивление.",
-  "Определённые центры показывают, что в тебе устойчиво и не зависит от окружения. Неопределённые — то, что ты берёшь от людей рядом и усиливаешь. Это объясняет, почему в одной компании ты один, а в другой совсем другой.",
-  "В отличие от матрицы и нумерологии, дизайн человека нельзя посчитать по одной дате. Нужны время и место рождения, и не одна карта, а две.",
+  "Дизайн человека появился в конце восьмидесятых и соединил четыре старые системы: астрологию, китайскую Книгу перемен, каббалу и учение о чакрах. Из них собрана одна схема — бодиграф, где девять центров соединены каналами.",
+  "Каждый центр отвечает за свою функцию: один за то, как ты думаешь, другой за то, как проявляешься вовне, третий за жизненную энергию. Часть центров у человека определена, часть нет — и это главное, что читается по схеме.",
+  "Определённый центр работает одинаково всегда, независимо от окружения: это то, на что можно опереться. Неопределённый усиливает то, что приходит от людей рядом, — отсюда ощущение, что в одной компании ты один человек, а в другой совсем другой.",
+  "Из сочетания определённых центров выводится тип, а из типа — стратегия: способ принимать решения, при котором тратится меньше сил. Типов четыре, и они распределены между людьми очень неравномерно.",
 ];
 
 const LINES: DirectionLine[] = [
@@ -96,129 +85,6 @@ const FAQ: FaqItem[] = [
     a: "Нет. Он описывает механику решений и энергии, а не то, что произойдёт.",
   },
 ];
-
-const selectClass =
-  "qc-focus h-14 w-full appearance-none rounded-[12px] border border-border bg-surface-1 px-4 pr-10 text-[17px] text-text-primary transition-colors focus:border-text-accent";
-
-function Chevron() {
-  return (
-    <svg
-      viewBox="0 0 12 8"
-      aria-hidden="true"
-      className="pointer-events-none absolute right-4 top-1/2 h-2 w-3 -translate-y-1/2 text-text-secondary"
-    >
-      <path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" strokeWidth="1.5" />
-    </svg>
-  );
-}
-
-const pad = (n: number) => String(n).padStart(2, "0");
-
-/** Форма первого экрана: дата, время, место. Бесплатного расчёта нет. */
-function HdCalculator({ stage, submit }: CalculatorApi<HdInput>) {
-  const [date, setDate] = useState<DateParts>({ day: "", month: "", year: "" });
-  const [hour, setHour] = useState("");
-  const [minute, setMinute] = useState("");
-  const [place, setPlace] = useState("");
-
-  const hours = useMemo(() => Array.from({ length: 24 }, (_, i) => i), []);
-  const minutes = useMemo(() => Array.from({ length: 60 }, (_, i) => i), []);
-
-  const dateComplete = date.day !== "" && date.month !== "" && date.year !== "";
-  const dateInvalid =
-    dateComplete && !isValidDate(Number(date.day), Number(date.month), Number(date.year));
-  const complete =
-    dateComplete && !dateInvalid && hour !== "" && minute !== "" && place.trim().length > 1;
-  const disabled = !complete || stage === "loading";
-
-  return (
-    <>
-      <div style={{ marginTop: 32 }}>
-        <DateSelects idPrefix="hd" value={date} onChange={setDate} />
-      </div>
-
-      <div className="flex flex-col md:flex-row" style={{ marginTop: 12, gap: 12 }}>
-        <div className="relative flex-1">
-          <label className="sr-only" htmlFor="hd-hour">
-            Часы
-          </label>
-          <select
-            id="hd-hour"
-            className={selectClass}
-            value={hour}
-            onChange={(e) => setHour(e.target.value)}
-          >
-            <option value="">Часы</option>
-            {hours.map((h) => (
-              <option key={h} value={h}>
-                {pad(h)}
-              </option>
-            ))}
-          </select>
-          <Chevron />
-        </div>
-
-        <div className="relative flex-1">
-          <label className="sr-only" htmlFor="hd-minute">
-            Минуты
-          </label>
-          <select
-            id="hd-minute"
-            className={selectClass}
-            value={minute}
-            onChange={(e) => setMinute(e.target.value)}
-          >
-            <option value="">Минуты</option>
-            {minutes.map((m) => (
-              <option key={m} value={m}>
-                {pad(m)}
-              </option>
-            ))}
-          </select>
-          <Chevron />
-        </div>
-      </div>
-
-      <div style={{ marginTop: 12 }}>
-        <label className="sr-only" htmlFor="hd-place">
-          Место рождения
-        </label>
-        <input
-          id="hd-place"
-          type="text"
-          autoComplete="off"
-          placeholder="Город"
-          value={place}
-          onChange={(e) => setPlace(e.target.value)}
-          className="qc-focus h-14 w-full rounded-[12px] border border-border bg-surface-1 px-4 text-[17px] text-text-primary transition-colors placeholder:text-text-secondary focus:border-text-accent"
-        />
-      </div>
-
-      {dateInvalid ? (
-        <p className="text-text-secondary" style={{ marginTop: 10, fontSize: 14 }}>
-          Такой даты не существует
-        </p>
-      ) : null}
-
-      <div>
-        <button
-          type="button"
-          disabled={disabled}
-          onClick={() => !disabled && submit({ date, hour, minute, place: place.trim() })}
-          className="qc-focus rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity"
-          style={{ marginTop: 24, height: 54, paddingInline: 40, opacity: disabled ? 0.4 : 1 }}
-        >
-          {stage === "loading" ? "Считаем" : "Рассчитать бодиграф"}
-        </button>
-      </div>
-
-      <p className="text-text-secondary" style={{ marginTop: 12, fontSize: 13, lineHeight: 1.5 }}>
-        Единственное направление без бесплатного расчёта. Бодиграф входит в пробный доступ —
-        объясняем почему ниже
-      </p>
-    </>
-  );
-}
 
 const CENTERS: { points: string; label: string }[] = [
   { points: "35,26 65,26 50,8", label: "Голова" },
@@ -315,48 +181,38 @@ function EmptyBodygraph() {
         className="text-center text-text-secondary"
         style={{ marginTop: 18, fontSize: 13, lineHeight: 1.5 }}
       >
-        Все центры пусты: расчёт ещё не сделан
+        Девять центров. У каждого человека часть из них закрашена, часть пуста
       </p>
     </div>
   );
 }
 
-function HdResultContent() {
+/** Первый экран: объяснение + прямой переход на пробный доступ. */
+function HdHeroCta() {
   return (
-    <div>
-      <h2
-        className="font-display text-text-primary"
-        style={{ marginTop: 14, fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
-      >
-        Бодиграф не считается по дате
-      </h2>
-      <div
-        className="flex flex-col text-text-primary"
-        style={{
-          marginTop: 24,
-          gap: 16,
-          fontSize: "clamp(16px, 1.25vw, 20px)",
-          lineHeight: 1.7,
-        }}
-      >
-        <p>
-          Дизайн человека — единственная из шести систем, которую нельзя посчитать в браузере.
-          Бодиграф строится по двум картам: на момент рождения и на точку примерно за 88 дней до
-          него. Обе требуют астрономических эфемерид, и приблизительный результат здесь хуже, чем
-          никакого — тип определяется однозначно или не определяется вовсе.
-        </p>
-        <p>
-          Твои данные сохранены. Расчёт входит в пробный доступ на три дня за 249 ₽ вместе с
-          остальными пятью направлениями.
-        </p>
-      </div>
-      <a
-        href="#start"
-        className="qc-focus inline-flex items-center justify-center rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground"
-        style={{ marginTop: 28, height: 54, paddingInline: 40 }}
+    <div style={{ marginTop: 32 }}>
+      <Link
+        to="/login"
+        className="qc-focus inline-flex items-center justify-center rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
+        style={{ height: 54, paddingInline: 40 }}
       >
         Открыть пробный доступ
-      </a>
+      </Link>
+
+      <div className="mt-4">
+        <a
+          href="#about"
+          className="text-text-accent transition-opacity hover:opacity-80"
+          style={{ fontSize: "clamp(15px, 1.15vw, 18px)" }}
+        >
+          Сначала разобраться, что это
+        </a>
+      </div>
+
+      <p className="text-text-secondary" style={{ marginTop: 20, fontSize: 13, lineHeight: 1.5 }}>
+        Бодиграф считается по двум картам и требует точного времени рождения. Входит в пробный доступ
+        на три дня
+      </p>
     </div>
   );
 }
@@ -447,10 +303,10 @@ function TwoChartsBlock() {
 
 function HumanDesignPage() {
   return (
-    <DirectionPage<HdInput>
+    <DirectionPage<unknown>
       id="humandesign"
-      h1="Дизайн человека: рассчитать бодиграф"
-      heroDescription="Тип, стратегия и авторитет — по дате, времени и месту рождения"
+      h1="Дизайн человека: тип, стратегия и авторитет"
+      heroDescription="Схема из девяти центров, рассчитанная по положению планет. Разбираем, что это такое и как читается"
       heroImage={hdAsset.url}
       heroImageAlt="Дизайн человека — расчёт бодиграфа"
       aboutTitle="Что показывает дизайн человека"
@@ -468,11 +324,50 @@ function HumanDesignPage() {
       otherTitle="Эти пять считают тебя иначе"
       otherSubtitle="Дизайн человека описывает обмен энергией. Остальные пять смотрят с других сторон и складываются с ним в один профиль"
       finalTitle="Рассчитать свой бодиграф"
-      finalSubtitle="Входит в пробный доступ на три дня"
-      calculator={(api) => <HdCalculator {...api} />}
+      finalSubtitle="Тип, стратегия и авторитет входят в пробный доступ на три дня"
+      finalBlock={
+        <section
+          id="start"
+          className="qc-plate relative w-full overflow-hidden z-[2]"
+          style={{
+            paddingTop: "clamp(120px, 14vh, 220px)",
+            paddingBottom: "clamp(120px, 14vh, 220px)",
+          }}
+        >
+          <div
+            className="relative z-[4] mx-auto flex w-full max-w-[1600px] flex-col items-center text-center"
+            style={{ paddingLeft: "clamp(24px, 6vw, 120px)", paddingRight: "clamp(24px, 6vw, 120px)" }}
+          >
+            <h2
+              className="font-display text-text-primary"
+              style={{
+                fontSize: "clamp(32px, 3.4vw, 64px)",
+                letterSpacing: "0.01em",
+                lineHeight: 1.08,
+              }}
+            >
+              Рассчитать свой бодиграф
+            </h2>
+            <p
+              className="mt-4 max-w-[520px] text-text-secondary"
+              style={{ fontSize: "clamp(16px, 1.2vw, 20px)" }}
+            >
+              Тип, стратегия и авторитет входят в пробный доступ на три дня
+            </p>
+            <Link
+              to="/login"
+              className="qc-focus mt-8 inline-flex items-center justify-center rounded-[12px] bg-accent text-[17px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
+              style={{ height: 54, paddingInline: 40 }}
+            >
+              Открыть пробный доступ
+            </Link>
+          </div>
+        </section>
+      }
+      calculator={() => <HdHeroCta />}
       placeholderVisual={<EmptyBodygraph />}
       resultVisual={() => <EmptyBodygraph />}
-      resultContent={() => <HdResultContent />}
+      resultContent={() => null}
       explainBlock={<TwoChartsBlock />}
     />
   );
