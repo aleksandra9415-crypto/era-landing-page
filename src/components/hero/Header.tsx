@@ -193,6 +193,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [dirOpen, setDirOpen] = useState(false);
   const { isAuthenticated, email, loading } = useAuth();
+  const target = useDirectionTarget();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
