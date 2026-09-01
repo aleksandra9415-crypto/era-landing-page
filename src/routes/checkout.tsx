@@ -101,29 +101,19 @@ function CheckoutPage() {
         className="mx-auto w-full max-w-[1100px] px-[clamp(20px,5vw,40px)]"
         style={{ paddingTop: "clamp(40px, 6vh, 80px)", paddingBottom: "clamp(60px, 9vh, 120px)" }}
       >
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div
-              className="text-text-secondary"
-              style={{ fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase" }}
-            >
-              Чекаут
-            </div>
-            <h1
-              className="font-display text-text-primary"
-              style={{ fontSize: "clamp(28px, 3.4vw, 46px)", lineHeight: 1.1, marginTop: 10 }}
-            >
-              Оформление подписки
-            </h1>
-          </div>
-          <Link
-            to="/"
-            hash="pricing"
-            className="text-text-secondary hover:text-text-primary"
-            style={{ fontSize: 14 }}
+        <div>
+          <div
+            className="text-text-secondary"
+            style={{ fontSize: 12, letterSpacing: "0.18em", textTransform: "uppercase" }}
           >
-            ← Сменить тариф
-          </Link>
+            Чекаут
+          </div>
+          <h1
+            className="font-display text-text-primary"
+            style={{ fontSize: "clamp(28px, 3.4vw, 46px)", lineHeight: 1.1, marginTop: 10 }}
+          >
+            Оформление подписки
+          </h1>
         </div>
 
         <div className="checkout-grid" style={{ marginTop: 34 }}>
