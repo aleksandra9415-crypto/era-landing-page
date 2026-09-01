@@ -117,6 +117,7 @@ export function DirectionPage<R>({
   otherSubtitle,
   finalTitle,
   finalSubtitle,
+  finalBlock,
   calculator,
   resultVisual,
   placeholderVisual,
