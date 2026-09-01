@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { FullReadingButton } from "@/components/direction/FullReadingButton";
 import { Section } from "./Section";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { arcana, digitSum, reduceTo22 } from "@/lib/arcana";

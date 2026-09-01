@@ -1,8 +1,15 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { ensureOwnerProfile } from "@/lib/profile";
+import {
+  formatPendingBirth,
+  readPendingBirth,
+  setProfileSaveError,
+  type PendingBirth,
+} from "@/lib/pendingBirth";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
@@ -38,6 +45,11 @@ function RegisterPage() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [formError, setFormError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
+  const [pending, setPending] = useState<PendingBirth | null>(null);
+
+  useEffect(() => {
+    setPending(readPendingBirth());
+  }, []);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -57,7 +69,7 @@ function RegisterPage() {
     if (invalid) return;
 
     setBusy(true);
-    const { error } = await supabase.auth.signUp({
+    const { data, error } = await supabase.auth.signUp({
       email: email.trim(),
       password,
       options: { emailRedirectTo: window.location.origin },
