@@ -1,5 +1,6 @@
 import { supabase } from "@/integrations/supabase/client";
 import { clearPendingBirth, readPendingBirth, type PendingBirth } from "@/lib/pendingBirth";
+import { clearPendingRef, readPendingRef } from "@/lib/referral";
 
 /**
  * Создаёт профиль владельца, если его ещё нет, и записывает дату рождения из
@@ -30,9 +31,11 @@ export async function ensureOwnerProfile(
       birth_date: pending?.date ?? null,
       birth_time: pending?.time ?? null,
       birth_place: pending?.place ?? null,
+      referred_by: readPendingRef(),
     });
     if (insertError) return false;
     clearPendingBirth();
+    clearPendingRef();
     return true;
   }
 
