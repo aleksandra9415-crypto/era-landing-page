@@ -12,6 +12,7 @@ import { FullReadingButton } from "@/components/direction/FullReadingButton";
 import { toIsoDate } from "@/lib/pendingBirth";
 import { arcana, MONTHS, digitSum, reduceTo22, isValidDate } from "@/lib/arcana";
 import matrixAsset from "@/assets/matrix.png.asset.json";
+import { MATRIX_LINES } from "@/lib/directionLines";
 
 const TITLE = "Рассчитать матрицу судьбы по дате рождения — Моя Эра";
 const DESCRIPTION =
@@ -56,38 +57,7 @@ type MatrixResult = {
   date: { day: number; month: number; year: number };
 };
 
-const LINES = [
-  {
-    n: "01",
-    title: "Характер",
-    text: "Центральный аркан и линия личности: сильные стороны, слепые зоны и то, к чему возвращаешься снова и снова",
-  },
-  {
-    n: "02",
-    title: "Отношения",
-    text: "Что ищешь в паре, что готов давать и какие сценарии повторяются от партнёра к партнёру",
-  },
-  {
-    n: "03",
-    title: "Деньги",
-    text: "Через что приходят ресурсы, какая работа даётся легче и что чаще всего мешает доводить до денег",
-  },
-  {
-    n: "04",
-    title: "Реализация",
-    text: "Линия таланта и социального проявления: в чём ты сильнее среднего и где это применимо",
-  },
-  {
-    n: "05",
-    title: "Род",
-    text: "Что пришло по материнской и отцовской линии — качества, которые достались до того, как ты начал выбирать",
-  },
-  {
-    n: "06",
-    title: "Повторения",
-    text: "Сценарии, которые возвращаются, пока их не заметишь. Не приговор — описание петли и того, где у неё вход",
-  },
-];
+const LINES = MATRIX_LINES;
 
 const ABOUT_PARAGRAPHS = [
   "Матрица судьбы раскладывает дату рождения на 22 позиции — по числу старших арканов. Каждая позиция отвечает за свою область: характер, отношения, деньги, здоровье, связь с родом.",
