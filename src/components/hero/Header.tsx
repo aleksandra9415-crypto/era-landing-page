@@ -10,6 +10,52 @@ const LINKS = [
   { label: "Тарифы", href: "/#pricing" },
 ];
 
+/** Есть ли у авторизованного пользователя дата рождения в профиле. */
+function useHasBirthDate() {
+  const { user } = useAuth();
+  const [hasBirth, setHasBirth] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (!user?.id) {
+      setHasBirth(false);
+      return;
+    }
+    supabase
+      .from("profiles")
+      .select("birth_date")
+      .eq("user_id", user.id)
+      .eq("is_owner", true)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .then(({ data }) => {
+        if (active) setHasBirth(Boolean(data?.[0]?.birth_date));
+      });
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
+
+  return hasBirth;
+}
+
+/** Куда ведёт пункт меню направления с учётом состояния пользователя. */
+function useDirectionTarget() {
+  const { isAuthenticated } = useAuth();
+  const hasBirth = useHasBirthDate();
+
+  return (d: (typeof directions)[number]) => {
+    const toCabinet = isAuthenticated && (hasBirth || d.id === "humandesign");
+    return toCabinet
+      ? ({ to: "/cabinet/$id", params: { id: d.id } } as const)
+      : ({ to: d.path } as const);
+  };
+}
+
+function isCurrent(pathname: string, d: (typeof directions)[number]) {
+  return pathname === d.path || pathname === `/cabinet/${d.id}`;
+}
+
 function DirectionsMenu() {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
