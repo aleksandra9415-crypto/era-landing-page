@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { createFileRoute } from "@tanstack/react-router";
 import {
   DirectionPage,
@@ -296,15 +297,16 @@ function NatalWheel({ signKey }: { signKey: string }) {
       </g>
       <g
         style={{
-          transform: `translate(${sunX - cx}px, ${sunY - cy}px)`,
+          transform: `translate(${lblX - cx}px, ${lblY - cy}px)`,
           transition: reduced ? "none" : "transform 600ms ease-out",
         }}
         aria-hidden="true"
       >
         <text
           x={cx}
-          y={cy - 5}
+          y={cy}
           textAnchor="middle"
+          dominantBaseline="middle"
           fill="var(--text-primary)"
           fontSize={3}
           fontFamily="Onest, sans-serif"
@@ -438,7 +440,7 @@ function NatalPage() {
       calculator={(api) => <NatalCalculator {...api} />}
       resultVisual={(ctx) => <NatalStage {...ctx} />}
       resultContent={(ctx) => <NatalResultContent {...ctx} />}
-      explainBlock={<DataVsTimeBlock />}
+      explainBlock={(ctx) => <DataVsTimeBlock ctx={ctx} />}
     />
   );
 }
