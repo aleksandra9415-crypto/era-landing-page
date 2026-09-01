@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useIsMobile, useReducedMotion } from "@/hooks/use-reduced-motion";
 
 const rand = (min: number, max: number) => min + Math.random() * (max - min);
@@ -74,7 +74,12 @@ export function CursorStarField({
   const layerRef = useRef<HTMLDivElement>(null);
   const reduced = useReducedMotion();
   const isMobile = useIsMobile();
-  const stars = useMemo(() => buildStars(isMobile ? 35 : count), [count, isMobile]);
+  // Генерация только на клиенте после гидратации — иначе SSR/клиент
+  // получают разные случайные позиции и ломается гидратация страницы.
+  const [stars, setStars] = useState<Star[]>([]);
+  useEffect(() => {
+    setStars(buildStars(isMobile ? 35 : count));
+  }, [count, isMobile]);
 
   useEffect(() => {
     if (reduced || isMobile) return;
