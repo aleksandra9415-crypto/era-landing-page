@@ -459,7 +459,7 @@ function DayCard({ userId }: { userId: string }) {
   return (
     <div style={cardStyle} className="h-full">
       <div className="flex flex-col items-center gap-7 sm:flex-row">
-        <div className="w-[min(30%,200px)] max-sm:w-[min(60%,200px)]">
+        <div className="w-[min(30%,200px)] [&_.tarot-hit]:w-full max-sm:w-[min(60%,200px)]">
           {ready && (
             <TarotFlipCard
               n={n}
