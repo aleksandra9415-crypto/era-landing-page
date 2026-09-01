@@ -60,6 +60,7 @@ function DirectionsMenu() {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<Array<HTMLAnchorElement | null>>([]);
+  const target = useDirectionTarget();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
