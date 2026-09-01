@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as CheckoutRouteImport } from './routes/checkout'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as DizaynChelovekaRouteImport } from './routes/dizayn-cheloveka'
 import { Route as LoginRouteImport } from './routes/login'
@@ -39,6 +40,11 @@ const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CheckoutRoute = CheckoutRouteImport.update({
+  id: '/checkout',
+  path: '/checkout',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConsentRoute = ConsentRouteImport.update({
@@ -115,6 +121,7 @@ const AuthenticatedCabinetIdRoute = AuthenticatedCabinetIdRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/checkout': typeof CheckoutRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -133,6 +140,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/checkout': typeof CheckoutRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -153,6 +161,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
+  '/checkout': typeof CheckoutRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -173,6 +182,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/checkout'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -191,6 +201,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/checkout'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -210,6 +221,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/checkout'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -230,6 +242,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
+  CheckoutRoute: typeof CheckoutRoute
   ConsentRoute: typeof ConsentRoute
   DizaynChelovekaRoute: typeof DizaynChelovekaRoute
   LoginRoute: typeof LoginRoute
@@ -265,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/checkout': {
+      id: '/checkout'
+      path: '/checkout'
+      fullPath: '/checkout'
+      preLoaderRoute: typeof CheckoutRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/consent': {
@@ -385,6 +405,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
+  CheckoutRoute: CheckoutRoute,
   ConsentRoute: ConsentRoute,
   DizaynChelovekaRoute: DizaynChelovekaRoute,
   LoginRoute: LoginRoute,
