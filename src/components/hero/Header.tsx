@@ -294,19 +294,30 @@ export function Header() {
                 className="mt-4 flex flex-col self-start"
                 style={{ paddingLeft: 20, gap: 16 }}
               >
-                {directions.map((d) => (
-                  <Link
-                    key={d.id}
-                    to={d.path}
-                    onClick={() => {
-                      setOpen(false);
-                      setDirOpen(false);
-                    }}
-                    className="text-text-secondary text-[17px]"
-                  >
-                    {d.title}
-                  </Link>
-                ))}
+                {directions.map((d) => {
+                  const current = isCurrent(pathname, d);
+                  return (
+                    <Link
+                      key={d.id}
+                      {...target(d)}
+                      onClick={() => {
+                        setOpen(false);
+                        setDirOpen(false);
+                      }}
+                      className="flex items-center gap-2 text-[17px]"
+                      style={{ color: current ? "var(--text-accent)" : "var(--text-secondary)" }}
+                    >
+                      {current && (
+                        <span
+                          aria-hidden="true"
+                          className="inline-block shrink-0 rounded-full"
+                          style={{ width: 6, height: 6, background: "var(--text-accent)" }}
+                        />
+                      )}
+                      {d.title}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
