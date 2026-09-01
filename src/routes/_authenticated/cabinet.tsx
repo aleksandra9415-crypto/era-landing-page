@@ -12,6 +12,7 @@ import { sunSign } from "@/lib/natal";
 import { supabase } from "@/integrations/supabase/client";
 import { dayArcanum, todayIso } from "@/lib/dayCard";
 import { useAuth } from "@/lib/useAuth";
+import { TarotFlipCard } from "@/components/tarot/TarotFlipCard";
 
 export const Route = createFileRoute("/_authenticated/cabinet")({
   head: () => ({
@@ -107,7 +108,7 @@ function CabinetPage() {
       </div>
 
       <div
-        className="mx-auto w-full max-w-[1240px] px-[clamp(24px,5vw,40px)]"
+        className="mx-auto w-[min(1320px,92vw)]"
         style={{
           paddingTop: "clamp(60px, 8vh, 110px)",
           paddingBottom: "clamp(60px, 8vh, 110px)",
@@ -427,41 +428,98 @@ function DayCard({ userId }: { userId: string }) {
   const card = arcana.find((a) => a.n === n);
   const [y, m, d] = iso.split("-").map(Number);
   const dateWords = `${d} ${MONTHS[(m ?? 1) - 1]} ${y}`;
+  const storageKey = `dayCard:${userId}:${iso}`;
+
+  const [flipped, setFlipped] = useState(false);
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    if (!userId) return;
+    let saved = false;
+    try {
+      saved = localStorage.getItem(storageKey) === "1";
+    } catch {
+      saved = false;
+    }
+    setFlipped(saved);
+    setReady(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storageKey, userId]);
+
+  function handleFlip(next: boolean) {
+    setFlipped(next);
+    if (!next) return;
+    try {
+      localStorage.setItem(storageKey, "1");
+    } catch {
+      /* хранилище недоступно */
+    }
+  }
 
   return (
     <div style={cardStyle} className="h-full">
-      <div className="flex items-baseline gap-3 text-text-secondary" style={capStyle}>
-        <span>Карта дня</span>
-        <span style={{ textTransform: "none", letterSpacing: 0 }}>{dateWords}</span>
-      </div>
+      <div className="flex flex-col items-center gap-7 sm:flex-row">
+        <div className="w-[min(30%,200px)] max-sm:w-[min(60%,200px)]">
+          {ready && (
+            <TarotFlipCard
+              n={n}
+              name={card?.name ?? ""}
+              drawKey={0}
+              initialFlipped={flipped}
+              oneWay
+              hint={false}
+              width="100%"
+              onFlip={handleFlip}
+            />
+          )}
+        </div>
 
-      <div
-        className="mt-3 text-text-accent"
-        style={{ fontFamily: "var(--font-mono)", fontSize: "clamp(44px, 4vw, 72px)", lineHeight: 1 }}
-      >
-        {n}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline gap-3 text-text-secondary" style={capStyle}>
+            <span>Карта дня</span>
+            <span style={{ textTransform: "none", letterSpacing: 0 }}>{dateWords}</span>
+          </div>
+
+          {flipped ? (
+            <>
+              <div
+                className="mt-2 font-display text-text-primary"
+                style={{ fontSize: "clamp(22px, 1.8vw, 30px)" }}
+              >
+                {n} · {card?.name}
+              </div>
+              <p
+                className="text-text-secondary"
+                style={{ fontSize: "clamp(14px, 1.1vw, 17px)", marginTop: 12 }}
+              >
+                {card?.draw}
+              </p>
+              <Link
+                to="/cabinet/$id"
+                params={{ id: "tarot" }}
+                className="mt-3 inline-block text-[15px] text-text-accent hover:opacity-80"
+              >
+                Открыть целиком
+              </Link>
+            </>
+          ) : (
+            <>
+              <div
+                className="mt-2 font-display text-text-primary"
+                style={{ fontSize: "clamp(22px, 1.8vw, 30px)" }}
+              >
+                Сегодняшняя карта ждёт
+              </div>
+              <p
+                className="text-text-secondary"
+                style={{ fontSize: "clamp(14px, 1.1vw, 17px)", marginTop: 10 }}
+              >
+                Переверни её, когда будешь готов. Одна карта в сутки, следующая — завтра
+              </p>
+            </>
+          )}
+        </div>
       </div>
-      <div
-        className="mt-1 font-display text-text-primary"
-        style={{ fontSize: "clamp(22px, 1.8vw, 30px)" }}
-      >
-        {card?.name}
-      </div>
-      <p
-        className="mt-[14px] text-text-secondary"
-        style={{
-          fontSize: "clamp(14px, 1.1vw, 17px)",
-          display: "-webkit-box",
-          WebkitLineClamp: 3,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-        }}
-      >
-        {card?.draw}
-      </p>
-      <a href="/taro" className="mt-3 inline-block text-[15px] text-text-accent hover:opacity-80">
-        Открыть целиком
-      </a>
     </div>
   );
 }
