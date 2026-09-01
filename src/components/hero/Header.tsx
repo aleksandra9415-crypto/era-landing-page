@@ -231,6 +231,37 @@ export function Header() {
           className="fixed inset-0 z-[99] flex flex-col items-center justify-center gap-6 md:hidden"
           style={{ background: "rgba(3, 25, 30, 0.97)" }}
         >
+          <div className="flex flex-col items-center">
+            <button
+              type="button"
+              aria-expanded={dirOpen}
+              onClick={() => setDirOpen((v) => !v)}
+              className="flex items-center gap-3 text-text-primary text-[20px]"
+            >
+              Направления
+              <span className="text-text-accent">{dirOpen ? "−" : "+"}</span>
+            </button>
+            {dirOpen && (
+              <div
+                className="mt-4 flex flex-col self-start"
+                style={{ paddingLeft: 20, gap: 16 }}
+              >
+                {directions.map((d) => (
+                  <Link
+                    key={d.id}
+                    to={d.path}
+                    onClick={() => {
+                      setOpen(false);
+                      setDirOpen(false);
+                    }}
+                    className="text-text-secondary text-[17px]"
+                  >
+                    {d.title}
+                  </Link>
+                ))}
+              </div>
+            )}
+          </div>
           {LINKS.map((l) => (
             <a
               key={l.label}
