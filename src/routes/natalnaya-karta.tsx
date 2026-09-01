@@ -194,6 +194,27 @@ function useReducedMotion() {
 /** Колесо натальной карты с одной горящей позицией — Солнцем. */
 function NatalWheel({ signKey }: { signKey: string }) {
   const reduced = useReducedMotion();
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const svg = svgRef.current;
+    if (!svg) return;
+    const update = () => {
+      const rect = svg.getBoundingClientRect();
+      const vbWidth = 124; // viewBox -12..112
+      setScale(rect.width / vbWidth);
+    };
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(svg);
+    window.addEventListener("resize", update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener("resize", update);
+    };
+  }, []);
+
   const S = 100; // viewBox 100x100, 1 единица = 1% стороны
   const cx = S / 2;
   const cy = S / 2;
@@ -218,16 +239,21 @@ function NatalWheel({ signKey }: { signKey: string }) {
   const [sunX, sunY] = point(mid, 33);
   const [lblX, lblY] = point(mid, 26.5); // подпись «Солнце» смещена к центру от точки
 
+  const symbolPx = "clamp(18px, 1.6vw, 26px)";
+  const labelPx = "clamp(11px, 1vw, 15px)";
+
   return (
     <svg
+      ref={svgRef}
       viewBox={`-12 -12 ${S + 24} ${S + 24}`}
       role="img"
       aria-label="Колесо натальной карты: рассчитана одна позиция из десяти"
       className="h-auto w-full overflow-visible"
       style={{
-        ["--symbol-size" as string]: "clamp(18px, 1.6vw, 26px)",
-        ["--label-size" as string]: "clamp(11px, 1vw, 15px)",
-        fontSize: "clamp(11px, 1vw, 15px)",
+        ["--symbol-size" as string]: symbolPx,
+        ["--label-size" as string]: labelPx,
+        ["--symbol-uu" as string]: `calc(${symbolPx} / ${scale})`,
+        ["--label-uu" as string]: `calc(${labelPx} / ${scale})`,
       }}
     >
       {/* активный сектор — кольцевой, под спицами и окружностями */}
