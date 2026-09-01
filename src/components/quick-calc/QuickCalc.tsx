@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import { FullReadingButton } from "@/components/direction/FullReadingButton";
+import { toIsoDate } from "@/lib/pendingBirth";
 import { arcana, MONTHS, centralArcanum, isValidDate } from "@/lib/arcana";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
 import { Orbits } from "./Orbits";
@@ -227,12 +229,14 @@ export function QuickCalc({
               className="mt-10"
               style={{ animation: reduced ? "none" : "qc-result-in 800ms ease-out both" }}
             >
-              <button
-                type="button"
-                className="h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground"
-              >
-                Открыть полный разбор
-              </button>
+              <FullReadingButton
+                pending={{
+                  date: toIsoDate(Number(day), Number(month), Number(year)),
+                  direction: "matrix",
+                }}
+                className="qc-focus h-14 rounded-[12px] bg-accent px-10 text-[17px] font-medium text-primary-foreground transition-opacity hover:opacity-90"
+                style={{}}
+              />
               <p className="mt-3 text-[14px] text-text-secondary">
                 Для полного разбора понадобятся ещё время и место рождения
               </p>
