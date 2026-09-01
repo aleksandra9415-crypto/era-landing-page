@@ -10,10 +10,57 @@ const LINKS = [
   { label: "Тарифы", href: "/#pricing" },
 ];
 
+/** Есть ли у авторизованного пользователя дата рождения в профиле. */
+function useHasBirthDate() {
+  const { user } = useAuth();
+  const [hasBirth, setHasBirth] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    if (!user?.id) {
+      setHasBirth(false);
+      return;
+    }
+    supabase
+      .from("profiles")
+      .select("birth_date")
+      .eq("user_id", user.id)
+      .eq("is_owner", true)
+      .order("created_at", { ascending: true })
+      .limit(1)
+      .then(({ data }) => {
+        if (active) setHasBirth(Boolean(data?.[0]?.birth_date));
+      });
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
+
+  return hasBirth;
+}
+
+/** Куда ведёт пункт меню направления с учётом состояния пользователя. */
+function useDirectionTarget() {
+  const { isAuthenticated } = useAuth();
+  const hasBirth = useHasBirthDate();
+
+  return (d: (typeof directions)[number]) => {
+    const toCabinet = isAuthenticated && (hasBirth || d.id === "humandesign");
+    return toCabinet
+      ? ({ to: "/cabinet/$id", params: { id: d.id } } as const)
+      : ({ to: d.path } as const);
+  };
+}
+
+function isCurrent(pathname: string, d: (typeof directions)[number]) {
+  return pathname === d.path || pathname === `/cabinet/${d.id}`;
+}
+
 function DirectionsMenu() {
   const [open, setOpen] = useState(false);
   const wrapRef = useRef<HTMLDivElement>(null);
   const itemsRef = useRef<Array<HTMLAnchorElement | null>>([]);
+  const target = useDirectionTarget();
   const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
@@ -86,11 +133,11 @@ function DirectionsMenu() {
           }}
         >
           {directions.map((d, i) => {
-            const current = pathname === d.path;
+            const current = isCurrent(pathname, d);
             return (
               <Link
                 key={d.id}
-                to={d.path}
+                {...target(d)}
                 role="menuitem"
                 ref={(el) => {
                   itemsRef.current[i] = el;
@@ -146,6 +193,8 @@ export function Header() {
   const [open, setOpen] = useState(false);
   const [dirOpen, setDirOpen] = useState(false);
   const { isAuthenticated, email, loading } = useAuth();
+  const target = useDirectionTarget();
+  const pathname = useRouterState({ select: (s) => s.location.pathname });
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 80);
@@ -247,19 +296,30 @@ export function Header() {
                 className="mt-4 flex flex-col self-start"
                 style={{ paddingLeft: 20, gap: 16 }}
               >
-                {directions.map((d) => (
-                  <Link
-                    key={d.id}
-                    to={d.path}
-                    onClick={() => {
-                      setOpen(false);
-                      setDirOpen(false);
-                    }}
-                    className="text-text-secondary text-[17px]"
-                  >
-                    {d.title}
-                  </Link>
-                ))}
+                {directions.map((d) => {
+                  const current = isCurrent(pathname, d);
+                  return (
+                    <Link
+                      key={d.id}
+                      {...target(d)}
+                      onClick={() => {
+                        setOpen(false);
+                        setDirOpen(false);
+                      }}
+                      className="flex items-center gap-2 text-[17px]"
+                      style={{ color: current ? "var(--text-accent)" : "var(--text-secondary)" }}
+                    >
+                      {current && (
+                        <span
+                          aria-hidden="true"
+                          className="inline-block shrink-0 rounded-full"
+                          style={{ width: 6, height: 6, background: "var(--text-accent)" }}
+                        />
+                      )}
+                      {d.title}
+                    </Link>
+                  );
+                })}
               </div>
             )}
           </div>
