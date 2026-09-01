@@ -119,9 +119,11 @@ function DirectionsMenu() {
           role="menu"
           className="absolute left-0 top-full grid grid-cols-2"
           style={{
-            marginTop: 12,
             width: 560,
-            padding: 20,
+            paddingTop: 32,
+            paddingRight: 20,
+            paddingBottom: 20,
+            paddingLeft: 20,
             gap: 8,
             background: "rgba(3, 25, 30, 0.97)",
             backdropFilter: "blur(12px)",
