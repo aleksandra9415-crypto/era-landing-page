@@ -10,8 +10,8 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AboutRouteImport } from './routes/about'
-import { Route as CabinetRouteImport } from './routes/cabinet'
 import { Route as ConsentRouteImport } from './routes/consent'
 import { Route as DizaynChelovekaRouteImport } from './routes/dizayn-cheloveka'
 import { Route as LoginRouteImport } from './routes/login'
@@ -20,23 +20,24 @@ import { Route as NatalnayaKartaRouteImport } from './routes/natalnaya-karta'
 import { Route as NumerologiyaRouteImport } from './routes/numerologiya'
 import { Route as OfferRouteImport } from './routes/offer'
 import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as RegisterRouteImport } from './routes/register'
 import { Route as SovmestimostRouteImport } from './routes/sovmestimost'
 import { Route as SubscriptionTermsRouteImport } from './routes/subscription-terms'
 import { Route as TaroRouteImport } from './routes/taro'
+import { Route as AuthenticatedCabinetRouteImport } from './routes/_authenticated/cabinet'
 
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedRouteRoute = AuthenticatedRouteRouteImport.update({
+  id: '/_authenticated',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const CabinetRoute = CabinetRouteImport.update({
-  id: '/cabinet',
-  path: '/cabinet',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ConsentRoute = ConsentRouteImport.update({
@@ -79,6 +80,11 @@ const PrivacyRoute = PrivacyRouteImport.update({
   path: '/privacy',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RegisterRoute = RegisterRouteImport.update({
+  id: '/register',
+  path: '/register',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SovmestimostRoute = SovmestimostRouteImport.update({
   id: '/sovmestimost',
   path: '/sovmestimost',
@@ -94,11 +100,15 @@ const TaroRoute = TaroRouteImport.update({
   path: '/taro',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AuthenticatedCabinetRoute = AuthenticatedCabinetRouteImport.update({
+  id: '/cabinet',
+  path: '/cabinet',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -107,14 +117,15 @@ export interface FileRoutesByFullPath {
   '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
+  '/cabinet': typeof AuthenticatedCabinetRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -123,15 +134,17 @@ export interface FileRoutesByTo {
   '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
+  '/cabinet': typeof AuthenticatedCabinetRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/about': typeof AboutRoute
-  '/cabinet': typeof CabinetRoute
   '/consent': typeof ConsentRoute
   '/dizayn-cheloveka': typeof DizaynChelovekaRoute
   '/login': typeof LoginRoute
@@ -140,16 +153,17 @@ export interface FileRoutesById {
   '/numerologiya': typeof NumerologiyaRoute
   '/offer': typeof OfferRoute
   '/privacy': typeof PrivacyRoute
+  '/register': typeof RegisterRoute
   '/sovmestimost': typeof SovmestimostRoute
   '/subscription-terms': typeof SubscriptionTermsRoute
   '/taro': typeof TaroRoute
+  '/_authenticated/cabinet': typeof AuthenticatedCabinetRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
     | '/'
     | '/about'
-    | '/cabinet'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -158,14 +172,15 @@ export interface FileRouteTypes {
     | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/register'
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
+    | '/cabinet'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/about'
-    | '/cabinet'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -174,14 +189,16 @@ export interface FileRouteTypes {
     | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/register'
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
+    | '/cabinet'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
-    | '/cabinet'
     | '/consent'
     | '/dizayn-cheloveka'
     | '/login'
@@ -190,15 +207,17 @@ export interface FileRouteTypes {
     | '/numerologiya'
     | '/offer'
     | '/privacy'
+    | '/register'
     | '/sovmestimost'
     | '/subscription-terms'
     | '/taro'
+    | '/_authenticated/cabinet'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRouteRoute: typeof AuthenticatedRouteRouteWithChildren
   AboutRoute: typeof AboutRoute
-  CabinetRoute: typeof CabinetRoute
   ConsentRoute: typeof ConsentRoute
   DizaynChelovekaRoute: typeof DizaynChelovekaRoute
   LoginRoute: typeof LoginRoute
@@ -207,6 +226,7 @@ export interface RootRouteChildren {
   NumerologiyaRoute: typeof NumerologiyaRoute
   OfferRoute: typeof OfferRoute
   PrivacyRoute: typeof PrivacyRoute
+  RegisterRoute: typeof RegisterRoute
   SovmestimostRoute: typeof SovmestimostRoute
   SubscriptionTermsRoute: typeof SubscriptionTermsRoute
   TaroRoute: typeof TaroRoute
@@ -221,18 +241,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/about': {
       id: '/about'
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/cabinet': {
-      id: '/cabinet'
-      path: '/cabinet'
-      fullPath: '/cabinet'
-      preLoaderRoute: typeof CabinetRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/consent': {
@@ -291,6 +311,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof PrivacyRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/register': {
+      id: '/register'
+      path: '/register'
+      fullPath: '/register'
+      preLoaderRoute: typeof RegisterRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sovmestimost': {
       id: '/sovmestimost'
       path: '/sovmestimost'
@@ -312,13 +339,31 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TaroRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/_authenticated/cabinet': {
+      id: '/_authenticated/cabinet'
+      path: '/cabinet'
+      fullPath: '/cabinet'
+      preLoaderRoute: typeof AuthenticatedCabinetRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
+interface AuthenticatedRouteRouteChildren {
+  AuthenticatedCabinetRoute: typeof AuthenticatedCabinetRoute
+}
+
+const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedCabinetRoute: AuthenticatedCabinetRoute,
+}
+
+const AuthenticatedRouteRouteWithChildren =
+  AuthenticatedRouteRoute._addFileChildren(AuthenticatedRouteRouteChildren)
+
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRouteRoute: AuthenticatedRouteRouteWithChildren,
   AboutRoute: AboutRoute,
-  CabinetRoute: CabinetRoute,
   ConsentRoute: ConsentRoute,
   DizaynChelovekaRoute: DizaynChelovekaRoute,
   LoginRoute: LoginRoute,
@@ -327,6 +372,7 @@ const rootRouteChildren: RootRouteChildren = {
   NumerologiyaRoute: NumerologiyaRoute,
   OfferRoute: OfferRoute,
   PrivacyRoute: PrivacyRoute,
+  RegisterRoute: RegisterRoute,
   SovmestimostRoute: SovmestimostRoute,
   SubscriptionTermsRoute: SubscriptionTermsRoute,
   TaroRoute: TaroRoute,
