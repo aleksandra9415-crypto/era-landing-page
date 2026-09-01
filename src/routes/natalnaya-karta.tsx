@@ -164,9 +164,161 @@ function NatalResultContent({ result }: ResultCtx<SunSignResult>) {
   );
 }
 
-/** Блок «как считается»: что даёт дата и что даёт время. */
-function DataVsTimeBlock() {
-  const itemStyle = { fontSize: "clamp(15px, 1.2vw, 18px)", lineHeight: 1.4 } as const;
+/** Короткие подписи знаков по кругу, начиная с Овна сверху, по часовой. */
+const SIGN_LABELS = ["Овен", "Телец", "Близ", "Рак", "Лев", "Дева", "Весы", "Скорп", "Стрел", "Козер", "Водол", "Рыбы"];
+const SIGN_KEYS = ["aries", "taurus", "gemini", "cancer", "leo", "virgo", "libra", "scorpio", "sagittarius", "capricorn", "aquarius", "pisces"];
+
+/** Фиксированные погашенные позиции: [сектор, радиус в % от стороны области]. */
+const DIM_DOTS: [number, number][] = [
+  [1, 26], [2, 36], [3, 22], [5, 30], [6, 24], [7, 40], [8, 34], [10, 28], [11, 38],
+];
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const onChange = () => setReduced(mq.matches);
+    onChange();
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, []);
+  return reduced;
+}
+
+/** Колесо натальной карты с одной горящей позицией — Солнцем. */
+function NatalWheel({ signKey }: { signKey: string }) {
+  const reduced = useReducedMotion();
+  const S = 100; // viewBox 100x100, 1 единица = 1% стороны
+  const cx = S / 2;
+  const cy = S / 2;
+  const activeIdx = Math.max(0, SIGN_KEYS.indexOf(signKey));
+
+  // Угол от вертикали по часовой, в радианах
+  const point = (deg: number, r: number) => {
+    const a = (deg * Math.PI) / 180;
+    return [cx + r * Math.sin(a), cy - r * Math.cos(a)] as const;
+  };
+
+  // Клин активного сектора от центра к внешней окружности
+  const a0 = activeIdx * 30 - 15;
+  const a1 = activeIdx * 30 + 15;
+  const [x0, y0] = point(a0, 46);
+  const [x1, y1] = point(a1, 46);
+  const wedge = `M ${cx} ${cy} L ${x0} ${y0} A 46 46 0 0 1 ${x1} ${y1} Z`;
+
+  const mid = activeIdx * 30;
+  const [sunX, sunY] = point(mid, 38);
+  const [lblX, lblY] = point(mid, 46); // подпись «Солнце» наружу от точки
+
+  return (
+    <svg
+      viewBox={`0 0 ${S} ${S}`}
+      role="img"
+      aria-label="Колесо натальной карты: рассчитана одна позиция из десяти"
+      className="h-auto w-full"
+    >
+      <defs>
+        <radialGradient id="natal-sector-glow" cx="50%" cy="50%" r="46%">
+          <stop offset="55%" stopColor="rgba(122, 93, 168, 0)" />
+          <stop offset="100%" stopColor="rgba(122, 93, 168, 0.16)" />
+        </radialGradient>
+      </defs>
+
+      {/* активный сектор */}
+      <g style={{ transition: reduced ? "none" : "opacity 600ms ease-out" }}>
+        <path d={wedge} fill="url(#natal-sector-glow)" />
+      </g>
+
+      {/* окружности и спицы */}
+      <circle cx={cx} cy={cy} r={46} fill="none" stroke="var(--border)" strokeWidth={0.25} />
+      <circle cx={cx} cy={cy} r={30} fill="none" stroke="var(--border)" strokeWidth={0.25} strokeOpacity={0.5} />
+      {SIGN_LABELS.map((_, i) => {
+        const [ix, iy] = point(i * 30 + 15, 30);
+        const [ox, oy] = point(i * 30 + 15, 46);
+        return (
+          <line
+            key={i}
+            x1={ix}
+            y1={iy}
+            x2={ox}
+            y2={oy}
+            stroke="var(--border)"
+            strokeWidth={0.25}
+            strokeOpacity={0.45}
+          />
+        );
+      })}
+
+      {/* подписи знаков */}
+      {SIGN_LABELS.map((label, i) => {
+        const [tx, ty] = point(i * 30, 52);
+        const active = i === activeIdx;
+        return (
+          <text
+            key={label}
+            x={tx}
+            y={ty}
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fill={active ? "var(--text-accent)" : "var(--text-secondary)"}
+            fillOpacity={active ? 1 : 0.45}
+            fontSize={2.6}
+            fontFamily="Onest, sans-serif"
+            style={{ transition: reduced ? "none" : "fill 600ms ease-out, fill-opacity 600ms ease-out" }}
+          >
+            {label}
+          </text>
+        );
+      })}
+
+      {/* погашенные позиции */}
+      {DIM_DOTS.map(([sector, r], i) => {
+        const [dx, dy] = point(sector * 30, r);
+        return (
+          <circle key={i} cx={dx} cy={dy} r={1.15} fill="var(--border)" fillOpacity={0.35} />
+        );
+      })}
+
+      {/* Солнце */}
+      <g
+        style={{
+          transform: `translate(${sunX - cx}px, ${sunY - cy}px)`,
+          transition: reduced ? "none" : "transform 600ms ease-out",
+        }}
+      >
+        <g transform={`translate(${cx}, ${cy})`}>
+          <circle
+            r={2}
+            fill="var(--text-accent)"
+            style={{ filter: "drop-shadow(0 0 5px rgba(122, 93, 168, 0.5))" }}
+          />
+        </g>
+      </g>
+      <g
+        style={{
+          transform: `translate(${sunX - cx}px, ${sunY - cy}px)`,
+          transition: reduced ? "none" : "transform 600ms ease-out",
+        }}
+        aria-hidden="true"
+      >
+        <text
+          x={cx}
+          y={cy - 5}
+          textAnchor="middle"
+          fill="var(--text-primary)"
+          fontSize={3}
+          fontFamily="Onest, sans-serif"
+        >
+          Солнце
+        </text>
+      </g>
+    </svg>
+  );
+}
+
+/** Блок «как считается»: колесо с одной позицией + список. */
+function DataVsTimeBlock({ ctx }: { ctx: ResultCtx<SunSignResult> | null }) {
+  const signKey = ctx?.result.sign.key ?? "leo";
   return (
     <section
       className="relative w-full"
@@ -191,55 +343,67 @@ function DataVsTimeBlock() {
         </p>
 
         <div
-          className="grid grid-cols-1 items-start md:grid-cols-2"
-          style={{ marginTop: 40, gap: "clamp(32px, 4vw, 72px)" }}
+          className="mt-10 grid grid-cols-1 items-center md:grid-cols-2"
+          style={{ gap: "clamp(40px, 5vw, 90px)" }}
         >
-          <div>
-            <div
-              className="text-text-secondary"
-              style={{
-                fontSize: 13,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                marginBottom: 16,
-              }}
-            >
-              Только по дате
-            </div>
-            <div className="flex items-center text-text-primary" style={itemStyle}>
-              <span
-                aria-hidden="true"
-                className="rounded-full bg-text-accent"
-                style={{ width: 6, height: 6, marginRight: 14, flexShrink: 0 }}
-              />
-              Солнце
-            </div>
+          <div
+            className="mx-auto aspect-square w-full"
+            style={{ width: "min(34vw, 46vh)", minWidth: 280 }}
+          >
+            <NatalWheel signKey={signKey} />
           </div>
 
-          <div>
-            <div
-              className="text-text-secondary"
-              style={{
-                fontSize: 13,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
-                marginBottom: 16,
-              }}
-            >
-              С временем и местом
-            </div>
-            <div className="flex flex-col" style={{ gap: 10 }}>
+          <div className="w-full" style={{ maxWidth: 480 }}>
+            <div className="flex flex-col" style={{ gap: 14 }}>
+              <div className="flex items-center">
+                <span
+                  aria-hidden="true"
+                  className="shrink-0 rounded-full bg-text-accent"
+                  style={{
+                    width: 10,
+                    height: 10,
+                    marginRight: 14,
+                    boxShadow: "0 0 10px rgba(122, 93, 168, 0.5)",
+                  }}
+                />
+                <span
+                  className="text-text-primary"
+                  style={{ fontSize: "clamp(15px, 1.2vw, 18px)", lineHeight: 1.4 }}
+                >
+                  Солнце
+                </span>
+                <span className="ml-auto text-text-accent" style={{ fontSize: 12 }}>
+                  есть
+                </span>
+              </div>
               {FULL_CHART_ITEMS.map((item) => (
-                <div key={item} className="flex items-center text-text-secondary" style={{ ...itemStyle, opacity: 0.55 }}>
+                <div key={item} className="flex items-center">
                   <span
                     aria-hidden="true"
-                    className="rounded-full bg-border"
-                    style={{ width: 6, height: 6, marginRight: 14, flexShrink: 0 }}
+                    className="shrink-0 rounded-full border border-border"
+                    style={{ width: 10, height: 10, marginRight: 14 }}
                   />
-                  {item}
+                  <span
+                    className="text-text-secondary"
+                    style={{ fontSize: "clamp(15px, 1.2vw, 18px)", lineHeight: 1.4, opacity: 0.5 }}
+                  >
+                    {item}
+                  </span>
+                  <span
+                    className="ml-auto text-text-secondary"
+                    style={{ fontSize: 12, opacity: 0.5 }}
+                  >
+                    нужно время
+                  </span>
                 </div>
               ))}
             </div>
+            <p
+              className="text-text-secondary"
+              style={{ marginTop: 28, fontSize: "clamp(14px, 1.05vw, 16px)", lineHeight: 1.6 }}
+            >
+              Девять позиций из десяти появятся, когда добавишь время и место рождения
+            </p>
           </div>
         </div>
       </div>
