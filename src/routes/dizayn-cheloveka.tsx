@@ -664,7 +664,12 @@ function HumanDesignPage() {
       placeholderVisual={<EmptyBodygraph />}
       resultVisual={() => <EmptyBodygraph />}
       resultContent={() => null}
-      explainBlock={<TwoChartsBlock />}
+      explainBlock={
+        <>
+          <HdStructureBlock />
+          <TwoChartsBlock />
+        </>
+      }
     />
   );
 }
