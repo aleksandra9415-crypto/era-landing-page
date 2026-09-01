@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { Link } from "@tanstack/react-router";
 import { directions, type Direction } from "@/lib/directions";
 import { useReducedMotion } from "@/hooks/use-reduced-motion";
@@ -54,16 +54,54 @@ function buildCardStars(count: number): CardStar[] {
 
 type Props = {
   currentId?: Direction["id"];
+  /** Ссылки ведут на страницы разборов в кабинете, а не на публичные страницы. */
+  cabinetLinks?: boolean;
   title?: string;
   subtitle?: string;
 };
 
+type CardLinkRest = {
+  onMouseEnter: () => void;
+  onMouseLeave: () => void;
+  onFocus: () => void;
+  onBlur: () => void;
+  className: string;
+  style: CSSProperties;
+};
+
+function CardLink({
+  cabinetLinks,
+  item,
+  children,
+  ...rest
+}: {
+  cabinetLinks: boolean;
+  item: Direction;
+  children: ReactNode;
+} & CardLinkRest) {
+
+  if (cabinetLinks) {
+    return (
+      <Link to="/cabinet/$id" params={{ id: item.id }} {...rest}>
+        {children}
+      </Link>
+    );
+  }
+  return (
+    <Link to={item.path} {...rest}>
+      {children}
+    </Link>
+  );
+}
+
 function DirectionCard({
   item,
   reducedMotion,
+  cabinetLinks = false,
 }: {
   item: Direction;
   reducedMotion: boolean;
+  cabinetLinks?: boolean;
 }) {
   const [active, setActive] = useState(false);
   const stars = useMemo(() => buildCardStars(14), []);
@@ -95,8 +133,9 @@ function DirectionCard({
           })}
         </div>
       )}
-      <Link
-        to={item.path}
+      <CardLink
+        cabinetLinks={cabinetLinks}
+        item={item}
         onMouseEnter={() => setActive(true)}
         onMouseLeave={() => setActive(false)}
         onFocus={() => setActive(true)}
@@ -130,13 +169,14 @@ function DirectionCard({
         >
           {item.title}
         </span>
-      </Link>
+      </CardLink>
     </div>
   );
 }
 
 export function OtherDirections({
   currentId,
+  cabinetLinks = false,
   title = "Эти пять считают тебя иначе",
   subtitle = "Матрица описывает устройство. Остальные пять смотрят с других сторон и складываются с ней в один профиль",
 }: Props = {}) {
@@ -169,7 +209,7 @@ export function OtherDirections({
 
         <div className="other-dirs-track mt-11 flex gap-5 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0 lg:grid-cols-5">
           {items.map((d) => (
-            <DirectionCard key={d.id} item={d} reducedMotion={reduced} />
+            <DirectionCard key={d.id} item={d} reducedMotion={reduced} cabinetLinks={cabinetLinks} />
           ))}
         </div>
       </div>

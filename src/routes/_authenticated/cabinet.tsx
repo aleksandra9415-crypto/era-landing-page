@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, Link } from "@tanstack/react-router";
 import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
 import { Pricing } from "@/components/landing/Pricing";
@@ -10,6 +10,7 @@ import { arcana, centralArcanum, isValidDate, MONTHS } from "@/lib/arcana";
 import { lifePath, lifePathNumber } from "@/lib/numerology";
 import { sunSign } from "@/lib/natal";
 import { supabase } from "@/integrations/supabase/client";
+import { dayArcanum, todayIso } from "@/lib/dayCard";
 import { useAuth } from "@/lib/useAuth";
 
 export const Route = createFileRoute("/_authenticated/cabinet")({
@@ -53,28 +54,11 @@ const capStyle = {
   textTransform: "uppercase",
 } as const;
 
-/** Детерминированный выбор карты дня: id пользователя + дата. */
-function dayArcanum(userId: string, isoDay: string): number {
-  const seed = `${userId}:${isoDay}`;
-  let h = 2166136261;
-  for (let i = 0; i < seed.length; i++) {
-    h ^= seed.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return (Math.abs(h) % 22) + 1;
-}
-
 function parseDate(iso: string | null) {
   if (!iso) return null;
   const [y, m, d] = iso.split("-").map(Number);
   if (!y || !m || !d) return null;
   return { day: d, month: m, year: y };
-}
-
-function todayIso() {
-  const now = new Date();
-  const p = (n: number) => String(n).padStart(2, "0");
-  return `${now.getFullYear()}-${p(now.getMonth() + 1)}-${p(now.getDate())}`;
 }
 
 function CabinetPage() {
@@ -572,8 +556,8 @@ function DirectionTile({
   }
 
   return (
-    <a href={`/cabinet/${id}`} className={`${className} cab-tile`} style={style}>
+    <Link to="/cabinet/$id" params={{ id }} className={`${className} cab-tile`} style={style}>
       {body}
-    </a>
+    </Link>
   );
 }
