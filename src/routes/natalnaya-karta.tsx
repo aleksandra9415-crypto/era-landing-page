@@ -209,11 +209,11 @@ function NatalWheel({ signKey }: { signKey: string }) {
 
   const mid = activeIdx * 30;
   const [sunX, sunY] = point(mid, 38);
-  const [lblX, lblY] = point(mid, 46); // подпись «Солнце» наружу от точки
+  const [lblX, lblY] = point(mid, 44); // подпись «Солнце» наружу от точки
 
   return (
     <svg
-      viewBox={`0 0 ${S} ${S}`}
+      viewBox={`-6 -6 ${S + 12} ${S + 12}`}
       role="img"
       aria-label="Колесо натальной карты: рассчитана одна позиция из десяти"
       className="h-auto w-full"
