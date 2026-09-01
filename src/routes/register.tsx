@@ -90,6 +90,14 @@ function RegisterPage() {
       return;
     }
 
+    const userId = data.user?.id;
+    if (userId) {
+      const ok = await ensureOwnerProfile(userId, pending);
+      if (!ok) setProfileSaveError();
+    } else {
+      setProfileSaveError();
+    }
+
     navigate({ to: "/cabinet" });
   }
 
@@ -166,6 +174,19 @@ function RegisterPage() {
               </Link>
             </span>
           </label>
+
+          {pending && (
+            <p
+              className="mt-4 text-[14px] text-text-secondary"
+              style={{
+                background: "var(--surface-1)",
+                borderRadius: "10px",
+                padding: "14px",
+              }}
+            >
+              {formatPendingBirth(pending)}
+            </p>
+          )}
 
           <button
             type="submit"
