@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import {
   DirectionPage,
@@ -187,6 +188,301 @@ function EmptyBodygraph() {
   );
 }
 
+const HD_TYPES = [
+  {
+    share: "~70%",
+    title: "Генератор",
+    text: "Есть постоянный доступ к энергии, но включается она откликом, а не решением. Работает то, на что отзывается тело, и буксует то, что выбрано головой",
+  },
+  {
+    share: "~20%",
+    title: "Проектор",
+    text: "Не производит энергию, а направляет чужую. Видит людей и системы точнее остальных, но выдыхается, если работает наравне с генераторами",
+  },
+  {
+    share: "~9%",
+    title: "Манифестор",
+    text: "Начинает сам, не дожидаясь отклика и приглашения. Чаще других встречает сопротивление, и оно снимается, если предупреждать о своих действиях заранее",
+  },
+  {
+    share: "~1%",
+    title: "Рефлектор",
+    text: "Все центры открыты. Отражает состояние окружения и потому особенно зависит от того, среди кого находится. Решения требуют времени — около лунного цикла",
+  },
+];
+
+const HD_CENTERS = [
+  {
+    id: "head",
+    title: "Голова",
+    text: "Давление думать: вопросы, идеи и то, что не даёт покоя. Определённая голова рождает свои вопросы, неопределённая подхватывает чужие и может думать о том, что её вовсе не касается",
+  },
+  {
+    id: "ajna",
+    title: "Аджна",
+    text: "Как ты обрабатываешь информацию и приходишь к выводам. Определённая аджна держится за свой способ думать, неопределённая гибко примеряет чужие и потому кажется себе непоследовательной",
+  },
+  {
+    id: "throat",
+    title: "Горло",
+    text: "Выражение и действие: как ты проявляешься вовне. Самый загруженный центр в схеме — сюда стекается почти всё остальное, и здесь замысел превращается в слово или поступок",
+  },
+  {
+    id: "g",
+    title: "Самость",
+    text: "Направление и ощущение себя: кто ты и куда идёшь. Определённая самость держит курс изнутри, неопределённая находит его через место и людей, среди которых оказывается",
+  },
+  {
+    id: "heart",
+    title: "Воля",
+    text: "Воля, обещания и самооценка через доказанное. Определённая воля умеет обещать и выполнять, неопределённой не стоит доказывать свою ценность — это самый частый источник усталости",
+  },
+  {
+    id: "sacral",
+    title: "Сакральный",
+    text: "Жизненная энергия и отклик. Определённый сакральный даёт устойчивый доступ к силе, но она включается ответом на вопрос, а не решением. Есть только у генераторов",
+  },
+  {
+    id: "spleen",
+    title: "Селезёнка",
+    text: "Интуиция, здоровье и мгновенное чувство безопасности. Говорит один раз и тихо, повторять не будет. Определённая селезёнка предупреждает надёжно, неопределённая склонна цепляться за то, что пора отпустить",
+  },
+  {
+    id: "solar",
+    title: "Солнечное сплетение",
+    text: "Эмоции и их волна. Определённое сплетение означает, что ясности в моменте не бывает: решение становится верным только после того, как волна прошла",
+  },
+  {
+    id: "root",
+    title: "Корневой",
+    text: "Давление и топливо для действия. Определённый корень даёт ровный напор, неопределённый усиливает чужую спешку — отсюда ощущение, что надо срочно всё доделать и освободиться",
+  },
+];
+
+/** Каналы (по индексам CHANNELS), ведущие к каждому центру. */
+const CENTER_CHANNELS: Record<string, number[]> = {
+  head: [0],
+  ajna: [0, 1],
+  throat: [1, 2, 3, 4, 5],
+  g: [2, 6, 7, 8],
+  heart: [3, 8],
+  sacral: [6, 9, 12, 13],
+  spleen: [4, 7, 10, 12],
+  solar: [5, 11, 13],
+  root: [9, 10, 11],
+};
+
+/** Интерактивный бодиграф: центры подсвечиваются, каналы к активному центру загораются. */
+function InteractiveBodygraph({
+  active,
+  onActivate,
+}: {
+  active: string;
+  onActivate: (id: string) => void;
+}) {
+  const lit = new Set(CENTER_CHANNELS[active] ?? []);
+  return (
+    <div
+      className="mx-auto w-[80vw] md:w-[min(34vw,50vh)]"
+      style={{ minWidth: 300, maxWidth: "100%" }}
+    >
+      <svg
+        viewBox="0 0 100 170"
+        role="group"
+        aria-label="Схема девяти центров бодиграфа"
+        className="h-auto w-full"
+        preserveAspectRatio="xMidYMid meet"
+      >
+        {CHANNELS.map(([a, b], i) => (
+          <line
+            key={i}
+            x1={a[0]}
+            y1={a[1]}
+            x2={b[0]}
+            y2={b[1]}
+            stroke={lit.has(i) ? "var(--text-accent)" : "var(--border)"}
+            strokeOpacity={lit.has(i) ? 0.5 : 0.3}
+            strokeWidth={lit.has(i) ? 1.5 : 1}
+            style={{ transition: "stroke 250ms, stroke-opacity 250ms" }}
+          />
+        ))}
+        {CENTERS.map((c, i) => {
+          const id = HD_CENTERS[i]!.id;
+          const isActive = id === active;
+          return (
+            <polygon
+              key={id}
+              points={c.points}
+              role="button"
+              tabIndex={0}
+              aria-label={HD_CENTERS[i]!.title}
+              aria-pressed={isActive}
+              onMouseEnter={() => onActivate(id)}
+              onClick={() => onActivate(id)}
+              onFocus={() => onActivate(id)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  onActivate(id);
+                }
+              }}
+              fill={isActive ? "rgba(122, 93, 168, 0.14)" : "transparent"}
+              stroke={isActive ? "var(--text-accent)" : "var(--border)"}
+              strokeOpacity={isActive ? 1 : 0.55}
+              strokeWidth={isActive ? 1.5 : 1}
+              style={{
+                cursor: "pointer",
+                outline: "none",
+                transition: "fill 250ms, stroke 250ms, stroke-opacity 250ms, filter 250ms",
+                filter: isActive ? "drop-shadow(0 0 6px rgba(122, 93, 168, 0.35))" : "none",
+              }}
+            />
+          );
+        })}
+      </svg>
+    </div>
+  );
+}
+
+/** Блок «Как устроен дизайн человека»: четыре типа + интерактивная схема девяти центров. */
+function HdStructureBlock() {
+  const [active, setActive] = useState("throat");
+  const interactedRef = useRef(false);
+
+  const activate = (id: string) => {
+    interactedRef.current = true;
+    setActive(id);
+  };
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const t = window.setInterval(() => {
+      if (interactedRef.current) {
+        window.clearInterval(t);
+        return;
+      }
+      setActive((prev) => {
+        const i = HD_CENTERS.findIndex((c) => c.id === prev);
+        return HD_CENTERS[(i + 1) % HD_CENTERS.length]!.id;
+      });
+    }, 3000);
+    return () => window.clearInterval(t);
+  }, []);
+
+  const current = HD_CENTERS.find((c) => c.id === active) ?? HD_CENTERS[2]!;
+
+  return (
+    <section
+      className="relative w-full"
+      style={{ paddingTop: "clamp(64px, 8vh, 120px)", paddingBottom: "clamp(64px, 8vh, 120px)" }}
+    >
+      <div className="mx-auto w-full max-w-[1240px] px-[4vw] md:px-6">
+        <h2
+          className="font-display text-text-primary"
+          style={{ fontSize: "clamp(28px, 2.6vw, 46px)", lineHeight: 1.1 }}
+        >
+          Как устроен дизайн человека
+        </h2>
+        <p
+          className="text-text-secondary"
+          style={{ marginTop: 14, fontSize: "clamp(15px, 1.15vw, 19px)", lineHeight: 1.6 }}
+        >
+          Девять центров складываются в четыре типа. От типа зависит стратегия — способ принимать
+          решения
+        </p>
+
+        {/* Часть 1: четыре типа */}
+        <p
+          className="uppercase text-text-secondary"
+          style={{
+            marginTop: 48,
+            fontSize: 13,
+            letterSpacing: "0.08em",
+          }}
+        >
+          Четыре типа
+        </p>
+        <div
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4"
+          style={{ gap: 20, marginTop: 28 }}
+        >
+          {HD_TYPES.map((t) => (
+            <div
+              key={t.title}
+              className="rounded-[18px] border border-border bg-surface-1"
+              style={{ padding: 26 }}
+            >
+              <span
+                className="font-mono text-text-accent"
+                style={{ fontSize: "clamp(22px, 2vw, 34px)", lineHeight: 1.1 }}
+              >
+                {t.share}
+              </span>
+              <h3
+                className="font-display text-text-primary"
+                style={{ marginTop: 8, fontSize: "clamp(18px, 1.5vw, 25px)", lineHeight: 1.2 }}
+              >
+                {t.title}
+              </h3>
+              <p
+                className="text-text-secondary"
+                style={{ marginTop: 10, fontSize: "clamp(13px, 1.05vw, 16px)", lineHeight: 1.55 }}
+              >
+                {t.text}
+              </p>
+            </div>
+          ))}
+        </div>
+        <p
+          className="text-text-secondary"
+          style={{ marginTop: 20, fontSize: 12, opacity: 0.7 }}
+        >
+          Доли приблизительные, приняты внутри самой системы
+        </p>
+
+        {/* Разделитель */}
+        <div
+          aria-hidden="true"
+          className="bg-border"
+          style={{ height: 1, opacity: 0.35, marginTop: 56, marginBottom: 56 }}
+        />
+
+        {/* Часть 2: девять центров */}
+        <p
+          className="uppercase text-text-secondary"
+          style={{ fontSize: 13, letterSpacing: "0.08em" }}
+        >
+          Девять центров
+        </p>
+        <div
+          className="flex flex-col items-center md:flex-row md:items-center"
+          style={{ gap: "clamp(32px, 4vw, 72px)", marginTop: 28 }}
+        >
+          <div className="w-full md:w-[46%]">
+            <InteractiveBodygraph active={active} onActivate={activate} />
+          </div>
+          <div className="w-full md:w-[48%]">
+            <div key={current.id} className="animate-[fade-in_200ms_ease-out]" style={{ minHeight: 220 }}>
+              <h3
+                className="font-display text-text-primary"
+                style={{ fontSize: "clamp(22px, 1.9vw, 32px)", lineHeight: 1.15 }}
+              >
+                {current.title}
+              </h3>
+              <p
+                className="text-text-secondary"
+                style={{ marginTop: 14, fontSize: "clamp(15px, 1.15vw, 19px)", lineHeight: 1.65 }}
+              >
+                {current.text}
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 /** Первый экран: объяснение + прямой переход на пробный доступ. */
 function HdHeroCta() {
   return (
@@ -368,7 +664,12 @@ function HumanDesignPage() {
       placeholderVisual={<EmptyBodygraph />}
       resultVisual={() => <EmptyBodygraph />}
       resultContent={() => null}
-      explainBlock={<TwoChartsBlock />}
+      explainBlock={
+        <>
+          <HdStructureBlock />
+          <TwoChartsBlock />
+        </>
+      }
     />
   );
 }
