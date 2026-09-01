@@ -3,7 +3,7 @@ import { Header } from "@/components/hero/Header";
 import { Footer } from "@/components/landing/Footer";
 import { directions } from "@/lib/directions";
 
-export const Route = createFileRoute("/cabinet")({
+export const Route = createFileRoute("/_authenticated/cabinet")({
   head: () => ({
     meta: [
       { title: "Мой кабинет — Моя Эра" },
